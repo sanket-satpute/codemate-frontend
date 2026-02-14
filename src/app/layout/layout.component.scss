@@ -1,0 +1,229 @@
+@use '../../styles/variables' as v;
+
+// ============================================================================
+// PREMIUM LAYOUT ARCHITECTURE
+// Modern, clean spacing with visual hierarchy and sophisticated animations
+// Sidebar properly integrated with content flow
+// ============================================================================
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: v.$bg-primary-navy-black;
+  color: v.$text-primary;
+  
+  // Reduced outer padding for more content space
+  padding: v.$space-md; // 16px - cleaner edge spacing
+  gap: v.$space-md; // 16px - tighter, more cohesive layout
+  
+  // Smooth theme transitions
+  transition: background-color v.$transition-duration-slow v.$ease-in-out;
+  
+  // Prevent horizontal overflow
+  overflow-x: hidden;
+}
+
+// ============================================================================
+// MAIN CONTENT AREA - Properly adjusted for sidebar
+// ============================================================================
+.main-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1; // Take remaining space after sidebar
+  min-width: 0; // Prevent flex item from overflowing
+  
+  // Refined spacing between navbar, content, and footer
+  gap: v.$space-md; // 16px - consistent rhythm
+  
+  // Smooth transitions for sidebar toggle
+  transition: all v.$transition-duration-slow v.$ease-out-back;
+  
+  // Let flexbox handle the width automatically
+  width: auto;
+  
+  // Sidebar collapsed state - content expands more
+  &.sidebar-collapsed {
+    // Flexbox will automatically adjust, no manual calculation needed
+  }
+}
+
+// ============================================================================
+// ROUTER CONTENT - THE PREMIUM CANVAS
+// ============================================================================
+.router-content {
+  flex-grow: 1;
+  position: relative;
+  
+  // Generous but balanced internal padding
+  // padding: v.$space-2xl; // 48px - premium content breathing room
+  
+  // Surface styling with subtle depth
+  background: v.$bg-secondary;
+  border-radius: v.$border-radius-content; // 18px
+  
+  // Premium layered shadows for depth
+  box-shadow: 
+    v.$shadow-lg,
+    inset 0 1px 0 rgba(255, 255, 255, 0.03), // Subtle top highlight
+    inset 0 0 0 1px rgba(79, 70, 229, 0.08); // Subtle indigo border glow
+  
+  // Refined border for definition
+  border: 1px solid v.$border-neutral;
+  
+  // Sophisticated page transition
+  animation: premiumFadeIn 0.6s v.$ease-out-back forwards;
+  
+  // Auto scrolling for content overflow
+  overflow-x: hidden;
+  overflow-y: auto;
+  
+  // Smooth scrolling experience
+  scroll-behavior: smooth;
+  
+  // Custom scrollbar styling (webkit browsers)
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.3);
+    border-radius: v.$border-radius-sm;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: v.$border-neutral;
+    border-radius: v.$border-radius-sm;
+    
+    &:hover {
+      background: v.$text-muted;
+    }
+  }
+  
+  // Subtle hover elevation
+  transition: box-shadow v.$transition-duration-base v.$ease-in-out;
+  
+  &:hover {
+    box-shadow: 
+      v.$shadow-xl,
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 0 0 1px rgba(79, 70, 229, 0.12);
+  }
+}
+
+// ============================================================================
+// PREMIUM ANIMATIONS
+// ============================================================================
+
+// Sophisticated fade-in with subtle scale and blur
+@keyframes premiumFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    filter: blur(4px);
+  }
+  60% {
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+// ============================================================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================================================
+
+// Tablet and below
+@media (max-width: 1024px) {
+  .app-container {
+    padding: v.$space-sm; // 8px
+    gap: v.$space-sm;
+  }
+  
+  .main-content {
+    gap: v.$space-sm;
+  }
+  
+  .router-content {
+    padding: v.$space-xl; // 32px - reduced on smaller screens
+    border-radius: v.$border-radius-lg; // 12px - slightly less dramatic
+  }
+}
+
+// Mobile
+@media (max-width: 768px) {
+  .app-container {
+    padding: v.$space-xs; // 4px
+    gap: v.$space-xs;
+    flex-direction: column; // Stack vertically on mobile
+  }
+  
+  .main-content {
+    gap: v.$space-xs;
+    width: 100%;
+  }
+  
+  .router-content {
+    padding: v.$space-lg; // 24px - comfortable mobile padding
+    border-radius: v.$border-radius-md; // 8px - subtle on mobile
+  }
+}
+
+// ============================================================================
+// ACCESSIBILITY ENHANCEMENTS
+// ============================================================================
+
+// Respect user's motion preferences
+@media (prefers-reduced-motion: reduce) {
+  .app-container,
+  .main-content,
+  .router-content {
+    transition: none;
+    animation: none;
+  }
+  
+  .router-content {
+    animation: simpleFadeIn 0.3s ease-out forwards;
+  }
+  
+  @keyframes simpleFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .router-content {
+    border: 2px solid v.$text-primary;
+    box-shadow: none;
+  }
+}
+
+// ============================================================================
+// PRINT OPTIMIZATION
+// ============================================================================
+@media print {
+  .app-container {
+    padding: 0;
+    gap: 0;
+    display: block;
+  }
+  
+  .main-content {
+    width: 100%;
+  }
+  
+  .router-content {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}

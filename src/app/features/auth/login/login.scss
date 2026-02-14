@@ -1,0 +1,35 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--background-color);
+}
+
+.login-card {
+  @include m.glass-card; /* Apply glassmorphism for premium look */
+  width: 100%;
+  max-width: 400px;
+  padding: var(--space-2xl); /* More generous padding for premium feel */
+  /* background-color, box-shadow, border-radius are now handled by glass-card mixin */
+  box-shadow: var(--shadow-xl), var(--shadow-neon-mixed); /* Enhanced shadow with neon glow */
+  transition: all 0.3s ease-in-out; /* Smooth transitions for hover/focus effects */
+
+  &:hover {
+    transform: translateY(-2px); /* Subtle lift on hover */
+    box-shadow: var(--shadow-2xl), var(--shadow-neon-mixed), var(--shadow-neon-cyan); /* More prominent glow on hover */
+  }
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.error-message {
+  color: var(--error-color); /* Use CSS variable */
+  margin-top: var(--space-sm); /* Use CSS variable for spacing */
+  font-size: calc(var(--font-size-base) * 0.875); /* Use calc for consistent scaling */
+}

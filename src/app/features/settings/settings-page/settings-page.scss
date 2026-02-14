@@ -1,0 +1,402 @@
+@use 'sass:color';
+@use '../../../../styles/_variables.scss' as variables;
+@use '../../../../styles/_mixins.scss' as mixins;
+
+.settings-container {
+  display: flex;
+  height: 100%;
+  background-color: variables.$bg-primary-navy-black;
+  font-family: variables.$font-family-primary;
+  color: variables.$text-primary;
+  overflow: hidden;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$shadow-2xl;
+}
+
+/* Left Sidebar */
+.settings-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: variables.$bg-secondary;
+  border-right: 1px solid variables.$border-neutral;
+  padding: variables.$space-xl variables.$space-md;
+  overflow-y: auto;
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$space-sm;
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: variables.$space-md;
+      padding: variables.$space-sm variables.$space-md;
+      border-radius: variables.$border-radius-base;
+      color: variables.$text-muted;
+      font-size: variables.$font-size-body-md;
+      text-decoration: none;
+      transition: all variables.$transition-duration-fast variables.$ease-in-out;
+      position: relative;
+      overflow: hidden;
+
+      i {
+        font-size: variables.$font-size-subtitle;
+        width: 24px;
+        text-align: center;
+      }
+
+      &:hover {
+        background-color: rgba(variables.$primary-indigo-600, 0.1);
+        color: variables.$text-primary;
+      }
+
+      &.active {
+        background-color: variables.$primary-indigo-600;
+        color: variables.$white;
+        font-weight: variables.$font-weight-semibold;
+        box-shadow: 0 0 8px rgba(variables.$primary-indigo-600, 0.5);
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 4px;
+          background-color: variables.$accent-cyan-400;
+          border-radius: 0 variables.$border-radius-xs variables.$border-radius-xs 0;
+        }
+      }
+    }
+  }
+}
+
+/* Right Side — Detailed Sections */
+.settings-content {
+  flex-grow: 1;
+  padding: variables.$space-xl;
+  overflow-y: auto;
+  background-color: variables.$bg-primary-navy-black;
+
+  .settings-section {
+    margin-bottom: variables.$space-3xl; // Spacing between major sections
+
+    .section-title {
+      font-size: variables.$font-size-page-title;
+      font-weight: variables.$font-weight-bold;
+      color: variables.$text-primary;
+      margin-bottom: variables.$space-sm;
+      padding-bottom: variables.$space-md;
+      border-bottom: 1px solid variables.$border-neutral;
+    }
+
+    .section-subtitle {
+      font-size: variables.$font-size-body-lg;
+      color: variables.$text-muted;
+      margin-bottom: variables.$space-xl;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: variables.$space-lg;
+
+      .card {
+        @include mixins.card-base; // Use base card styling
+        background-color: variables.$surface-card;
+        padding: variables.$space-lg;
+        display: flex;
+        flex-direction: column;
+        gap: variables.$space-md;
+        transition: all variables.$transition-duration-fast variables.$ease-in-out;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: variables.$shadow-md;
+        }
+
+        h3 {
+          font-size: variables.$font-size-section-title;
+          color: variables.$text-primary;
+          margin-bottom: variables.$space-sm;
+          border-bottom: 1px solid variables.$border-neutral;
+          padding-bottom: variables.$space-xs;
+        }
+
+        p {
+          font-size: variables.$font-size-body-md;
+          color: variables.$text-primary;
+        }
+
+        .text-muted {
+          color: variables.$text-muted;
+          font-size: variables.$font-size-body-sm;
+        }
+
+        .form-group {
+          margin-bottom: variables.$space-md;
+
+          label {
+            display: block;
+            font-size: variables.$font-size-body-sm;
+            color: variables.$text-muted;
+            margin-bottom: variables.$space-xs;
+          }
+
+          input[type="text"],
+          input[type="email"],
+          input[type="password"],
+          input[type="number"],
+          select {
+            width: 100%;
+            font-size: variables.$font-size-body-md;
+            @include mixins.input-styles;
+          }
+        }
+
+        .save-button, .upload-button, .remove-button, .toggle-2fa-button,
+        .generate-codes-button, .logout-all-button, .primary-button, .secondary-button, .danger-button,
+        .integration-button, .download-link {
+          @include mixins.button-primary; // Default button style from mixins
+          font-size: variables.$font-size-body-sm;
+          padding: variables.$space-sm variables.$space-md;
+          align-self: flex-start;
+          margin-top: variables.$space-sm;
+        }
+
+        .secondary-button {
+          @include mixins.button-secondary; // Secondary button style
+        }
+
+        .danger-button {
+          background-color: variables.$error-color;
+          color: variables.$white;
+          border: 1px solid variables.$error-color;
+          &:hover {
+            background-color: variables.$error-color; /* Removed color.adjust as it's incompatible with CSS variables */
+            box-shadow: 0 0 10px rgba(variables.$error-color, 0.5);
+          }
+        }
+      }
+
+      /* Specific Card Styles */
+      .profile-photo {
+        .photo-area {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: variables.$space-sm;
+          padding: variables.$space-md;
+          border: 1px dashed variables.$border-neutral;
+          border-radius: variables.$border-radius-base;
+
+          .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid variables.$primary-indigo-600;
+            box-shadow: variables.$shadow-sm;
+          }
+        }
+      }
+
+      .flex-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .qr-code-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: variables.$space-md;
+        margin-top: variables.$space-md;
+        padding-top: variables.$space-md;
+        border-top: 1px solid variables.$border-neutral;
+
+        .qr-code {
+          width: 120px;
+          height: 120px;
+          border: 1px solid variables.$border-neutral;
+          border-radius: variables.$border-radius-sm;
+        }
+      }
+
+      .device-list, .login-history-list {
+        display: flex;
+        flex-direction: column;
+        gap: variables.$space-xs;
+
+        .device-item, .login-item {
+          background-color: variables.$bg-primary-navy-black;
+          padding: variables.$space-sm;
+          border-radius: variables.$border-radius-xs;
+          border: 1px solid variables.$border-neutral;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: variables.$font-size-body-sm;
+          color: variables.$text-muted;
+          gap: variables.$space-sm;
+
+          span.timestamp {
+            font-size: variables.$font-size-body-xs;
+            color: variables.$text-muted;
+          }
+        }
+      }
+
+      .radio-group, .toggle-group {
+        display: flex;
+        flex-direction: column;
+        gap: variables.$space-sm;
+      }
+
+      .radio-item, .toggle-item {
+        display: flex;
+        align-items: center;
+        gap: variables.$space-sm;
+        font-size: variables.$font-size-body-md;
+        color: variables.$text-muted;
+        cursor: pointer;
+
+        input[type="radio"] {
+          @include mixins.custom-radio(variables.$primary-indigo-600, variables.$border-neutral, variables.$white); // Assuming custom-radio mixin exists
+        }
+
+        input[type="checkbox"] {
+          @include mixins.custom-checkbox(variables.$primary-indigo-600, variables.$border-neutral, variables.$white);
+        }
+      }
+
+      .payment-method-item, .invoice-item, .api-key-item, .member-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: variables.$bg-primary-navy-black;
+        padding: variables.$space-sm;
+        border-radius: variables.$border-radius-xs;
+        border: 1px solid variables.$border-neutral;
+        font-size: variables.$font-size-body-md;
+        color: variables.$text-primary;
+        margin-bottom: variables.$space-xs;
+
+        .download-link {
+          @include mixins.button-secondary;
+          padding: variables.$space-xs variables.$space-sm;
+          font-size: variables.$font-size-body-xs;
+        }
+      }
+
+      .integration-card {
+        .integration-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: variables.$space-xs;
+
+          h4 {
+            margin: 0;
+            font-size: variables.$font-size-subtitle;
+          }
+
+          .status-connected {
+            color: variables.$success-color;
+            font-weight: variables.$font-weight-semibold;
+          }
+          .status-disconnected {
+            color: variables.$error-color;
+            font-weight: variables.$font-weight-semibold;
+          }
+        }
+        .integration-button {
+          @include mixins.button-primary;
+          margin-top: variables.$space-md;
+          align-self: flex-end; // Align to bottom right
+          &.disconnect-button {
+            background-color: variables.$error-color;
+            border-color: variables.$error-color;
+            &:hover {
+              background-color: variables.$error-color; /* Removed color.adjust as it's incompatible with CSS variables */
+              box-shadow: 0 0 10px rgba(variables.$error-color, 0.5);
+            }
+          }
+        }
+      }
+
+      .api-key-item {
+        flex-wrap: wrap; // Allow key to wrap
+        .key-display {
+          font-family: variables.$font-family-code;
+          background-color: variables.$bg-primary-navy-black;
+          padding: variables.$space-xs;
+          border-radius: variables.$border-radius-xs;
+          border: 1px solid variables.$border-neutral;
+          flex-grow: 1;
+          margin-right: variables.$space-sm;
+          white-space: pre-wrap; // Allow text to wrap
+          word-break: break-all; // Break long words
+        }
+        .key-actions {
+          display: flex;
+          gap: variables.$space-xs;
+          margin-left: auto;
+
+          .icon-button {
+            background: none;
+            border: 1px solid variables.$border-neutral;
+            color: variables.$text-muted;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: variables.$border-radius-xs;
+            transition: all variables.$transition-duration-fast variables.$ease-in-out;
+
+            &:hover {
+              color: variables.$accent-cyan-400;
+              background-color: variables.$bg-secondary-focus;
+              border-color: variables.$accent-cyan-400;
+            }
+          }
+        }
+        p {
+          width: 100%;
+          margin-top: variables.$space-xs;
+          font-size: variables.$font-size-body-xs;
+        }
+      }
+
+      .progress-bar {
+        height: 8px;
+        background-color: variables.$border-neutral;
+        border-radius: variables.$border-radius-pill;
+        overflow: hidden;
+
+        .progress {
+          height: 100%;
+          background-color: variables.$primary-indigo-600;
+          border-radius: variables.$border-radius-pill;
+          transition: width variables.$transition-duration-base variables.$ease-in-out;
+        }
+      }
+
+      .danger-card {
+        border-color: variables.$error-color;
+        background-color: rgba(variables.$error-color, 0.1);
+        .danger-button {
+          @include mixins.button-primary;
+          background-color: variables.$error-color;
+          border: 1px solid variables.$error-color;
+          color: variables.$white;
+          &:hover {
+            background-color: variables.$error-color; /* Removed color.adjust as it's incompatible with CSS variables */
+            box-shadow: 0 0 10px rgba(variables.$error-color, 0.5);
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+<div class="chat-container" [class.dark-theme]="theme === 'dark'" [class.light-theme]="theme === 'light'">
+  <!-- Sticky Header -->
+  <header class="chat-header">
+    <button class="back-button" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      Back
+    </button>
+    <h2 class="project-name">Project: {{ projectId }}</h2>
+    <button class="theme-toggle" (click)="toggleTheme()">
+      <svg *ngIf="theme === 'dark'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+      <svg *ngIf="theme === 'light'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </header>
+
+  <!-- Scrollable Chat Area -->
+  <main class="chat-messages-container" #chatMessagesContainer>
+    <div>
+      <div *ngFor="let message of messages; let i = index"
+           class="message-bubble-wrapper"
+           [ngClass]="{'user-message-wrapper': message.sender === 'user', 'ai-message-wrapper': message.sender === 'ai'}"
+           [@messageAnimation]>
+        <div class="message-avatar" *ngIf="message.sender === 'ai'">🤖</div>
+        <div class="message-bubble" [attr.data-timestamp]="message.timestamp | date:'shortTime'">
+          <p>{{ message.message }}</p>
+        </div>
+        <div class="message-avatar" *ngIf="message.sender === 'user'">👤</div>
+      </div>
+    </div>
+
+    <!-- AI Typing Indicator -->
+    <div *ngIf="isTyping" class="message-bubble-wrapper ai-message-wrapper" [@typingAnimation]>
+      <div class="message-avatar">🤖</div>
+      <div class="message-bubble typing-indicator">
+        <p>{{ aiResponseBuffer }}<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Sticky Footer with Input -->
+  <footer class="chat-footer">
+    <form (ngSubmit)="sendMessage()" class="message-input-form">
+      <input
+        type="text"
+        [(ngModel)]="currentMessage"
+        name="currentMessage"
+        placeholder="Type your message..."
+        class="message-input"
+        (keydown.enter)="sendMessage()"
+      />
+      <button type="submit" class="send-button" [disabled]="!currentMessage.trim()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M15 7l-6 6"/></svg>
+      </button>
+    </form>
+  </footer>
+</div>

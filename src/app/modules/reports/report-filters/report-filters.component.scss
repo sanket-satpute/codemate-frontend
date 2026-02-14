@@ -1,0 +1,40 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+.filters-form {
+  background-color: var(--color-surface-card);
+  padding: 1.5rem;
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-neutral);
+
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--color-text-primary);
+    }
+
+    input,
+    select {
+      @include m.input-styles;
+    }
+  }
+
+  .form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+}

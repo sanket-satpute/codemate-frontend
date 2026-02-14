@@ -1,0 +1,325 @@
+<div class="projects-page">
+  <!-- Header Section -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="welcome-section">
+        <h1 class="page-title">Projects</h1>
+        <p class="page-subtitle">Manage and track your development projects</p>
+      </div>
+      <div class="header-actions">
+        <app-button variant="primary" icon="fa-plus" (btnClick)="createNewProject()">
+          New Project
+        </app-button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-overlay">
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+        <p>Loading projects...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main *ngIf="!loading" class="projects-content">
+    <!-- Search & Filters Bar -->
+    <section class="controls-section">
+      <div class="search-filters">
+        <div class="search-bar">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="applyFilters()"
+              placeholder="Search projects, tags, languages..."
+              class="search-input">
+            <button *ngIf="searchTerm" (click)="clearSearch()" class="clear-search">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-chips">
+          <button
+            class="filter-chip"
+            [class.active]="selectedFilter === 'all'"
+            (click)="setFilter('all')">
+            All
+            <span class="chip-count">{{ totalProjects }}</span>
+          </button>
+          <button
+            class="filter-chip"
+            [class.active]="selectedFilter === 'active'"
+            (click)="setFilter('active')">
+            Active
+            <span class="chip-count">{{ activeProjects }}</span>
+          </button>
+          <button
+            class="filter-chip"
+            [class.active]="selectedFilter === 'archived'"
+            (click)="setFilter('archived')">
+            Archived
+            <span class="chip-count">{{ archivedProjects }}</span>
+          </button>
+        </div>
+
+        <div class="sort-options">
+          <select [(ngModel)]="sortBy" (ngModelChange)="applyFilters()" class="sort-select">
+            <option value="name">Name</option>
+            <option value="updated">Last Updated</option>
+            <option value="health">Health Score</option>
+            <option value="created">Created Date</option>
+          </select>
+          <button (click)="toggleSortOrder()" class="sort-order-btn" [class.asc]="sortOrder === 'asc'">
+            <i class="fas" [class]="sortOrder === 'asc' ? 'fa-sort-amount-up' : 'fa-sort-amount-down'"></i>
+          </button>
+        </div>
+
+        <div class="view-toggle">
+          <button
+            class="view-btn"
+            [class.active]="viewMode === 'grid'"
+            (click)="setViewMode('grid')">
+            <i class="fas fa-th-large"></i>
+          </button>
+          <button
+            class="view-btn"
+            [class.active]="viewMode === 'list'"
+            (click)="setViewMode('list')">
+            <i class="fas fa-list"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Stats Overview -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-project-diagram"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalProjects }}</div>
+            <div class="stat-label">Total Projects</div>
+            <div class="stat-trend positive">
+              <i class="fas fa-arrow-up"></i>
+              +12% this month
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ completedProjects }}</div>
+            <div class="stat-label">Completed</div>
+            <div class="stat-trend positive">
+              <i class="fas fa-arrow-up"></i>
+              +8 this week
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-heartbeat"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ avgHealthScore }}%</div>
+            <div class="stat-label">Avg Health</div>
+            <div class="progress-indicator">
+              <div class="progress-bar" [style.width.%]="avgHealthScore"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalLinesCode }}</div>
+            <div class="stat-label">LoC Tracked</div>
+            <div class="stat-trend positive">
+              <i class="fas fa-arrow-up"></i>
+              +24.3k lines
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredProjects.length === 0 && !loading" class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-folder-plus"></i>
+      </div>
+      <div class="empty-content">
+        <h3>{{ searchTerm ? 'No matching projects' : 'Start your journey' }}</h3>
+        <p>
+          {{ searchTerm ? 'Try adjusting your search terms or filters' : 'Create your first project to begin tracking your development work' }}
+        </p>
+        <div class="empty-actions">
+          <app-button variant="primary" size="sm" icon="fa-plus" (btnClick)="createNewProject()">
+            Create Project
+          </app-button>
+          <!---button class="secondary-action" (click)="showTemplates()">
+            <i class="fas fa-th-large"></i>
+            Browse Templates
+          </button-->
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects Grid/List -->
+    <section *ngIf="filteredProjects.length > 0" class="projects-section">
+      <div class="projects-container"
+           [class.grid-view]="viewMode === 'grid'"
+           [class.list-view]="viewMode === 'list'">
+
+        <div class="project-item"
+             *ngFor="let project of filteredProjects; trackBy: trackByProjectId"
+             [routerLink]="['/projects', project.id]">
+
+          <!-- Grid Card View -->
+          <div *ngIf="viewMode === 'grid'" class="project-card">
+            <div class="card-header">
+              <div class="project-icon" [style.background-color]="getProjectColor(project)">
+                <i class="fas" [class]="getProjectIcon(project.type)"></i>
+              </div>
+              <div class="card-menu">
+                <button class="menu-btn" (click)="showProjectMenu($event, project)">
+                  <i class="fas fa-ellipsis-v"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <h3 class="project-name">{{ project.name }}</h3>
+              <p class="project-description" *ngIf="project.description">
+                {{ project.description | truncate:100 }}
+              </p>
+
+              <div class="project-meta">
+                <div class="project-type">
+                  <span class="type-badge" [class]="getProjectTypeClass(project.type)">
+                    {{ project.type }}
+                  </span>
+                </div>
+
+                <div class="health-score">
+                  <div class="health-indicator" [class]="getHealthClass(project.healthScore)">
+                    <span class="health-value">{{ project.healthScore }}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="footer-left">
+                <span class="last-updated">
+                  <i class="fas fa-clock"></i>
+                  {{ project.lastUpdated | date:'short' }}
+                </span>
+              </div>
+              <div class="footer-right">
+                <button class="quick-action" (click)="runAnalysis(project); $event.stopPropagation()">
+                  <i class="fas fa-play"></i>
+                  Analyze
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- List Row View -->
+          <div *ngIf="viewMode === 'list'" class="project-row">
+            <div class="row-left">
+              <div class="project-icon" [style.background-color]="getProjectColor(project)">
+                <i class="fas" [class]="getProjectIcon(project.type)"></i>
+              </div>
+
+              <div class="project-info">
+                <div class="project-name-row">
+                  <h3>{{ project.name }}</h3>
+                  <span class="status-badges">
+                    <span class="status-badge" [class]="project.status.toLowerCase()">
+                      {{ project.status }}
+                    </span>
+                    <span class="type-badge" [class]="getProjectTypeClass(project.type)">
+                      {{ project.type }}
+                    </span>
+                  </span>
+                </div>
+
+                <div class="project-meta-row">
+                  <span class="description" *ngIf="project.description">
+                    {{ project.description | truncate:150 }}
+                  </span>
+                  <span class="meta-items">
+                    <span class="meta-item">
+                      <i class="fas fa-code"></i>
+                      {{ project.language }}
+                    </span>
+                    <span class="meta-item">
+                      <i class="fas fa-clock"></i>
+                      {{ project.lastUpdated | date:'short' }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row-right">
+              <div class="health-score-column">
+                <div class="health-bar">
+                  <div class="health-fill" [style.width.%]="project.healthScore"></div>
+                </div>
+                <span class="health-text">{{ project.healthScore }}%</span>
+              </div>
+
+              <div class="actions-column">
+                <button class="action-btn" (click)="viewProject(project); $event.stopPropagation()">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn" (click)="runAnalysis(project); $event.stopPropagation()">
+                  <i class="fas fa-play"></i>
+                </button>
+                <button class="action-btn" (click)="showProjectMenu($event, project); $event.stopPropagation()">
+                  <i class="fas fa-ellipsis-v"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Quick Action Menu (if needed) -->
+  <div class="quick-menu" *ngIf="showMenu && selectedProject" [style.left.px]="menuPosition.x" [style.top.px]="menuPosition.y">
+    <div class="menu-item" (click)="editProject(selectedProject!)">
+      <i class="fas fa-edit"></i>
+      Edit
+    </div>
+    <div class="menu-item" (click)="duplicateProject(selectedProject!)">
+      <i class="fas fa-copy"></i>
+      Duplicate
+    </div>
+    <div class="menu-item" (click)="archiveProject(selectedProject!)">
+      <i class="fas fa-archive"></i>
+      Archive
+    </div>
+    <div class="menu-item danger" (click)="deleteProject(selectedProject!)">
+      <i class="fas fa-trash"></i>
+      Delete
+    </div>
+  </div>
+</div>

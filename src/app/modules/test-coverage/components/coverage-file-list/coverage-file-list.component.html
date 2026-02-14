@@ -1,0 +1,24 @@
+<div class="file-list-container">
+  <div class="list-header">
+    <span class="header-item">File Path</span>
+    <span class="header-item">Coverage</span>
+    <span class="header-item">Actions</span>
+  </div>
+  <div class="list-body">
+    <div *ngFor="let file of files" class="list-row">
+      <span class="file-path">{{ file.filePath }}</span>
+      <div class="coverage-bar-container">
+        <div class="coverage-bar" [style.width.%]="file.coveragePercent"></div>
+        <span class="coverage-percent">{{ file.coveragePercent | number:'1.0-1' }}%</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-sm btn-primary" (click)="onGenerateTests(file)">
+          Generate Tests
+        </button>
+      </div>
+    </div>
+    <div *ngIf="files.length === 0" class="empty-state">
+      <p>No coverage data available for this project.</p>
+    </div>
+  </div>
+</div>

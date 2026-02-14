@@ -1,0 +1,226 @@
+<div class="code-quality-page-container">
+  <!-- Page Header -->
+  <header class="page-header">
+    <h1>Code Quality</h1>
+    <div class="header-metadata">
+      <span>Project: {{ projectName }}</span>
+      <span>Last Scan: {{ lastOverallScan }}</span>
+    </div>
+  </header>
+
+  <main class="main-content-grid">
+    <!-- 1. Hero Section: Top Summary Cards -->
+    <section class="hero-metrics-grid">
+      <div *ngFor="let metric of heroMetrics" class="metric-card card">
+        <div class="metric-header">
+          <span class="metric-title">{{ metric.title }}</span>
+          <span class="metric-trend" [class.up]="metric.trend === 'up'" [class.down]="metric.trend === 'down'" [class.neutral]="metric.trend === 'neutral'">
+            <i class="fas" [class.fa-arrow-up]="metric.trend === 'up'" [class.fa-arrow-down]="metric.trend === 'down'" [class.fa-minus]="metric.trend === 'neutral'"></i>
+            {{ metric.trendValue }}
+          </span>
+        </div>
+        <div class="metric-value-area">
+          <span class="metric-value {{ metric.colorClass }}">{{ metric.value }}</span>
+          <span class="grade-badge" *ngIf="metric.grade" [class.grade-a]="metric.grade === 'A+' || metric.grade === 'A'" [class.grade-b]="metric.grade === 'B+' || metric.grade === 'B'" [class.grade-c]="metric.grade === 'C+' || metric.grade === 'C'">{{ metric.grade }}</span>
+        </div>
+        <div class="metric-footer">
+          <span class="badge {{ metric.colorClass }}">{{ metric.badgeText }}</span>
+          <span class="last-scanned">{{ metric.lastScanned }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Quality Trend Graphs -->
+    <section class="quality-trends-section">
+      <h2 class="section-title">Quality Trend Over Time</h2>
+      <div class="trends-grid">
+        <div *ngFor="let chart of qualityTrends" class="chart-card card">
+          <h3>{{ chart.title }}</h3>
+          <!-- Placeholder for chart. In a real app, this would be a charting library component -->
+          <div class="chart-placeholder" [style.border-color]="chart.color">
+            <span>Graph for {{ chart.title }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="two-column-layout">
+      <div class="left-column">
+        <!-- 3. Maintainability Section -->
+        <section class="maintainability-section">
+          <h2 class="section-title">Maintainability Overview</h2>
+          <div class="maintainability-grid">
+            <div *ngFor="let metric of maintainabilityMetrics" class="maintainability-metric-card card">
+              <span class="metric-label">{{ metric.label }}</span>
+              <span class="metric-value {{ metric.colorClass }}">{{ metric.value }}</span>
+              <div class="progress-bar-wrapper" *ngIf="metric.max">
+                <div class="progress-bar" [style.width.%]="(metric.value / metric.max) * 100"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Code Standards & Best Practices -->
+        <section class="standards-section">
+          <h2 class="section-title">Code Standards & Best Practices</h2>
+          <div class="standards-list">
+            <div *ngFor="let check of standardChecks" class="standards-item card" [class.expanded]="check.isExpanded">
+              <div class="standards-summary" (click)="toggleStandardCheckAccordion(check.id)">
+                <span class="severity-indicator {{ check.severity | lowercase }}"></span>
+                <span class="item-label">{{ check.label }}</span>
+                <span class="issue-count">{{ check.count }} issues</span>
+                <i class="fas" [class.fa-chevron-down]="!check.isExpanded" [class.fa-chevron-up]="check.isExpanded"></i>
+              </div>
+              <div class="standards-details" *ngIf="check.isExpanded">
+                <h5>Suggested Fix:</h5>
+                <p>{{ check.fixSuggestion }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Security Quality Indicators -->
+        <section class="security-section">
+          <h2 class="section-title">Security Quality Indicators</h2>
+          <div class="security-indicators-grid">
+            <div *ngFor="let indicator of securityIndicators" class="indicator-card card">
+              <i class="fas {{ indicator.icon }} {{ indicator.severity | lowercase }}"></i>
+              <div class="indicator-info">
+                <span class="indicator-label">{{ indicator.label }}</span>
+                <span class="indicator-count" *ngIf="indicator.count">{{ indicator.count }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Performance Quality Indicators -->
+        <section class="performance-section">
+          <h2 class="section-title">Performance Quality Indicators</h2>
+          <div class="performance-indicators-grid">
+            <div *ngFor="let indicator of performanceIndicators" class="indicator-card card">
+              <i class="fas {{ indicator.icon }} {{ indicator.severity | lowercase }}"></i>
+              <div class="indicator-info">
+                <span class="indicator-label">{{ indicator.label }}</span>
+                <span class="indicator-count" *ngIf="indicator.count">{{ indicator.count }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="right-column">
+        <!-- 5. Language / Module Breakdown -->
+        <section class="breakdown-section">
+          <h2 class="section-title">Codebase Breakdown</h2>
+          <div class="breakdown-charts-grid">
+            <div class="chart-card card">
+              <h3>Issues by Language</h3>
+              <div class="chart-placeholder short" style="border-color: var(--color-primary-indigo-600);">
+                <span>Pie Chart</span>
+              </div>
+            </div>
+            <div class="chart-card card">
+              <h3>Issues by Module</h3>
+              <div class="chart-placeholder short" style="border-color: var(--color-accent-cyan-400);">
+                <span>Bar Chart</span>
+              </div>
+            </div>
+            <div class="chart-card card">
+              <h3>Complexity by Component</h3>
+              <div class="chart-placeholder short" style="border-color: var(--color-warning);">
+                <span>Bar Chart</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. Testability & Coverage -->
+        <section class="testability-section">
+          <h2 class="section-title">Testability & Coverage</h2>
+          <div *ngIf="hasTests; else noTests" class="test-metrics-grid">
+            <div *ngFor="let metric of testCoverageMetrics" class="metric-card-small card">
+              <span class="metric-label">{{ metric.label }}</span>
+              <span class="metric-value {{ metric.colorClass }}">{{ metric.value }}</span>
+            </div>
+            <div class="untested-files-card card">
+              <h3>Untested Critical Files</h3>
+              <ul>
+                <li *ngFor="let file of untestedCriticalFiles">{{ file }}</li>
+              </ul>
+            </div>
+            <div class="test-quality-card card">
+              <h3>Test Quality Score: <span class="{{ testQualityScore | lowercase }}">{{ testQualityScore }}</span></h3>
+              <p>Failing Tests: <span class="text-error">{{ failingTestsCount }}</span></p>
+              <p>Slow Tests: <span class="text-warning">{{ slowTestsCount }}</span></p>
+            </div>
+          </div>
+          <ng-template #noTests>
+            <div class="empty-state-card card">
+              <h3>No Tests Detected</h3>
+              <p>It seems your project does not have any tests configured or detected. Add tests to improve code quality insights!</p>
+              <button class="action-btn primary"><i class="fas fa-plus"></i> Add First Test</button>
+            </div>
+          </ng-template>
+        </section>
+
+        <!-- 9. Quality Gates -->
+        <section class="quality-gates-section">
+          <h2 class="section-title">Quality Gates Status</h2>
+          <div class="quality-gates-grid">
+            <div *ngFor="let gate of qualityGates" class="quality-gate-card card">
+              <div class="gate-summary">
+                <span class="gate-label">{{ gate.label }}</span>
+                <span class="gate-status {{ gate.statusColorClass }}">{{ gate.status }}</span>
+              </div>
+              <div class="gate-details">
+                <span class="threshold">Threshold: {{ gate.threshold }}</span>
+                <span class="current-value">Current: {{ gate.currentValue }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 10. AI Recommendations Section -->
+    <section class="ai-recommendations-section">
+      <h2 class="section-title">AI-Powered Recommendations</h2>
+      <div class="recommendations-grid">
+        <div *ngFor="let rec of aiRecommendations" class="recommendation-card card">
+          <div class="rec-header">
+            <span class="priority-badge">P{{ rec.priority }}</span>
+            <h3 class="rec-title">{{ rec.title }}</h3>
+          </div>
+          <p class="rec-description">{{ rec.description }}</p>
+          <div class="rec-details">
+            <span class="impact-tag {{ rec.impact | lowercase }}">Impact: {{ rec.impact }}</span>
+            <span class="effort-tag {{ rec.effort | lowercase }}">Effort: {{ rec.effort }}</span>
+          </div>
+          <div class="rec-files" *ngIf="rec.files && rec.files.length > 0">
+            <span>Affected Files:</span>
+            <ul>
+              <li *ngFor="let file of rec.files">{{ file }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 11. Sticky Bottom Action Bar -->
+  <footer class="bottom-action-bar">
+    <button class="action-btn large-action-btn primary" (click)="exportQualityReport()">
+      <i class="fas fa-file-download"></i> Export Quality Report
+    </button>
+    <button class="action-btn large-action-btn" (click)="viewProjectSummary()">
+      <i class="fas fa-chart-line"></i> View Project Summary
+    </button>
+    <button class="action-btn large-action-btn" (click)="openCodeAnalysis()">
+      <i class="fas fa-microscope"></i> Open Code Analysis
+    </button>
+    <button class="action-btn large-action-btn" (click)="reRunQualityScan()">
+      <i class="fas fa-redo"></i> Re-run Quality Scan
+    </button>
+  </footer>
+</div>

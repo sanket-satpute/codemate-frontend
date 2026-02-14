@@ -1,0 +1,22 @@
+<div class="files-list-container">
+  <ng-container *ngIf="files.length > 0; else emptyState">
+    <div class="files-grid">
+      <div class="grid-header">
+        <div>Name</div>
+        <div>Size</div>
+        <div>Type</div>
+        <div>Uploaded Date</div>
+      </div>
+      <div *ngFor="let file of files" class="grid-row">
+        <div>{{ file.name }}</div>
+        <div>{{ file.size | number }} bytes</div>
+        <div>{{ file.type }}</div>
+        <div>{{ file.uploadedDate | date:'short' }}</div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <app-empty-state message="No files found in this project."></app-empty-state>
+  </ng-template>
+</div>

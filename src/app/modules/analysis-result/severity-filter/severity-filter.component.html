@@ -1,0 +1,13 @@
+<div class="severity-filter-container">
+  <h3 class="filter-header">Filter by Severity</h3>
+  <div class="filter-pills">
+    <button 
+      *ngFor="let severity of severities"
+      class="pill"
+      [class.active]="isActive(severity)"
+      [class]="'pill-' + severity.toLowerCase()"
+      (click)="toggleSeverity(severity)">
+      {{ severity }}
+    </button>
+  </div>
+</div>

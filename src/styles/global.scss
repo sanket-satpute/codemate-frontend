@@ -1,0 +1,162 @@
+@use 'sass:color';
+@use './_variables' as v;
+@use './_theme';
+@use './_mixins' as m; // Import mixins
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-family-ui); /* Use design token for UI font */
+  font-size: var(--font-size-body); /* Use design token for body font size */
+  line-height: var(--line-height-body); /* Use design token for body line height */
+  color: var(--current-text-primary); /* Use theme-aware primary text color */
+  background-color: var(--current-background); /* Use theme-aware background color */
+  transition: background-color var(--duration-base) ease, color var(--duration-base) ease;
+  text-rendering: optimizeLegibility; /* For sharper text */
+  -webkit-font-smoothing: antialiased; /* For smoother font rendering */
+  -moz-osx-font-smoothing: grayscale; /* For smoother font rendering */
+  @include m.scrollbar-style;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--current-text-primary); /* Use theme-aware primary text color */
+  margin-top: var(--spacing-4); /* Use spacing token */
+  margin-bottom: var(--spacing-2); /* Use spacing token */
+  font-family: var(--font-family-ui); /* Use design token for UI font */
+  line-height: 1.2; /* Tighter line-height for headings */
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-h1);
+  line-height: var(--line-height-h1);
+  letter-spacing: var(--letter-spacing-h1);
+}
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-h2);
+  line-height: var(--line-height-h2);
+  letter-spacing: var(--letter-spacing-h2);
+}
+h3 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-h3);
+  line-height: var(--line-height-h3);
+  letter-spacing: var(--letter-spacing-h3);
+}
+h4 {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-h4);
+  line-height: var(--line-height-h4);
+  letter-spacing: var(--letter-spacing-h4);
+}
+h5 {
+  font-size: var(--font-size-h5);
+  font-weight: var(--font-weight-h5);
+  line-height: var(--line-height-h5);
+  letter-spacing: var(--letter-spacing-h5);
+}
+h6 {
+  font-size: var(--font-size-h6);
+  font-weight: var(--font-weight-h6);
+  line-height: var(--line-height-h6);
+  letter-spacing: var(--letter-spacing-h6);
+}
+
+/* Links */
+a {
+  color: var(--current-text-link); /* Use theme-aware link color */
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--easing-ease-out), box-shadow var(--duration-fast) var(--easing-ease-out);
+
+  &:hover {
+    color: var(--current-text-link); /* Darken link on hover */ /* Removed color.adjust as it's incompatible with CSS variables */
+    box-shadow: 0 1px 0 0 var(--current-text-link); /* Removed color.adjust as it's incompatible with CSS variables */
+  }
+}
+
+/* Buttons - Use mixin for comprehensive styling */
+button {
+  // Reset default button styles for consistency with custom button mixins
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  color: var(--current-text-primary); // Default text color, can be overridden by button mixins
+}
+
+/* Forms */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  padding: var(--spacing-2); /* Use spacing token (8px) */
+  border: 1px solid var(--current-border-neutral); /* Use theme-aware border color */
+  border-radius: var(--border-radius-lg); /* Use design token for border radius */
+  background-color: var(--current-surface-card); /* Consistent with theme */
+  color: var(--current-text-primary); /* Use text-primary for consistency */
+  font-family: var(--font-family-ui); /* Use design token for UI font */
+  font-size: var(--font-size-body); /* Use design token for body font size */
+  transition: border-color var(--duration-base) var(--easing-ease-out), background-color var(--duration-base) var(--easing-ease-out);
+
+  &:focus {
+    border-color: var(--primary-600); /* Use primary color for focus */
+    outline: none;
+    box-shadow: var(--current-focus-ring); /* Use theme-aware focus ring */
+  }
+
+  &:disabled {
+    background-color: var(--current-border-default); /* Use theme-aware disabled background */
+    cursor: not-allowed;
+  }
+}
+
+/* Utility Classes */
+.container {
+  width: 100%;
+  max-width: v.$max-content-width;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-6); /* Use spacing token (24px) */
+  padding-right: var(--spacing-6); /* Use spacing token (24px) */
+
+  @include m.breakpoint-down(md) {
+    padding-left: var(--spacing-4); /* Use spacing token (16px) */
+    padding-right: var(--spacing-4); /* Use spacing token (16px) */
+  }
+}
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.margin-sm { margin: var(--spacing-2); }
+.margin-md { margin: var(--spacing-4); }
+.margin-lg { margin: var(--spacing-6); }
+
+.padding-sm { padding: var(--spacing-2); }
+.padding-md { padding: var(--spacing-4); }
+.padding-lg { padding: var(--spacing-6); }
+
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+
+/* Flexbox Utilities */
+.d-flex { display: flex; }
+.justify-content-center { justify-content: center; }
+.align-items-center { align-items: center; }
+.flex-column { flex-direction: column; }
+.flex-grow-1 { flex-grow: 1; }

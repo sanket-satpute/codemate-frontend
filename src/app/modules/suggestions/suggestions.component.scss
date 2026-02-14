@@ -1,0 +1,66 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+:host {
+  display: block;
+}
+
+.page-container {
+  padding: var(--spacing-xl);
+}
+
+.page-header {
+  margin-bottom: var(--spacing-xl);
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+  }
+  p {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+  }
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+.suggestions-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--spacing-xl);
+  align-items: start;
+
+  @include m.breakpoint(lg) {
+    grid-template-columns: 400px 1fr;
+  }
+
+  @include m.breakpoint(md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: var(--spacing-sm);
+}
+
+app-suggestion-card.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+}
+
+.refactor-preview {
+  position: sticky;
+  top: var(--spacing-xl);
+  height: calc(70vh + var(--spacing-md));
+}

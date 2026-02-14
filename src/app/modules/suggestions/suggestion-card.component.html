@@ -1,0 +1,12 @@
+<div class="suggestion-card">
+  <div class="card-header">
+    <h3 class="card-title">{{ suggestion.title }}</h3>
+    <span class="severity-badge" [ngClass]="'severity-' + suggestion.severity.toLowerCase()">
+      {{ suggestion.severity }}
+    </span>
+  </div>
+  <p class="card-description">{{ suggestion.description }}</p>
+  <div class="card-actions">
+    <button class="btn btn-primary" (click)="onPreviewClick()">View Refactor Preview</button>
+  </div>
+</div>

@@ -1,0 +1,854 @@
+@use '../../../../styles/_mixins' as m;
+@use '../../../../styles/_theme' as t; // Use full path for theme
+@use '../../../../styles/_variables' as v; // Use full path for global variables
+@use 'sass:color'; // For color manipulation functions (though trying to avoid direct usage now)
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--background); // Use global background variable
+  color: var(--text-primary); // Use global text primary
+  font-family: var(--font-family-ui); // Use global font family
+  font-size: var(--font-size-body); // Use global body font size
+}
+
+.code-analysis-header {
+  @include m.glassmorphism($bg-opacity: 0.08, $border-opacity: 0.15); // Apply glassmorphism
+  padding: v.$space-xl v.$space-2xl; // Use variables
+  border-bottom: 1px solid rgba(v.$white, 0.15); // Consistent border
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: v.$space-lg; // Use variable
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-lg); // Enhanced shadow
+  background-image: url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' viewBox=\'0 0 6 6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%239C92AC\' fill-opacity=\'0.1\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 0h3v3H0V0zm3 3h3v3H3V3z\'/\%3C/g%3E%3C/svg%3E"); // Subtle pattern
+  background-repeat: repeat;
+  background-size: 6px 6px;
+
+  .header-content {
+    display: flex;
+    flex-direction: column;
+    h1 {
+      font-size: v.$h3-font-size; // Use variable
+      color: v.$text-primary; // Use primary text
+      font-weight: v.$font-weight-bold; // Use variable
+      margin-bottom: v.$space-xxs; // Use variable
+    }
+    .header-metadata {
+      display: flex;
+      gap: v.$space-lg; // Use variable
+      font-size: v.$font-size-body-sm; // Use variable
+      color: v.$text-muted; // Use muted text
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$space-sm; // Use variable
+  }
+}
+
+.action-btn {
+  @include m.flex-center;
+  background-color: rgba(v.$primary-indigo-600, 0.2); // Use variable
+  color: v.$accent-cyan-400; // Use variable
+  border: 1px solid rgba(v.$accent-cyan-400, 0.5); // Use variable
+  border-radius: v.$border-radius-sm; // Use variable
+  padding: v.$space-xs v.$space-sm; // Use variables
+  font-size: v.$font-size-body-xs; // Use variable
+  cursor: pointer;
+  @include m.transition-ease(all, v.$transition-duration-fast, v.$ease-in-out); // Use variables for transition
+
+  &:hover {
+    background-color: v.$accent-cyan-400; // Use variable
+    color: v.$bg-secondary; // Use background secondary
+    box-shadow: 0 0 8px rgba(v.$accent-cyan-400, 0.6); // Use variable for glow
+  }
+
+  &.primary {
+    background: linear-gradient(45deg, v.$primary-indigo-600, v.$accent-cyan-400); // Use variables
+    color: v.$white; // Use variable
+    border: none;
+    &:hover {
+      box-shadow: 0 0 10px rgba(v.$primary-indigo-600, 0.7), 0 0 15px rgba(v.$accent-cyan-400, 0.5); // Use variables
+    }
+  }
+
+  i {
+    margin-right: v.$space-xs; // Use variable
+  }
+}
+
+.severity-filter-bar {
+  position: sticky;
+  top: 90px; // Adjust based on header height
+  @include m.glassmorphism($bg-opacity: 0.05, $border-opacity: 0.1); // Apply glassmorphism
+  padding: v.$space-md v.$space-2xl; // Use variables
+  border-bottom: 1px solid rgba(v.$white, 0.1); // Consistent border
+  display: flex;
+  flex-wrap: wrap;
+  gap: v.$space-sm; // Use variable
+  z-index: 99;
+  box-shadow: var(--shadow-md); // Enhanced shadow
+
+  .filter-chip {
+    @include m.flex-center;
+    @include m.glassmorphism($bg-opacity: 0.1, $border-opacity: 0.2, $blur-radius: 10px); // Apply glassmorphism with less blur
+    color: v.$text-primary; // Use primary text color
+    border-radius: v.$border-radius-pill; // More rounded for chips
+    padding: v.$space-xxs v.$space-md;
+    font-size: v.$font-size-body-sm;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    @include m.transition-ease(all, v.$transition-duration-base, v.$ease-in-out);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: transparent;
+      @include m.transition-ease(background-color, v.$transition-duration-fast, v.$ease-in-out);
+    }
+
+    &:hover {
+      background-color: rgba(v.$white, 0.15); // Lighter hover effect
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: var(--shadow-lg), var(--shadow-neon-cyan); // Enhanced shadow with neon glow
+      color: v.$white; // Highlight text on hover
+    }
+
+    &.active {
+      border: 1px solid v.$accent-cyan-400; // Use variable
+      color: v.$accent-cyan-400; // Use variable
+      background-color: rgba(v.$accent-cyan-400, 0.2); // More pronounced active background
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md), var(--shadow-neon-cyan); /* Add a smaller neon glow */
+      font-weight: v.$font-weight-semibold; // Bold text for active
+      &::before {
+        background-color: v.$accent-cyan-400; // Use variable
+      }
+    }
+
+    .count {
+      margin-left: auto;
+      background-color: var(--background); // Use global background
+      padding: 0 v.$space-xxs; // Use variable
+      border-radius: v.$border-radius-sm; // Use variable
+      font-family: v.$font-family-code; // Use variable
+    }
+
+    // Severity specific colors
+    &.critical::before { background-color: v.$error-color; }
+    &.high::before { background-color: v.$warning-color; } // Using general warning for high
+    &.medium::before { background-color: v.$info-color; } // Using info for medium
+    &.low::before { background-color: v.$accent-cyan-400; }
+    &.info::before { background-color: v.$info-color; } // Reusing info
+    &.warning::before { background-color: v.$warning-color; }
+    &.best-practice::before { background-color: v.$success-color; }
+
+    &.critical.active { border-color: v.$error-color; color: v.$error-color; background-color: rgba(v.$error-color, 0.1); }
+    &.high.active { border-color: v.$warning-color; color: v.$warning-color; background-color: rgba(v.$warning-color, 0.1); }
+    &.medium.active { border-color: v.$info-color; color: v.$info-color; background-color: rgba(v.$info-color, 0.1); }
+    &.low.active { border-color: v.$accent-cyan-400; color: v.$accent-cyan-400; background-color: rgba(v.$accent-cyan-400, 0.1); }
+    &.info.active { border-color: v.$info-color; color: v.$info-color; background-color: rgba(v.$info-color, 0.1); }
+    &.warning.active { border-color: v.$warning-color; color: v.$warning-color; background-color: rgba(v.$warning-color, 0.1); }
+    &.best-practice.active { border-color: v.$success-color; color: v.$success-color; background-color: rgba(v.$success-color, 0.1); }
+  }
+}
+
+.two-panel-layout {
+  display: flex;
+  flex: 1;
+  padding: v.$space-2xl; // Use variable
+  gap: v.$space-2xl; // Use variable
+  overflow: hidden; // Ensure panels don\'t overflow
+
+  .left-panel,
+  .right-panel {
+    background-color: var(--surface-card); // Use global surface card
+    border-radius: v.$border-radius-lg; // Use variable
+    box-shadow: var(--shadow-md);
+    padding: v.$space-xl; // Use variable
+    border: 1px solid rgba(v.$primary-indigo-600, 0.3); // Use variable
+    overflow-y: auto; // Enable scrolling for panels
+    @include m.scrollbar-style;
+  }
+
+  .left-panel {
+    flex: 0 0 28%; // Approx 28% width
+    max-width: 30%;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-lg; // Use variable
+  }
+
+  .right-panel {
+    flex: 1; // Take remaining space
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-2xl; // Use variable
+  }
+}
+
+.search-input {
+  width: 100%;
+  padding: v.$space-md v.$space-lg; // Use variables
+  border-radius: v.$border-radius-md; // Use variable
+  border: 1px solid var(--border-default); // Use global border default
+  background-color: var(--background); // Use global background
+  color: v.$text-primary; // Use primary text color
+  font-family: v.$font-family-primary; // Use variable
+  font-size: v.$font-size-body-md; // Use variable
+  outline: none;
+  @include m.transition-ease(border-color, v.$transition-duration-fast, v.$ease-in-out); // Use variables
+
+  &::placeholder {
+    color: v.$text-muted; // Use muted text
+  }
+
+  &:focus {
+    border-color: v.$accent-cyan-400; // Use variable
+    box-shadow: 0 0 5px rgba(v.$accent-cyan-400, 0.5); // Use variable
+  }
+}
+
+.file-tree-container {
+  flex: 1;
+  overflow-y: auto;
+  @include m.scrollbar-style;
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  li {
+    margin-top: v.$space-xxs; // Small gap between nodes
+  }
+
+  .node-item {
+    display: flex;
+    align-items: center;
+    gap: v.$space-xs; // Use variable
+    padding: v.$space-xxs v.$space-sm; // Use variables
+    cursor: pointer;
+    font-family: v.$font-family-code; // JetBrains Mono for file names
+    font-size: v.$font-size-body-sm; // Use variable
+    color: v.$text-primary; // Use primary text
+    border-radius: v.$border-radius-sm; // Use variable
+    @include m.transition-ease(all, v.$transition-duration-fast, v.$ease-in-out); // Use variables
+
+    &:hover {
+      background-color: rgba(v.$primary-indigo-600, 0.1); // Use variable
+      color: v.$text-primary; // Use primary text
+    }
+
+    &.selected {
+      background-color: rgba(v.$accent-cyan-400, 0.15); // Use variable
+      color: v.$accent-cyan-400; // Use variable
+      font-weight: v.$font-weight-semibold; // Use variable
+      border-left: 3px solid v.$accent-cyan-400; // Use variable
+      padding-left: calc(v.$space-sm - 3px); // Adjust padding for border
+    }
+
+    i {
+      color: v.$text-muted; // Use muted text
+      @include m.transition-ease(color, v.$transition-duration-fast, v.$ease-in-out); // Use variables
+      &.fa-folder, &.fa-folder-open {
+        color: v.$primary-indigo-600; // Use variable
+      }
+      &.fa-file {
+        color: v.$accent-cyan-400; // Use variable
+      }
+    }
+
+    .issue-badge {
+      margin-left: auto;
+      background-color: v.$error-color; // Use variable
+      color: v.$white; // Use variable
+      border-radius: v.$border-radius-pill; // Use variable
+      padding: 1px v.$space-xs; // Use variable
+      font-size: v.$font-size-body-xxs; // Use variable
+      font-family: v.$font-family-primary; // Use variable
+    }
+  }
+
+  .has-issues .node-item {
+    color: v.$error-color; // Highlight file names with issues, use variable
+    font-weight: v.$font-weight-medium; // Use variable
+  }
+
+  .node-children {
+    padding-left: v.$space-lg; // Indent children
+    overflow: hidden;
+    @include m.transition-ease(max-height, v.$transition-duration-base, v.$ease-out-back); // Use variables
+  }
+}
+
+.card {
+  @include m.glassmorphism($bg-opacity: 0.06, $border-opacity: 0.12);
+  border-radius: v.$border-radius-lg;
+  padding: v.$space-xl;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+// 1. File Header
+.file-detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: v.$space-lg; // Use variable
+  
+  .file-info {
+    h3 {
+      font-family: v.$font-family-code; // Use variable
+      font-size: v.$font-size-body-lg; // Use variable
+      color: v.$text-primary; // Use primary text
+      margin-bottom: v.$space-xxs; // Use variable
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 500px;
+    }
+    .file-metadata {
+      display: flex;
+      gap: v.$space-lg; // Use variable
+      font-size: v.$font-size-body-sm; // Use variable
+      color: v.$text-muted; // Use muted text
+      span {
+        display: flex;
+        align-items: center;
+        i {
+          margin-right: v.$space-xs; // Use variable
+          color: v.$accent-cyan-400; // Use variable
+        }
+      }
+    }
+  }
+  .file-actions {
+    display: flex;
+    gap: v.$space-sm; // Use variable
+  }
+}
+
+// 2. Code Viewer
+.code-viewer {
+  @include m.glassmorphism($bg-opacity: 0.05, $border-opacity: 0.1);
+  padding: v.$space-md;
+  font-family: v.$font-family-code;
+  font-size: v.$font-size-body-sm;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid rgba(v.$accent-cyan-400, 0.3);
+  border-radius: v.$border-radius-lg; // Add border radius for consistency
+  box-shadow: var(--shadow-md); // Add shadow
+
+  .code-lines {
+    display: block;
+  }
+
+  .code-line {
+    display: flex;
+    white-space: pre;
+    color: v.$text-muted;
+    position: relative;
+
+    .line-number {
+      flex-shrink: 0;
+      width: 40px;
+      text-align: right;
+      padding-right: v.$space-sm;
+      color: v.$text-secondary; // Use secondary text
+      user-select: none;
+      opacity: 0.7; // Slightly less prominent
+    }
+
+    .line-content {
+      flex: 1;
+      color: v.$text-primary;
+    }
+
+    &.has-issue {
+      background-color: rgba(v.$error-color, 0.1);
+      .line-number {
+        color: v.$error-color;
+        font-weight: v.$font-weight-medium; // Bold line number for issues
+      }
+      .line-content {
+        color: v.$text-primary;
+      }
+    }
+
+    .issue-indicator {
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(180deg, #F87171, #EF4444); /* Gradient for indicator */
+      position: absolute;
+      left: 0;
+      top: 0;
+      border-top-left-radius: v.$border-radius-xs;
+      border-bottom-left-radius: v.$border-radius-xs;
+      box-shadow: 0 0 8px rgba(v.$error-color, 0.6); // Glow for indicator
+    }
+  }
+}
+
+// 3. Issues List (Accordion)
+.issues-list-accordion {
+  .section-title {
+    margin-bottom: v.$space-lg; // Use variable
+    color: v.$text-primary; // Use primary text
+    font-size: v.$font-size-h5; // Use variable
+    font-weight: v.$font-weight-semibold; // Use variable
+  }
+
+  .issue-card {
+    margin-bottom: v.$space-md;
+    @include m.glassmorphism($bg-opacity: 0.06, $border-opacity: 0.15); // Apply glassmorphism
+    padding: v.$space-md v.$space-xl;
+    cursor: pointer;
+    @include m.transition-ease(all, v.$transition-duration-base, v.$ease-in-out);
+    box-shadow: var(--shadow-md); // Default shadow
+
+    &:hover {
+      background-color: rgba(v.$white, 0.1); // Lighter background on hover
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: var(--shadow-xl), var(--shadow-neon-indigo); // Enhanced shadow with neon glow
+    }
+
+    &.expanded {
+      background-color: rgba(v.$primary-indigo-600, 0.15); // More distinct expanded background
+      border-color: v.$accent-cyan-400; // Stronger border for expanded
+      box-shadow: var(--shadow-lg), var(--shadow-neon-cyan); // Expanded state glow
+    }
+  }
+
+  .issue-summary {
+    display: flex;
+    align-items: center;
+    gap: v.$space-sm; // Use variable
+
+    .severity-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: v.$border-radius-pill; // Use variable
+      flex-shrink: 0;
+      &.critical { background-color: v.$error-color; } // Use variable
+      &.high { background-color: v.$warning-color; } // Use variable
+      &.medium { background-color: v.$info-color; } // Use variable
+      &.low { background-color: v.$accent-cyan-400; } // Use variable
+      &.info { background-color: v.$info-color; } // Use variable
+      &.warning { background-color: v.$warning-color; } // Use variable
+      &.best-practice { background-color: v.$success-color; } // Use variable
+    }
+
+    .issue-title {
+      flex: 1;
+      font-size: v.$font-size-body-lg; // Use variable
+      color: v.$text-primary; // Use primary text
+      font-weight: v.$font-weight-medium; // Use variable
+    }
+
+    .issue-line-number {
+      font-family: v.$font-family-code; // Use variable
+      font-size: v.$font-size-body-sm; // Use variable
+      color: v.$text-muted; // Use muted text
+      flex-shrink: 0;
+    }
+
+    i {
+      color: v.$text-muted; // Use muted text
+      @include m.transition-ease(transform, v.$transition-duration-fast, v.$ease-in-out); // Use variables
+      &.fa-chevron-up {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .issue-details {
+    padding-top: v.$space-md; // Use variable
+    border-top: 1px solid var(--border-default); // Use global border default
+    margin-top: v.$space-md; // Use variable
+    font-size: v.$font-size-body-md; // Use variable
+    line-height: 1.6;
+
+    h5 {
+      font-size: v.$font-size-body-md; // Use variable
+      color: v.$accent-cyan-400; // Use variable
+      margin-top: v.$space-md; // Use variable
+      margin-bottom: v.$space-xs; // Use variable
+      font-weight: v.$font-weight-semibold; // Use variable
+    }
+
+    p {
+      color: v.$text-primary; // Use primary text
+      margin-bottom: v.$space-sm; // Use variable
+    }
+
+    .impact-tag {
+      display: inline-block;
+      padding: v.$space-xxs v.$space-xs; // Use variables
+      border-radius: v.$border-radius-sm; // Use variable
+      font-size: v.$font-size-body-xs; // Use variable
+      font-weight: v.$font-weight-bold; // Use variable
+      margin-top: v.$space-xs; // Use variable
+
+      &.performance { background-color: rgba(v.$warning-color, 0.2); color: v.$warning-color; }
+      &.security { background-color: rgba(v.$error-color, 0.2); color: v.$error-color; }
+      &.maintainability { background-color: rgba(v.$primary-indigo-600, 0.2); color: v.$primary-indigo-600; }
+      &.reliability { background-color: rgba(v.$info-color, 0.2); color: v.$info-color; }
+    }
+
+    .code-patch {
+      margin-top: v.$space-lg; // Use variable
+      background-color: var(--background); // Use global background
+      border-radius: v.$border-radius-md; // Use variable
+      overflow: hidden;
+      font-family: v.$font-family-code; // Use variable
+      font-size: v.$font-size-body-sm; // Use variable
+
+      h5 {
+        background-color: v.$bg-primary-navy-black; // Use variable
+        padding: v.$space-sm v.$space-md; // Use variables
+        margin: 0;
+        border-bottom: 1px solid var(--border-default); // Use global border default
+      }
+
+      .patch-viewer {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background-color: var(--border-default); // Divider line, use global border default
+
+        pre {
+          margin: 0;
+          padding: v.$space-md; // Use variable
+          background-color: var(--background); // Use global background
+          overflow-x: auto;
+          white-space: pre-wrap; // Wrap long lines in patch
+          word-break: break-all;
+
+          &.before {
+            color: v.$error-color; // Use variable
+            background-color: rgba(v.$error-color, 0.05);
+          }
+          &.after {
+            color: v.$success-color; // Use variable
+            background-color: rgba(v.$success-color, 0.05);
+          }
+        }
+      }
+    }
+  }
+}
+
+// 4. Deep Analysis Section
+.deep-analysis-section {
+  .section-title {
+    margin-bottom: v.$space-lg; // Use variable
+    color: v.$text-primary; // Use primary text
+    font-size: v.$font-size-h5; // Use variable
+    font-weight: v.$font-weight-semibold; // Use variable
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: v.$space-lg; // Use variable
+
+    .metric-card {
+      @include m.glassmorphism($bg-opacity: 0.1, $border-opacity: 0.2);
+      padding: v.$space-md;
+      border-radius: v.$border-radius-lg;
+      display: flex;
+      flex-direction: column;
+      gap: v.$space-xs;
+      box-shadow: var(--shadow-sm); // Default shadow
+      position: relative;
+      overflow: hidden;
+      @include m.transition-ease(all, v.$transition-duration-base, v.$ease-in-out);
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, rgba(v.$primary-indigo-600, 0.05), rgba(v.$accent-cyan-400, 0.05));
+        opacity: 0;
+        z-index: 0;
+        @include m.transition-ease(opacity, v.$transition-duration-base, v.$ease-in-out);
+      }
+
+      &:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: var(--shadow-xl), var(--shadow-neon-indigo); // Enhanced glow on hover
+        &::before {
+          opacity: 1; // Show gradient overlay on hover
+        }
+      }
+
+      .metric-label {
+        font-size: v.$font-size-body-sm;
+        color: v.$text-primary;
+        position: relative;
+        z-index: 1;
+      }
+
+      .metric-value {
+        font-family: v.$font-family-code;
+        font-size: v.$font-size-h6;
+        color: v.$accent-cyan-400;
+        font-weight: v.$font-weight-bold;
+        position: relative;
+        z-index: 1;
+      }
+
+      .metric-bar {
+        width: 100%;
+        height: 6px;
+        background-color: var(--background);
+        border-radius: v.$border-radius-pill;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+
+        .fill {
+          height: 100%;
+          background: linear-gradient(90deg, v.$primary-indigo-600, v.$accent-cyan-400);
+          border-radius: inherit;
+          @include m.transition-ease(width, v.$transition-duration-base, v.$ease-out-back);
+          box-shadow: 0 0 8px rgba(v.$accent-cyan-400, 0.5); // Subtle glow for the fill
+        }
+      }
+    }
+  }
+}
+
+// 5. File Summary
+.file-summary-card {
+  .section-title {
+    margin-bottom: v.$space-md; // Use variable
+    color: v.$text-primary; // Use primary text
+    font-size: v.$font-size-h5; // Use variable
+    font-weight: v.$font-weight-semibold; // Use variable
+  }
+
+  .total-issues {
+    font-size: v.$font-size-body-lg; // Use variable
+    color: v.$error-color; // Use variable
+    font-weight: v.$font-weight-medium; // Use variable
+    margin-bottom: v.$space-sm; // Use variable
+  }
+
+  .severity-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$space-md; // Use variable
+    margin-bottom: v.$space-lg; // Use variable
+
+    span {
+      display: flex;
+      align-items: center;
+      font-size: v.$font-size-body-md; // Use variable
+      font-weight: v.$font-weight-medium; // Use variable
+      &.critical { color: v.$error-color; } // Use variable
+      &.high { color: v.$warning-color; } // Use variable
+      &.medium { color: v.$info-color; } // Use variable
+      &.low { color: v.$accent-cyan-400; } // Use variable
+      &.info { color: v.$info-color; } // Use variable
+    }
+  }
+
+  h5 {
+    font-size: v.$font-size-body-md; // Use variable
+    color: v.$accent-cyan-400; // Use variable
+    margin-top: v.$space-md; // Use variable
+    margin-bottom: v.$space-xs; // Use variable
+    font-weight: v.$font-weight-semibold; // Use variable
+  }
+
+  ul {
+    list-style: disc;
+    padding-left: v.$space-xl; // Use variable
+    margin-bottom: v.$space-xl; // Use variable
+    color: v.$text-primary; // Use primary text
+    font-size: v.$font-size-body-md; // Use variable
+
+    li {
+      margin-bottom: v.$space-xxs; // Use variable
+    }
+  }
+
+  .large-action-btn {
+    width: 100%;
+    padding: v.$space-md v.$space-lg; // Use variables
+    font-size: v.$font-size-body-lg; // Use variable
+    background: linear-gradient(45deg, v.$primary-indigo-600, v.$accent-cyan-400); // Use variables
+    color: v.$white; // Use variable
+    border: none;
+    border-radius: v.$border-radius-md; // Use variable
+    box-shadow: var(--shadow-lg);
+    &:hover {
+      box-shadow: var(--shadow-xl), 0 0 15px rgba(v.$primary-indigo-600, 0.7), 0 0 20px rgba(v.$accent-cyan-400, 0.5); // Use variables
+    }
+  }
+}
+
+// (D) Bottom Action Bar
+.bottom-action-bar {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--surface-card); // Use global surface card
+  padding: v.$space-md v.$space-2xl; // Use variables
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(90deg, rgba(v.$accent-cyan-400, 0.7), rgba(v.$primary-indigo-600, 0.7)) 1; // Use variables
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: v.$space-lg; // Use variable
+  z-index: 100;
+  box-shadow: var(--shadow-lg); // Changed from --shadow-lg-up assuming it was a typo or should be generic shadow
+
+  .large-action-btn {
+    flex: 1;
+    max-width: 250px;
+    padding: v.$space-md v.$space-lg; // Use variables
+    font-size: v.$font-size-body-md; // Use variable
+    background: linear-gradient(90deg, v.$primary-indigo-600, v.$accent-cyan-400); // Use variables
+    color: v.$white; // Use variable
+    border: none;
+    border-radius: v.$border-radius-md; // Use variable
+    box-shadow: var(--shadow-md);
+    &:hover {
+      box-shadow: var(--shadow-lg), 0 0 10px rgba(v.$primary-indigo-600, 0.5); // Use variable
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1200px) {
+  .two-panel-layout {
+    flex-direction: column;
+    padding: v.$space-xl; // Use variable
+    gap: v.$space-xl; // Use variable
+  }
+
+  .left-panel {
+    max-width: 100%;
+    min-width: unset;
+    flex: none;
+  }
+
+  .code-analysis-header,
+  .severity-filter-bar,
+  .bottom-action-bar {
+    padding-left: v.$space-xl; // Use variable
+    padding-right: v.$space-xl; // Use variable
+  }
+
+  .code-analysis-header .header-actions {
+    justify-content: flex-start;
+  }
+
+  .bottom-action-bar .large-action-btn {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .code-analysis-header {
+    flex-direction: column;
+    align-items: flex-start;
+    .header-actions {
+      width: 100%;
+      justify-content: space-between;
+      .action-btn {
+        flex: 1;
+      }
+    }
+  }
+
+  .severity-filter-bar {
+    justify-content: center;
+  }
+
+  .file-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    .file-actions {
+      width: 100%;
+      justify-content: space-between;
+      .action-btn {
+        flex: 1;
+      }
+    }
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .patch-viewer {
+    grid-template-columns: 1fr !important; // Stack code patches vertically
+  }
+}
+
+/* Skeleton Loading Styles */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+.loading-skeleton {
+  background-color: var(--grey-800);
+  background-image: linear-gradient(90deg, var(--grey-800) 0px, var(--grey-700) 40px, var(--grey-800) 80px);
+  background-size: 200px 100%;
+  background-repeat: no-repeat;
+  border-radius: v.$border-radius-sm;
+  display: inline-block;
+  line-height: 1;
+  opacity: 0.7;
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+  // When used on text, ensure it has a min-width/min-height if content is not yet available
+  min-width: 80px; /* Example minimal width for skeleton text */
+  min-height: v.$font-size-body; /* Example minimal height for skeleton text */
+}
+
+// Specific skeleton adjustments for elements with dynamic height/width
+.code-analysis-header .header-content h1 .loading-skeleton { min-width: 250px; height: v.$font-size-h3; }
+.code-analysis-header .header-metadata span .loading-skeleton { min-width: 120px; height: v.$font-size-body-sm; }
+.severity-filter-bar .filter-chip .loading-skeleton { min-width: 80px; height: v.$font-size-body-sm; }
+.file-tree-container .node-item .loading-skeleton { min-width: 150px; height: v.$font-size-body-sm; }
+.file-detail-header .file-info h3 .loading-skeleton { min-width: 300px; height: v.$font-size-body-lg; }
+.file-detail-header .file-metadata span .loading-skeleton { min-width: 100px; height: v.$font-size-body-sm; }
+.code-viewer .code-line .line-content .loading-skeleton { min-width: 100%; height: v.$font-size-body; margin-bottom: v.$space-xxs; }
+.issues-list-accordion .issue-card .issue-summary .issue-title .loading-skeleton { min-width: 200px; height: v.$font-size-body-lg; }
+.issues-list-accordion .issue-card .issue-summary .issue-line-number .loading-skeleton { min-width: 80px; height: v.$font-size-body-sm; }
+.issues-list-accordion .issue-card .issue-details p .loading-skeleton { min-width: 100%; height: v.$font-size-body; margin-bottom: v.$space-sm; }
+.deep-analysis-section .metric-card .metric-label .loading-skeleton { min-width: 100px; height: v.$font-size-body-sm; }
+.deep-analysis-section .metric-card .metric-value .loading-skeleton { min-width: 50px; height: v.$font-size-h6; }
+.file-summary-card .section-title .loading-skeleton { min-width: 150px; height: v.$font-size-h5; }
+.file-summary-card .total-issues .loading-skeleton { min-width: 120px; height: v.$font-size-body-lg; }
+.file-summary-card .severity-breakdown span .loading-skeleton { min-width: 80px; height: v.$font-size-body-md; }
+.file-summary-card ul li .loading-skeleton { min-width: 100%; height: v.$font-size-body; margin-bottom: v.$space-xxs; }

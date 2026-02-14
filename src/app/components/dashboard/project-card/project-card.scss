@@ -1,0 +1,136 @@
+@use '../../../../styles/_variables' as v;
+@use '../../../../styles/_mixins' as m;
+
+.project-card {
+  display: block; // Make the whole card clickable
+  background-color: var(--card-background);
+  border-radius: v.$border-radius-card; // Use variable
+  box-shadow: var(--shadow-sm);
+  padding: v.$space-xl; // Use variable for padding
+  text-decoration: none; // Remove underline from link
+  color: inherit; // Inherit text color
+  transition: all v.$transition-duration-base ease-in-out; // Use variable for transition
+  height: 100%; // Ensure cards in a grid have equal height
+  border: 1px solid var(--border-default); // Add a subtle border
+
+  &:hover {
+    transform: translateY(-5px) scale(1.02); // More pronounced lift and slight scale on hover
+    box-shadow: var(--shadow-xl), var(--shadow-neon-cyan); // Enhanced shadow with neon glow
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: v.$space-md; // Use variable for margin
+
+    .project-name {
+      font-size: v.$font-size-subtitle; // Use variable
+      font-weight: v.$font-weight-bold; // Use variable
+      color: var(--text-primary); // Use primary text color
+      margin: 0;
+    }
+
+    .status-badge {
+      padding: v.$space-xs v.$space-sm; // Use variables
+      border-radius: v.$border-radius-pill; // Use variable
+      font-size: v.$font-size-body-sm; // Use variable
+      font-weight: v.$font-weight-medium; // Use variable
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      
+      // Status specific colors
+      &.status-PENDING {
+        background-color: rgba(v.$warning-color, 0.15);
+        color: v.$warning-color;
+      }
+      &.status-RUNNING {
+        background-color: rgba(v.$accent-cyan-400, 0.15);
+        color: v.$accent-cyan-400;
+      }
+      &.status-COMPLETED {
+        background-color: rgba(v.$success-color, 0.15);
+        color: v.$success-color;
+      }
+      &.status-FAILED {
+        background-color: rgba(v.$error-color, 0.15);
+        color: v.$error-color;
+      }
+    }
+  }
+
+  .project-description {
+    font-size: v.$font-size-body-md; // Use variable
+    color: var(--text-secondary); // Use secondary text color
+    line-height: 1.5; // Adjusted line-height
+    margin-bottom: v.$space-md; // Use variable for margin
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .progress-bar-container {
+    width: 100%;
+    height: v.$space-sm; // Use variable for height
+    background-color: var(--background-canvas); // Lighter background for the track
+    border-radius: v.$border-radius-pill; // Rounded corners
+    margin-bottom: v.$space-md; // Spacing below progress bar
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, v.$primary-indigo-600, v.$accent-cyan-400); // Gradient fill
+    border-radius: v.$border-radius-pill; // Rounded corners
+    transition: width v.$transition-duration-slow ease-in-out; // Smooth transition for progress
+  }
+
+  .progress-text {
+    position: absolute;
+    right: v.$space-sm; // Position text inside
+    font-size: v.$font-size-body-sm; // Smaller text
+    color: var(--text-primary); // Contrasting color
+    font-weight: v.$font-weight-medium;
+    text-shadow: 0 1px 2px rgba(v.$black, 0.2);
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between; // Space between date and actions
+    align-items: center;
+    margin-top: v.$space-md; // Use variable for margin
+    font-size: v.$font-size-body-sm; // Use variable
+    color: var(--text-muted); // Use muted text color
+
+    .creation-date {
+        color: var(--text-muted);
+    }
+
+    .actions {
+      display: flex;
+      gap: v.$space-xs; // Use variable for gap
+
+      .btn-icon {
+        background: none;
+        border: none;
+        color: var(--text-secondary); // Default icon color
+        font-size: v.$font-size-body-lg; // Use variable
+        cursor: pointer;
+        transition: all v.$transition-duration-fast ease-in-out; // Transition for hover
+
+        &:hover {
+          color: var(--primary-color); // Primary color on hover
+          transform: scale(1.1); // Subtle scale on hover
+        }
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+  }
+}

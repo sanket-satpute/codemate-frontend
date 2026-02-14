@@ -1,0 +1,100 @@
+<!-- <div class="app-container">
+  <app-sidebar
+    (toggle)="onSidebarToggle($event)"
+    (logoutClicked)="openLogoutDialog()"
+  ></app-sidebar>
+  <div class="main-content" [class.sidebar-collapsed]="!isSidebarExpanded">
+    <app-navbar></app-navbar>
+    <main class="router-content">
+      <router-outlet></router-outlet>
+    </main>
+    <app-footer></app-footer>
+  </div>
+  <app-theme-wipe *ngIf="isWiping()"></app-theme-wipe>
+
+  <app-confirm-dialog
+    *ngIf="dialogData()"
+    [title]="dialogData()!.title"
+    [message]="dialogData()!.message"
+    [confirmButtonText]="dialogData()!.confirmButtonText"
+    [cancelButtonText]="dialogData()!.cancelButtonText"
+    (confirm)="onConfirmGlobalDialog()"
+    (cancel)="onCancelGlobalDialog()"
+  ></app-confirm-dialog>
+
+  <app-logout-confirmation-dialog
+    [isOpen]="isLogoutDialogOpen"
+    (closeDialog)="onLogoutCanceled()"
+  ></app-logout-confirmation-dialog>
+</div> -->
+
+
+<!-- ============================================================================
+     PREMIUM APPLICATION SHELL
+     Clean, semantic structure with proper ARIA landmarks
+     ============================================================================ -->
+<div class="app-container" role="application">
+  
+  <!-- Sidebar Navigation -->
+  <app-sidebar
+    role="navigation"
+    aria-label="Main navigation"
+    (toggle)="onSidebarToggle($event)"
+    (logoutClicked)="openLogoutDialog()"
+  ></app-sidebar>
+
+  <!-- Main Content Area -->
+  <div 
+    class="main-content" 
+    [class.sidebar-collapsed]="!isSidebarExpanded"
+    role="main"
+  >
+    
+    <!-- Top Navigation Bar -->
+    <app-navbar role="banner"></app-navbar>
+
+    <!-- Primary Content Canvas -->
+    <main class="router-content" aria-label="Page content">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- Footer -->
+    <app-footer role="contentinfo"></app-footer>
+    
+  </div>
+
+  <!-- ========================================================================
+       OVERLAYS & DIALOGS
+       Rendered conditionally for better performance
+       ======================================================================== -->
+  
+  <!-- Theme Transition Effect -->
+  <app-theme-wipe 
+    *ngIf="isWiping()" 
+    aria-hidden="true"
+  ></app-theme-wipe>
+
+  <!-- Global Confirmation Dialog -->
+  <app-confirm-dialog
+    *ngIf="dialogData()"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="'dialog-title-' + dialogData()!.title"
+    [title]="dialogData()!.title"
+    [message]="dialogData()!.message"
+    [confirmButtonText]="dialogData()!.confirmButtonText"
+    [cancelButtonText]="dialogData()!.cancelButtonText"
+    (confirm)="onConfirmGlobalDialog()"
+    (cancel)="onCancelGlobalDialog()"
+  ></app-confirm-dialog>
+
+  <!-- Logout Confirmation Dialog -->
+  <app-logout-confirmation-dialog
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="logout-dialog-title"
+    [isOpen]="isLogoutDialogOpen"
+    (closeDialog)="onLogoutCanceled()"
+  ></app-logout-confirmation-dialog>
+  
+</div>

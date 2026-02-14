@@ -1,0 +1,88 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title animate-fade-up">Analyze. Debug. Optimize.</h1>
+      <p class="hero-subtitle animate-fade-up-delay">Your AI-powered code reviewer.</p>
+      <button class="cta-button" (click)="scrollToUpload()">
+        Upload Your Code
+        <span class="button-arrow">→</span>
+      </button>
+
+      <div class="login-form-container animate-fade-up-delay">
+        <h2>Login</h2>
+        <form (ngSubmit)="onLogin()">
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" [(ngModel)]="user.email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" [(ngModel)]="user.password" name="password" required>
+          </div>
+          <button type="submit" class="login-button">Login</button>
+          <div *ngIf="loginError" class="error-message">{{ loginError }}</div>
+        </form>
+      </div>
+    </div>
+    <div class="hero-background"></div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="features-container">
+      <article class="feature-card" *ngFor="let feature of features">
+        <div class="feature-icon">{{ feature.icon }}</div>
+        <h3 class="feature-title">{{ feature.title }}</h3>
+        <p class="feature-description">{{ feature.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Upload Section -->
+  <section class="upload-section" #uploadSection>
+    <div class="upload-card">
+      <h2 class="upload-title">Try it now</h2>
+      <p class="upload-subtitle">Upload your code and get instant AI-powered insights</p>
+      
+      <div class="upload-options">
+        <textarea 
+          class="code-textarea" 
+          placeholder="Paste your code here..."
+          [(ngModel)]="codeInput"
+          rows="10">
+        </textarea>
+        
+        <div class="divider">
+          <span class="divider-text">OR</span>
+        </div>
+        
+        <div class="file-upload-zone">
+          <input type="file" (change)="onFileSelected($event)" #fileInput style="display: none;" />
+          <div class="upload-icon">📁</div>
+          <p class="upload-text">Choose File / Drop ZIP</p>
+          <button class="browse-button" (click)="fileInput.click()">Browse Files</button>
+        </div>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-label">
+          <span>Upload Progress</span>
+          <span class="progress-percent">{{ uploadProgress }}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+        </div>
+      </div>
+
+      <button class="submit-button" (click)="analyzeCode()" [disabled]="!selectedFile">
+        Analyze Code
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="footer-text">© 2025 CodeScope — Built for developers, by developers.</p>
+  </footer>
+</div>

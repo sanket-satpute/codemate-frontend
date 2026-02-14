@@ -1,0 +1,9 @@
+<div class="file-viewer-container">
+  <div class="toolbar">
+    <button (click)="copyCode()">Copy Code</button>
+    <button (click)="toggleWordWrap()">{{ wordWrap() ? 'Disable' : 'Enable' }} Word Wrap</button>
+  </div>
+  <div class="code-container" [class.word-wrap]="wordWrap()" #codeContainer>
+    <pre><code [ngClass]="'language-' + (fileContent?.language || 'plaintext')"></code></pre>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: v.$space-2xl;
+  border-radius: v.$border-radius-card;
+  background-color: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+  margin: v.$space-lg auto;
+  max-width: 600px; /* Constrain width for better readability */
+
+  .icon-wrapper {
+    font-size: 4rem; /* Large icon */
+    color: var(--accent-color); /* Accent color for the icon */
+    margin-bottom: v.$space-lg;
+    position: relative;
+
+    i, .custom-svg-icon { /* Apply styles to both Font Awesome and custom SVG icons */
+      text-shadow: 0 0 15px rgba(var(--accent-color-rgb-channels), 0.6); /* Soft neon glow */
+      transition: text-shadow 0.3s ease;
+      display: flex; /* Ensure SVG is treated as a flex item */
+      justify-content: center;
+      align-items: center;
+      width: 1em; /* Take current font size */
+      height: 1em; /* Take current font size */
+
+      &::ng-deep svg { /* Styles for SVG elements inside custom-svg-icon */
+        width: 100%;
+        height: 100%;
+        fill: currentColor; /* Inherit color from parent */
+        stroke: currentColor; /* Inherit stroke color if any */
+        stroke-width: 0; /* Default to no stroke */
+        transition: fill 0.3s ease, stroke 0.3s ease;
+      }
+    }
+  }
+
+  .title {
+    font-size: var(--font-size-section-title);
+    font-weight: v.$font-weight-semibold;
+    color: var(--text-primary);
+    margin-bottom: v.$space-sm;
+  }
+
+  .message {
+    font-size: var(--font-size-body-md);
+    margin-bottom: v.$space-xl;
+    line-height: 1.5;
+    max-width: 400px;
+  }
+
+  .cta-button {
+    @include m.gradient-button; /* Use the premium gradient button mixin */
+    padding: v.$space-sm v.$space-lg;
+    font-size: var(--font-size-body-md);
+  }
+}

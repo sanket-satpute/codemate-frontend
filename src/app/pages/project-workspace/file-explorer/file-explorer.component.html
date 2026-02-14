@@ -1,0 +1,257 @@
+<div class="file-explorer-container">
+  <!-- Top-Level Header -->
+  <header class="global-header">
+    <div class="header-left">
+      <h1 class="header-title">File Explorer</h1>
+      <p class="header-subtitle">Browse and inspect all files in your project.</p>
+    </div>
+    <div class="header-right">
+      <button class="icon-button" aria-label="Collapse Left Sidebar">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 3v18M8 4.06c-1.38-.34-2.8-.25-4.02.3C2.28 5.67 1 7.19 1 9.25v5.5c0 2.06 1.28 3.58 2.98 4.89 1.22.55 2.64.64 4.02.3M13 3l-4 4-4-4M13 21l-4-4-4 4"/>
+        </svg>
+      </button>
+      <button class="icon-button" aria-label="Collapse Right Panel">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 3v18M16 4.06c1.38-.34 2.8-.25 4.02.3C21.72 5.67 23 7.19 23 9.25v5.5c0 2.06-1.28 3.58-2.98 4.89-1.22.55-2.64.64-4.02.3M11 3l4 4 4-4M11 21l4-4 4 4"/>
+        </svg>
+      </button>
+      <button class="icon-button" aria-label="Global Search">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="main-content-area">
+    <!-- Left Sidebar - File Tree -->
+    <aside class="left-sidebar">
+      <div class="sidebar-header">
+        <div class="search-bar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" placeholder="Search files/folders...">
+        </div>
+        <div class="filters">
+          <button class="filter-button">Only Java files</button>
+          <button class="filter-button">Only Modified files</button>
+          <button class="filter-button">Only files with issues</button>
+          <button class="filter-button">Only TS/JS files</button>
+          <button class="icon-button small" aria-label="Expand All">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+          <button class="icon-button small" aria-label="Collapse All">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+      <div class="file-tree">
+        <!-- Example File Tree Structure -->
+        <div class="file-tree-item folder expanded">
+          <div class="item-header">
+            <svg class="folder-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V5H6.5A2.5 2.5 0 0 0 4 7.5v12z"></path></svg>
+            <span class="item-name">src</span>
+            <span class="file-count">12</span>
+          </div>
+          <div class="item-children">
+            <div class="file-tree-item folder">
+              <div class="item-header">
+                <svg class="folder-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V5H6.5A2.5 2.5 0 0 0 4 7.5v12z"></path></svg>
+                <span class="item-name">app</span>
+                <span class="file-count">8</span>
+              </div>
+              <div class="item-children">
+                <div class="file-tree-item selected">
+                  <div class="item-header">
+                    <svg class="file-icon ts-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <span class="item-name">app.component.ts</span>
+                  </div>
+                </div>
+                <div class="file-tree-item">
+                  <div class="item-header">
+                    <svg class="file-icon html-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    <span class="item-name">index.html</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="file-tree-item">
+              <div class="item-header">
+                <svg class="file-icon css-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg>
+                <span class="item-name">styles.scss</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="file-tree-item folder">
+          <div class="item-header">
+            <svg class="folder-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V5H6.5A2.5 2.5 0 0 0 4 7.5v12z"></path></svg>
+            <span class="item-name">public</span>
+            <span class="file-count">2</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Middle Section - File Preview -->
+    <main class="middle-section">
+      <div class="file-preview-header">
+        <div class="file-tabs">
+          <div class="file-tab active">
+            <svg class="file-icon ts-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            <span>app.component.ts</span>
+            <button class="close-tab-button">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <!-- More tabs here -->
+        </div>
+        <div class="file-details">
+          <h3 class="file-name">app.component.ts</h3>
+          <p class="file-path">src/app/app.component.ts</p>
+        </div>
+        <div class="file-actions">
+          <button class="icon-button small" aria-label="Copy Code">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          </button>
+          <button class="icon-button small" aria-label="Raw View">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V5H6.5A2.5 2.5 0 0 0 4 7.5v12z"></path><path d="M10 10l-2 2l2 2M14 10l2 2l-2 2"></path></svg>
+          </button>
+          <button class="icon-button small" aria-label="AI Explain">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"></path></svg>
+          </button>
+          <button class="icon-button small" aria-label="Refactor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5l10-5l-10-5zM2 17l10 5l10-5M2 12l10 5l10-5"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div class="file-preview-viewer">
+        <div class="line-numbers">
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+        </div>
+        <pre><code class="language-typescript">
+&#60;!-- Example TypeScript Code (Escaped for Angular Template) --&#62;
+import &#123; Component &#125; from '@angular/core';
+import &#123; CommonModule &#125; from '@angular/common';
+
+@Component(&#123;
+  selector: 'app-file-explorer',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './file-explorer.component.html',
+  styleUrls: ['./file-explorer.component.scss']
+&#125;)
+export class FileExplorerComponent &#123;&#125;
+        </code></pre>
+        <div class="minimap"></div>
+      </div>
+      <div class="quick-action-bar">
+        <button class="action-button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Explain File
+        </button>
+        <button class="action-button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8zM12 6l-2 4h4l-2 4l2 4"></path></svg>
+          Refactor File
+        </button>
+        <button class="action-button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18.23C1.66 18.52 1.66 18.88 1.82 19.17C2.01 19.52 2.37 19.71 2.76 19.71H21.24C21.63 19.71 21.99 19.52 22.18 19.17C22.34 18.88 22.34 18.52 22.18 19.17L13.71 3.86C13.55 3.57 13.23 3.33 12.87 3.33H11.13C10.77 3.33 10.45 3.57 10.29 3.86ZM12 16.08H12.01"></path></svg>
+          Find Issues
+        </button>
+        <button class="action-button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V5H6.5A2.5 2.5 0 0 0 4 7.5v12z"></path><path d="M22 21h-2a2 2 0 0 0-2 2v-2"></path><path d="M12 11h4M12 15h4"></path></svg>
+          Generate Docs
+        </button>
+        <button class="action-button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8zM9.5 11.5L12 14l2.5-2.5"></path></svg>
+          Generate Test Cases
+        </button>
+      </div>
+    </main>
+
+    <!-- Right Sidebar - File Insights -->
+    <aside class="right-sidebar">
+      <div class="sidebar-section collapsible-section">
+        <div class="section-header">
+          <h4 class="section-title">Metadata</h4>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="section-content">
+          <p>File size: <span>1.2 KB</span></p>
+          <p>Total lines: <span>120</span></p>
+          <p>Last modified: <span>2 days ago</span></p>
+          <p>Created date: <span>3 months ago</span></p>
+        </div>
+      </div>
+
+      <div class="sidebar-section collapsible-section">
+        <div class="section-header">
+          <h4 class="section-title">Code Metrics</h4>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="section-content">
+          <div class="metric-item">
+            <p>Cyclomatic complexity: <span>5</span></p>
+            <div class="progress-bar"><div style="width: 50%;"></div></div>
+          </div>
+          <div class="metric-item">
+            <p>Maintainability score: <span>85%</span></p>
+            <div class="progress-bar"><div style="width: 85%;"></div></div>
+          </div>
+          <p>Code smell count: <span>3</span></p>
+          <p>Linting issue summary: <span>2 warnings, 1 error</span></p>
+          <p>Duplicate code percentage: <span>10%</span></p>
+        </div>
+      </div>
+
+      <div class="sidebar-section collapsible-section">
+        <div class="section-header">
+          <h4 class="section-title">Language-Specific Summaries</h4>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="section-content">
+          <h5>JS/TS</h5>
+          <ul>
+            <li>Imports: <span>5</span></li>
+            <li>Exports: <span>2</span></li>
+            <li>Functions: <span>3</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sidebar-section collapsible-section">
+        <div class="section-header">
+          <h4 class="section-title">Mini AST Tree</h4>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="section-content">
+          <div class="ast-node"><span><span class="node-type">Class:</span> FileExplorerComponent</span></div>
+          <div class="ast-node indent-1"><span><span class="node-type">Method:</span> constructor()</span></div>
+        </div>
+      </div>
+
+      <div class="sidebar-section collapsible-section">
+        <div class="section-header">
+          <h4 class="section-title">AI Suggestions</h4>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="section-content">
+          <div class="ai-suggestion">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1l3 3l-3 3l-3-3l3-3zM3 11l3 3l-3 3l-3-3l3-3zM12 21l3 3l-3 3l-3-3l3-3zM21 11l3 3l-3 3l-3-3l3-3z"/></svg>
+            <span>Improve readability</span>
+            <button class="apply-button">Apply</button>
+          </div>
+          <div class="ai-suggestion">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1l3 3l-3 3l-3-3l3-3zM3 11l3 3l-3 3l-3-3l3-3zM12 21l3 3l-3 3l-3-3l3-3zM21 11l3 3l-3 3l-3-3l3-3z"/></svg>
+            <span>Remove unused imports</span>
+            <button class="apply-button">Apply</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

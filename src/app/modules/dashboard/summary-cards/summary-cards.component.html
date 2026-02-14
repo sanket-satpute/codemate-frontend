@@ -1,0 +1,36 @@
+<div class="summary-cards-container" *ngIf="dashboardData; else loading">
+  <div class="card">
+    <div class="card-icon-wrapper">
+      <i class="fas fa-project-diagram"></i> <!-- Icon for Total Projects -->
+    </div>
+    <h3 class="card-title">Total Projects</h3>
+    <p class="card-value">{{ dashboardData.totalProjects }}</p>
+  </div>
+  <div class="card">
+    <div class="card-icon-wrapper">
+      <i class="fas fa-tasks"></i> <!-- Icon for Total Analysis Jobs -->
+    </div>
+    <h3 class="card-title">Total Analysis Jobs</h3>
+    <p class="card-value">{{ dashboardData.totalJobs }}</p>
+  </div>
+  <!-- TODO: 'totalFiles' is not available in the current Dashboard model.
+       Revisit if this metric needs to be added to the Dashboard backend response and interface. -->
+  <!--
+  <div class="card">
+    <h3 class="card-title">Total Files Uploaded</h3>
+    <p class="card-value">{{ dashboardData.totalFiles }}</p>
+  </div>
+  -->
+  <!-- TODO: 'lastActive' is not available in the current Dashboard model.
+       Revisit if this metric needs to be added to the Dashboard backend response and interface. -->
+  <!--
+  <div class="card">
+    <h3 class="card-title">Last Active</h3>
+    <p class="card-value">{{ dashboardData.lastActive | date: 'medium' }}</p>
+  </div>
+  -->
+</div>
+
+<ng-template #loading>
+  <app-loader></app-loader>
+</ng-template>

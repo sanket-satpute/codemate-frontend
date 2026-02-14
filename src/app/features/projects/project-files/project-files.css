@@ -1,0 +1,25 @@
+.project-files-container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 30%;
+  background-color: #f0f0f0;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.file-viewer {
+  width: 70%;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.loader, .error, .empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.2rem;
+}

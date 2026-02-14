@@ -1,0 +1,31 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1>Performance & Bottlenecks</h1>
+    <p>Monitor real-time application performance and detect potential bottlenecks.</p>
+  </header>
+
+  <div class="realtime-metrics-section">
+    <app-realtime-metrics [metrics]="metrics()"></app-realtime-metrics>
+  </div>
+
+  <div class="main-layout">
+    <div class="timeline-graph-section">
+      <app-timeline-graph [metrics]="metrics()"></app-timeline-graph>
+    </div>
+    <div class="bottlenecks-section">
+      <h2 class="section-title">Detected Bottlenecks</h2>
+      <div *ngIf="loadingBottlenecks(); else bottlenecksContent" class="loader-container">
+        </div>
+      <ng-template #bottlenecksContent>
+        <div *ngIf="bottlenecks().length > 0; else emptyState" class="bottlenecks-list">
+          <app-bottleneck-card *ngFor="let bottleneck of bottlenecks()" [item]="bottleneck"></app-bottleneck-card>
+        </div>
+      </ng-template>
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <p>No bottlenecks detected.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

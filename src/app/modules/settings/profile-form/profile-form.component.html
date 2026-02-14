@@ -1,0 +1,39 @@
+<div class="profile-form-container card">
+  <h3>Edit Profile</h3>
+  <app-loader *ngIf="saving()"></app-loader>
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input id="name" type="text" formControlName="name" />
+      <div *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched" class="error-message">
+        Name is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" />
+      <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="error-message">
+        <span *ngIf="profileForm.get('email')?.errors?.['required']">Email is required.</span>
+        <span *ngIf="profileForm.get('email')?.errors?.['email']">Invalid email format.</span>
+      </div>
+    </div>
+
+    <!-- <div class="form-group">
+      <label for="role">Role</label>
+      <input id="role" type="text" formControlName="role" readonly />
+    </div> -->
+
+    <div class="form-group">
+      <label for="profilePicture">Profile Picture</label>
+      <input id="profilePicture" type="file" (change)="onFileSelected($event)" />
+      <div *ngIf="profileForm.get('profilePicture')?.errors?.['invalidFileType']" class="error-message">
+        {{ error() }}
+      </div>
+    </div>
+
+    <div *ngIf="error()" class="error-state">{{ error() }}</div>
+
+    <app-button type="submit" [loading]="saving()" [disabled]="profileForm.invalid || saving()">Save Changes</app-button>
+  </form>
+</div>

@@ -1,0 +1,118 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.impact-analysis-container {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.impact-list-header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.impact-list-body {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.impact-card {
+  background-color: var(--color-background);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-light);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-xs);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.file-name {
+  font-family: var(--font-family-mono);
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.severity-badge {
+  padding: 0.2em 0.5em;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+
+  &.severity-low {
+    background-color: var(--color-success);
+  }
+  &.severity-medium {
+    background-color: var(--color-warning);
+  }
+  &.severity-high {
+    background-color: var(--color-danger);
+  }
+  &.severity-critical {
+    background-color: var(--color-critical);
+  }
+}
+
+.impact-reason {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  color: var(--color-text-secondary);
+}
+
+.empty-state-image {
+  width: 100px;
+  height: auto;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.7;
+}
+
+.empty-state-message {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+}
+
+.empty-state-details {
+  font-size: 0.9rem;
+  max-width: 250px;
+}

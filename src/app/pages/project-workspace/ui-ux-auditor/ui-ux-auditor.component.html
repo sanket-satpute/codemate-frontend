@@ -1,0 +1,188 @@
+<div class="ui-ux-auditor-page-container">
+  <!-- TOP SECTION — Page Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <h1>UI/UX Audit</h1>
+      <p class="tagline">{{ auditTagline }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="action-btn primary" (click)="downloadReport()">
+        <i class="fas fa-download"></i> Download Report
+      </button>
+      <button class="action-btn" (click)="reRunAudit()">
+        <i class="fas fa-redo"></i> Re-run Audit
+      </button>
+    </div>
+  </header>
+
+  <main class="main-content-grid">
+    <!-- SECTION 1 — Overall UX Score -->
+    <section class="overall-ux-score-section">
+      <div class="overall-score-card card">
+        <div class="score-graph-placeholder" [style.border-color]="overallUxScore.colorClass">
+          <span class="score-value">{{ overallUxScore.score }}</span>
+          <span class="score-rating {{ overallUxScore.colorClass }}">{{ overallUxScore.rating }}</span>
+        </div>
+        <div class="score-summary">
+          <h2>Overall UX Score</h2>
+          <p>{{ overallUxScore.summary }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 — Key UX Findings -->
+    <section class="key-ux-findings-section">
+      <h2 class="section-title">Key UX Findings</h2>
+      <div class="key-findings-grid">
+        <div *ngFor="let finding of keyUxFindings" class="finding-card card">
+          <i class="fas {{ finding.icon }} {{ finding.severity | lowercase }}"></i>
+          <h3>{{ finding.title }}</h3>
+          <p>{{ finding.explanation }}</p>
+          <span class="severity-badge {{ finding.severity | lowercase }}">{{ finding.severity }}</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="two-column-layout">
+      <div class="left-column">
+        <!-- SECTION 3 — Heuristic Evaluation -->
+        <section class="heuristic-evaluation-section">
+          <h2 class="section-title">Heuristic Evaluation (Nielsen's 10)</h2>
+          <div class="heuristic-accordion">
+            <div *ngFor="let heuristic of heuristicEvaluations" class="heuristic-item card" [class.expanded]="heuristic.isExpanded">
+              <div class="heuristic-summary" (click)="toggleHeuristicAccordion(heuristic.id)">
+                <span class="heuristic-score">Score: {{ heuristic.score }}/10</span>
+                <h3 class="heuristic-title">{{ heuristic.heuristic }}</h3>
+                <i class="fas" [class.fa-chevron-down]="!heuristic.isExpanded" [class.fa-chevron-up]="heuristic.isExpanded"></i>
+              </div>
+              <div class="heuristic-details" *ngIf="heuristic.isExpanded">
+                <p class="summary">{{ heuristic.summary }}</p>
+                <div *ngIf="heuristic.issuesFound.length > 0">
+                  <h5>Issues Found:</h5>
+                  <ul>
+                    <li *ngFor="let issue of heuristic.issuesFound">{{ issue }}</li>
+                  </ul>
+                </div>
+                <div *ngIf="heuristic.recommendations.length > 0">
+                  <h5>Recommendations:</h5>
+                  <ul>
+                    <li *ngFor="let rec of heuristic.recommendations">{{ rec }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4 — Accessibility Audit (WCAG Based) -->
+        <section class="accessibility-audit-section">
+          <h2 class="section-title">Accessibility Audit (WCAG Based)</h2>
+          <div class="accessibility-grid">
+            <div *ngFor="let item of accessibilityAudit" class="accessibility-item card">
+              <i class="fas {{ item.icon }} {{ item.colorClass }}"></i>
+              <div class="item-content">
+                <h3>{{ item.label }}</h3>
+                <span class="item-score {{ item.score | lowercase }}">{{ item.score }}</span>
+                <p *ngIf="item.description">{{ item.description }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="right-column">
+        <!-- SECTION 5 — Visual Analysis -->
+        <section class="visual-analysis-section">
+          <h2 class="section-title">Visual Analysis</h2>
+          <div class="visual-analysis-grid">
+            <div class="color-palette-card card">
+              <h3>Color Palette & Contrast</h3>
+              <div class="colors-display">
+                <div *ngFor="let colorItem of visualAnalysis.colorPalette.extractedColors" class="color-swatch-item">
+                  <div class="color-swatch" [style.background-color]="colorItem.color"></div>
+                  <span class="color-label">{{ colorItem.label }}</span>
+                  <span class="contrast-ratio" *ngIf="colorItem.contrastRatio">CR: {{ colorItem.contrastRatio | number:'1.1-1' }}</span>
+                  <span class="status-badge {{ colorItem.status | lowercase }}" *ngIf="colorItem.status">{{ colorItem.status }}</span>
+                </div>
+              </div>
+              <h5>Recommendations:</h5>
+              <ul>
+                <li *ngFor="let rec of visualAnalysis.colorPalette.recommendations">{{ rec }}</li>
+              </ul>
+            </div>
+
+            <div class="typography-consistency-card card">
+              <h3>Typography Consistency</h3>
+              <div class="typography-details">
+                <p><strong>Extracted Font Sizes:</strong> {{ visualAnalysis.typographyConsistency.extractedFontSizes.join(', ') }}</p>
+                <p><strong>Weight Usage:</strong> {{ visualAnalysis.typographyConsistency.weightUsage.join(', ') }}</p>
+                <div *ngIf="visualAnalysis.typographyConsistency.lineHeightIssues.length > 0">
+                  <h5>Line-height Issues:</h5>
+                  <ul>
+                    <li *ngFor="let issue of visualAnalysis.typographyConsistency.lineHeightIssues">{{ issue }}</li>
+                  </ul>
+                </div>
+              </div>
+              <h5>Recommendations:</h5>
+              <ul>
+                <li *ngFor="let rec of visualAnalysis.typographyConsistency.recommendations">{{ rec }}</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- SECTION 6 — UX Recommendations Section -->
+    <section class="ux-recommendations-section">
+      <h2 class="section-title">UX Recommendations</h2>
+      <div class="recommendations-list">
+        <div *ngFor="let rec of uxRecommendations" class="recommendation-item card" [class.expanded]="rec.isExpanded">
+          <div class="rec-summary" (click)="toggleRecommendationAccordion(rec.id)">
+            <span class="severity-badge {{ rec.severity | lowercase }}">{{ rec.severity }}</span>
+            <h3 class="rec-title">{{ rec.title }}</h3>
+            <i class="fas" [class.fa-chevron-down]="!rec.isExpanded" [class.fa-chevron-up]="rec.isExpanded"></i>
+          </div>
+          <div class="rec-details" *ngIf="rec.isExpanded">
+            <p class="description">{{ rec.description }}</p>
+            <h5>Action Items:</h5>
+            <ul>
+              <li *ngFor="let item of rec.actionItems">{{ item }}</li>
+            </ul>
+            <div *ngIf="rec.visualExamples && rec.visualExamples.length > 0">
+              <h5>Visual Examples:</h5>
+              <div class="visual-examples-grid">
+                <img *ngFor="let example of rec.visualExamples" [src]="example" alt="UX Recommendation Example" class="example-image">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7 — Final UX Grade -->
+    <section class="final-ux-grade-section">
+      <div class="final-grade-card card">
+        <span class="final-grade-badge {{ finalUxGrade | lowercase }}">{{ finalUxGrade }}</span>
+        <h2>Final UX Grade</h2>
+        <p>{{ finalUxSummary }}</p>
+        <button class="action-btn primary large-action-btn" (click)="generateFixPlan()">
+          <i class="fas fa-magic"></i> Generate Fix Plan
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Sticky Bottom Action Bar -->
+  <footer class="bottom-action-bar">
+    <button class="action-btn large-action-btn primary" (click)="downloadReport()">
+      <i class="fas fa-file-download"></i> Download Report
+    </button>
+    <button class="action-btn large-action-btn" (click)="reRunAudit()">
+      <i class="fas fa-redo"></i> Re-run Audit
+    </button>
+    <button class="action-btn large-action-btn" (click)="generateFixPlan()">
+      <i class="fas fa-magic"></i> Generate Fix Plan
+    </button>
+  </footer>
+</div>

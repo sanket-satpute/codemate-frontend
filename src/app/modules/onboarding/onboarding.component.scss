@@ -1,0 +1,518 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+@use 'sass:color';
+
+// Premium Onboarding Container Styles
+.onboarding-premium-container {
+  min-height: 100vh;
+  @include m.onboarding-background-gradient; // Using mixin for background gradient
+  position: relative;
+  overflow: hidden;
+  font-family: v.$font-family-primary;
+}
+
+// Animated Background Elements
+.background-animations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none; // Disable background animations for reduced motion
+  }
+}
+
+.floating-shape {
+  position: absolute;
+  border-radius: v.$border-radius-pill;
+  background: linear-gradient(45deg, rgba(v.$white, 0.1), rgba(v.$white, 0.05));
+  backdrop-filter: blur(18px); // Standardize blur to 18px as in glass-card mixin
+  -webkit-backdrop-filter: blur(18px);
+  animation: float 20s infinite linear;
+
+  &.shape-1 {
+    width: 80px;
+    height: 80px;
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  &.shape-2 {
+    width: 120px;
+    height: 120px;
+    top: 60%;
+    right: 15%;
+    animation-delay: -5s;
+  }
+
+  &.shape-3 {
+    width: 60px;
+    height: 60px;
+    bottom: 20%;
+    left: 20%;
+    animation-delay: -10s;
+  }
+
+  &.shape-4 {
+    width: 100px;
+    height: 100px;
+    top: 30%;
+    right: 30%;
+    animation-delay: -15s;
+  }
+
+  &.shape-5 {
+    width: 70px;
+    height: 70px;
+    bottom: 40%;
+    right: 10%;
+    animation-delay: -20s;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-30px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(20px) rotate(240deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(360deg);
+  }
+}
+
+// Header Section
+.onboarding-header {
+  position: relative;
+  z-index: 10;
+  @include m.flex-center;
+  justify-content: space-between;
+  padding: v.$space-2xl v.$space-lg;
+  @include m.glassmorphism($bg-opacity: 0.1, $border-opacity: 0.2); // Using glassmorphism mixin
+  border-bottom: 1px solid rgba(v.$white, 0.2);
+  box-shadow: v.$shadow-glass-dark;
+
+  @include m.breakpoint-down(md) {
+    padding: v.$space-lg v.$space-md;
+    flex-direction: column;
+    gap: v.$space-md;
+  }
+}
+
+.brand-section {
+  @include m.flex-center; // Using flex-center mixin
+  gap: v.$space-md;
+}
+
+.brand-logo {
+  @include m.flex-center; // Using flex-center mixin
+  gap: v.$space-sm;
+  font-weight: v.$font-weight-bold;
+  font-size: v.$font-size-section-title; // Using variable for font size
+  color: v.$white;
+  text-shadow: 0 2px 4px rgba(v.$black, 0.3);
+}
+
+.progress-section {
+  @include m.flex-center; // Using flex-center mixin
+  gap: v.$space-lg;
+}
+
+.progress-bar {
+  width: v.$onboarding-progress-bar-width; // Using variable
+  height: v.$space-sm;
+  background: rgba(v.$white, 0.3);
+  border-radius: v.$border-radius-sm;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(v.$black, 0.1);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, v.$success-color, v.$accent-cyan-400); // Using variables for gradient colors
+  border-radius: v.$border-radius-sm;
+  transition: width v.$transition-duration-slow ease; // Using variable for transition duration
+  box-shadow: 0 0 10px rgba(v.$success-color, 0.5);
+}
+
+.step-counter {
+  @include m.flex-center; // Using flex-center mixin
+  gap: v.$space-xs;
+  color: v.$white;
+  font-weight: v.$font-weight-semibold;
+  font-size: v.$font-size-body-sm; // Using variable for font size
+  text-shadow: 0 1px 2px rgba(v.$black, 0.3);
+}
+
+.skip-section {
+  @include m.flex-center; // Using flex-center mixin
+}
+
+.skip-button {
+  @include m.flex-center; // Using flex-center mixin
+  gap: v.$space-xs;
+  background: none;
+  border: none;
+  color: rgba(v.$white, 0.8);
+  font-size: v.$font-size-body-sm; // Using variable for font size
+  font-weight: v.$font-weight-medium;
+  cursor: pointer;
+  padding: v.$space-sm v.$space-md;
+  border-radius: v.$border-radius-sm;
+  transition: all v.$transition-duration-base ease; // Using variable for transition duration
+  text-shadow: 0 1px 2px rgba(v.$black, 0.3);
+
+  &:hover {
+    background: rgba(v.$white, 0.1);
+    color: v.$white;
+    transform: translateY(-1px);
+  }
+
+  svg {
+    width: v.$space-md;
+    height: v.$space-md;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// Main Content Area
+.onboarding-main {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  @include m.flex-center; // Using flex-center mixin
+  padding: v.$space-2xl v.$space-lg; // Using variables for padding
+
+  @include m.breakpoint-down(md) {
+    padding: v.$space-md v.$space-md;
+  }
+}
+
+.content-wrapper {
+  max-width: v.$max-content-width; // Using variable
+  width: 100%;
+  @include m.flex-center;
+  flex-direction: column;
+  gap: v.$space-2xl;
+}
+
+// Step Content with Fade Animation
+.step-content {
+  width: 100%;
+  // max-width: v.$onboarding-step-content-max-width; // Using variable
+  opacity: 0;
+  transform: translateY(v.$space-lg);
+  animation: fadeInUp 0.6s ease forwards;
+
+  &.fade-in {
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Navigation Section
+.navigation-section {
+  width: 100%;
+  max-width: v.$onboarding-navigation-section-max-width; // Using variable
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  @include m.breakpoint-down(md) {
+    flex-direction: column;
+    gap: v.$space-2xl;
+  }
+}
+
+.nav-button {
+  @include m.flex-center;
+  gap: v.$space-sm;
+  padding: v.$space-md v.$space-2xl;
+  border-radius: v.$border-radius-lg;
+  font-weight: v.$font-weight-semibold;
+  font-size: v.$font-size-body-md;
+  transition: all v.$transition-duration-base ease;
+  cursor: pointer;
+  border: none;
+  @include m.glassmorphism; // Using glassmorphism mixin
+  color: v.$white;
+  text-shadow: 0 1px 2px rgba(v.$black, 0.3);
+  box-shadow: v.$shadow-glass-dark;
+
+  &:hover:not(.disabled) {
+    transform: translateY(calc(0px - v.$space-xs));
+    background: rgba(v.$white, 0.2);
+    box-shadow: v.$shadow-glass-dark, 0 8px 25px rgba(v.$black, 0.15);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  &.primary {
+    background: linear-gradient(135deg, v.$success-color, v.$accent-cyan-400); // Using variables for gradient colors
+    color: v.$white;
+    box-shadow: 0 4px 15px rgba(v.$success-color, 0.3);
+
+    &:hover {
+      background: linear-gradient(135deg, v.$success-color, v.$accent-cyan-400); /* Removed color.change as it's incompatible with CSS variables */
+      box-shadow: 0 8px 25px rgba(v.$success-color, 0.4);
+    }
+  }
+
+  svg {
+    width: v.$font-size-subtitle; // Using variable for size
+    height: v.$font-size-subtitle;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// Step Indicators
+.step-indicators {
+  display: flex;
+  gap: v.$space-md; // Using variable for gap
+  align-items: center;
+}
+
+.step-indicator {
+  position: relative;
+  width: v.$onboarding-step-indicator-size; // Using variable
+  height: v.$onboarding-step-indicator-size; // Using variable
+  border-radius: v.$border-radius-pill;
+  @include m.glassmorphism($bg-opacity: 0.1, $border-opacity: 0.2); // Using glassmorphism mixin
+  border: 2px solid rgba(v.$white, 0.2); // Retain specific border for indicator
+  @include m.flex-center;
+  cursor: pointer;
+  transition: all v.$transition-duration-base ease;
+  color: rgba(v.$white, 0.8);
+  font-weight: v.$font-weight-semibold;
+  font-size: v.$font-size-body-sm;
+  text-shadow: 0 1px 2px rgba(v.$black, 0.3);
+
+  &:hover {
+    transform: scale(1.1);
+    background: rgba(v.$white, 0.2);
+    border-color: rgba(v.$white, 0.4);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, v.$success-color, v.$accent-cyan-400);
+    border-color: v.$white;
+    color: v.$white;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(v.$success-color, 0.5);
+  }
+
+  &.completed {
+    background: linear-gradient(135deg, v.$success-color, v.$success-color); /* Removed color.change as it's incompatible with CSS variables */
+    border-color: rgba(v.$success-color, 0.5);
+    color: v.$white;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover {
+      transform: none;
+    }
+    &.active, &.completed {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.indicator-tooltip {
+  position: absolute;
+  bottom: calc(0px - v.$onboarding-tooltip-offset-y); // Using variable
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(v.$black, 0.8);
+  color: v.$white;
+  padding: v.$space-sm v.$space-md;
+  border-radius: v.$border-radius-sm;
+  font-size: v.$font-size-body-sm;
+  font-weight: v.$font-weight-medium;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all v.$transition-duration-base ease;
+  pointer-events: none;
+
+  .step-indicator:hover & {
+    opacity: 1;
+    visibility: visible;
+bottom: v.$onboarding-tooltip-offset-y - v.$space-xs; // Adjust with variable
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: v.$onboarding-tooltip-arrow-size; // Using variable
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: v.$onboarding-tooltip-arrow-size solid transparent; // Using variable
+    border-right: v.$onboarding-tooltip-arrow-size solid transparent; // Using variable
+    border-bottom: v.$onboarding-tooltip-arrow-size solid rgba(v.$black, 0.8); // Using variable
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    .step-indicator:hover & {
+      opacity: 1;
+      visibility: visible;
+      bottom: -40px;
+    }
+  }
+}
+
+// Responsive Design - Using mixins
+@include m.breakpoint-down(lg) { // Changed from max-width 1024px to lg breakpoint
+  .onboarding-header {
+    padding: v.$space-lg v.$space-xl;
+  }
+
+  .onboarding-main {
+    padding: v.$space-md v.$space-xl;
+  }
+
+  .content-wrapper {
+    gap: v.$space-xl;
+  }
+
+  .nav-buttons {
+    gap: v.$space-lg;
+  }
+
+  .step-indicators {
+    gap: v.$space-sm;
+  }
+
+  .step-indicator {
+    width: 45px;
+    height: 45px;
+    font-size: v.$font-size-body-sm;
+  }
+}
+
+@include m.breakpoint-down(md) { // Changed from max-width 768px to md breakpoint
+  .onboarding-premium-container {
+    padding: 0;
+  }
+
+  .onboarding-header {
+    padding: v.$space-md v.$space-lg;
+    flex-direction: column;
+    gap: v.$space-md;
+  }
+
+  .progress-section {
+    flex-direction: column;
+    gap: v.$space-md;
+  }
+
+.progress-bar {
+    width: v.$onboarding-progress-bar-width - 50px; // Using variable
+  }
+
+  .onboarding-main {
+    padding: v.$space-md v.$space-lg;
+  }
+
+  .content-wrapper {
+    gap: v.$space-xl;
+  }
+
+  .nav-buttons {
+    flex-direction: column;
+    gap: v.$space-lg;
+  }
+
+  .nav-button {
+    width: 100%;
+    justify-content: center;
+    padding: v.$space-md v.$space-lg;
+  }
+
+  .step-indicators {
+    order: -1;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: v.$space-xs;
+  }
+
+  .step-indicator {
+    width: 40px;
+    height: 40px;
+    font-size: v.$font-size-body-xs;
+  }
+}
+
+@include m.breakpoint-down(sm) { // Changed from max-width 480px to sm breakpoint
+  .onboarding-header {
+    padding: v.$space-md;
+  }
+
+  .brand-name {
+    font-size: v.$font-size-body-lg;
+  }
+
+.progress-bar {
+    width: v.$onboarding-progress-bar-width - 80px; // Using variable
+  }
+
+  .onboarding-main {
+    padding: v.$space-md;
+  }
+
+  .nav-button {
+    padding: v.$space-sm v.$space-lg;
+    font-size: v.$font-size-body-md;
+  }
+
+  .step-indicator {
+    width: 35px;
+    height: 35px;
+    font-size: v.$font-size-body-xs;
+  }
+}

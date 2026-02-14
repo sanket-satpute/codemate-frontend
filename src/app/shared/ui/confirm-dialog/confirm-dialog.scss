@@ -1,0 +1,102 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.confirm-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(var(--color-black-rgb), 0.6); /* Dark overlay */
+  backdrop-filter: blur(5px); /* Subtle blur effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's above other content */
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.confirm-dialog-panel {
+  @include m.card-base; /* Use existing card base styles for consistency */
+  background-color: var(--color-surface-card);
+  padding: var(--space-2xl);
+  border-radius: var(--border-radius-xl);
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow-xl); /* Premium shadow */
+  border: 1px solid var(--color-border-neutral);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  animation: slideUp 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; /* Bouncy entry */
+
+  .dialog-title {
+    font-size: var(--font-size-section-title);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-sm);
+  }
+
+  .dialog-message {
+    font-size: var(--font-size-body-lg);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin-bottom: var(--space-lg);
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    width: 100%;
+
+    .btn {
+      @include m.button-primary; /* Use existing button styles */
+      flex: 1; /* Make buttons fill space */
+      max-width: 150px;
+
+      &.btn-primary {
+        background-color: var(--color-status-error); /* Use red for confirm logout */
+        &:hover {
+          background-color: var(--color-status-error-dark);
+        }
+      }
+
+      &.btn-secondary {
+        background-color: var(--color-bg-secondary);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border-neutral);
+        &:hover {
+          background-color: var(--color-bg-secondary-hover);
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Dark theme adjustments
+@media (prefers-color-scheme: dark) {
+  .confirm-dialog-panel {
+    background-color: var(--color-surface-card); /* Ensure dark card bg */
+    border: 1px solid var(--color-border-neutral);
+    box-shadow: var(--shadow-dark-xl); /* Dark theme shadow */
+  }
+}

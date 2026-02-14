@@ -1,0 +1,13 @@
+<div class="run-analysis-container">
+  <ng-container *ngIf="!isJobRunning; else showProgress">
+    <button class="btn btn-primary" (click)="runAnalysis()">
+      Run Analysis
+    </button>
+  </ng-container>
+
+  <ng-template #showProgress>
+    <div class="progress-bar-container">
+      <div class="progress-bar" [style.width.%]="progress"></div>
+      <span class="progress-status">{{ jobStatus }}</span>
+    </div>
+  </ng-template>

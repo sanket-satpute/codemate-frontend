@@ -1,0 +1,8 @@
+<div class="w-full bg-gray-200 rounded-full h-4">
+  <div
+    class="h-4 rounded-full"
+    [ngClass]="getColor()"
+    [style.width.%]="score"
+  ></div>
+</div>
+<div class="text-center mt-2 text-lg font-bold">{{ score }}%</div>

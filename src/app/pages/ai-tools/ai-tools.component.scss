@@ -1,0 +1,506 @@
+/* Global Variables and Mixins - Assuming these are defined in a global styles file like styles/_variables.scss or imported */
+
+@use 'sass:color';
+@use '../../../styles/global.scss' as global;
+@use '../../../styles/_variables.scss' as variables;
+@use '../../../styles/_mixins.scss' as mixins;
+@use '../../../styles/_animations.scss' as animations;
+
+// Directly use variables with their namespace
+$color-primary: variables.$primary-indigo-600;
+$color-accent: variables.$accent-cyan-400;
+$bg-main: variables.$bg-primary-navy-black;
+$bg-panel: variables.$bg-secondary;
+$text-light: variables.$text-primary;
+$text-medium: variables.$text-muted;
+$text-dark: variables.$text-secondary; // Using text-secondary as a darker text shade
+$border-light: variables.$border-neutral;
+$border-dark: variables.$dark-blue-gray; // Using dark-blue-gray as a darker border shade
+
+// Custom variables needed for this component's specific use cases
+$bg-secondary-focus: variables.$bg-secondary-focus; // Ensure this is explicitly available
+
+.ai-tools-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: $bg-main;
+  font-family: 'Inter', sans-serif;
+  color: $text-light;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* (A) Header Section */
+    .ai-tools-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: variables.$space-lg variables.$space-xl; /* Large spacing */
+      background-color: $bg-main; /* Main background, blends into page */
+      border-bottom: 1px solid $border-dark; /* Subtle separator */
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+  .header-content {
+      h1 {
+        font-size: variables.$font-size-page-title;
+        font-weight: variables.$font-weight-bold;
+        color: $text-light;
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      p {
+        font-size: variables.$font-size-body-lg;
+        color: $text-medium;
+        margin-top: variables.$space-sm;
+        line-height: 1.4;
+      }
+  }
+
+    .header-actions {
+      display: flex;
+      gap: variables.$space-md;
+      align-items: center;
+
+      .icon-button {
+        width: 40px;
+        height: 40px;
+        border-radius: variables.$border-radius-base;
+        background-color: $bg-panel;
+        border: 1px solid $border-light;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all variables.$transition-duration-fast ease-in-out;
+        color: $text-medium;
+
+      &:hover {
+        border-color: $color-accent;
+        color: $color-accent;
+        box-shadow: 0 0 12px rgba($color-accent, 0.4);
+      }
+    }
+
+      .primary-button {
+        background-color: $color-primary;
+        color: $text-light;
+        padding: 10px 20px;
+        border-radius: variables.$border-radius-base;
+        font-size: variables.$font-size-body-md;
+        font-weight: variables.$font-weight-medium;
+        border: none;
+        cursor: pointer;
+        transition: all variables.$transition-duration-fast ease-in-out;
+
+      &.small {
+        padding: variables.$space-sm variables.$space-md;
+        font-size: variables.$font-size-body-sm;
+        border-radius: variables.$border-radius-sm;
+      }
+
+      &:hover {
+        background-color: variables.$primary-indigo-700;
+        box-shadow: 0 0 10px rgba($color-accent, 0.3);
+      }
+
+      &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.main-layout {
+  display: flex;
+  flex-grow: 1;
+  padding: 0 variables.$space-xl variables.$space-xl variables.$space-xl; /* Match header horizontal padding, add bottom padding */
+  gap: variables.$space-xl; /* Large spacing */
+  overflow: hidden; /* For internal scrollable areas */
+}
+
+/* (B) Left Sidebar – Categories */
+.categories-sidebar {
+  flex-shrink: 0;
+  width: variables.$sidebar-width; /* Fixed width */
+  background-color: $bg-panel;
+  border-radius: variables.$border-radius-lg;
+  padding: variables.$space-lg 0;
+  overflow-y: auto; /* Scrollable categories */
+  box-shadow: variables.$shadow-lg;
+
+  .category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .category-item {
+      .category-link {
+        display: block;
+        padding: 12px variables.$space-lg;
+        color: $text-medium;
+        text-decoration: none;
+        font-size: variables.$font-size-body-md;
+        font-weight: variables.$font-weight-medium;
+        transition: all variables.$transition-duration-fast ease-in-out;
+        border-left: 3px solid transparent; /* For selected state */
+
+        &:hover {
+          color: $color-accent;
+          background-color: $bg-secondary-focus; // FIXED: color.adjust -> $bg-secondary-focus
+          box-shadow: inset 0 0 8px rgba($color-accent, 0.2);
+        }
+      }
+
+      &.selected .category-link {
+        color: $text-light;
+        background-color: $color-primary;
+        border-left-color: $color-accent;
+        font-weight: variables.$font-weight-semibold;
+        box-shadow: 0 0 10px rgba($color-accent, 0.3);
+      }
+    }
+  }
+}
+
+/* (C) Main Tools Grid (Center Section) */
+.tools-grid-container {
+  flex-grow: 1;
+  overflow-y: auto; /* Scrollable tools grid */
+  padding-right: 16px; /* For scrollbar */
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
+    gap: variables.$space-lg; /* Clean spacing */
+    padding-bottom: variables.$space-lg; /* Spacing before empty state or end of scroll */
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* 2 columns on tablet */
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr; /* 1 column on mobile */
+    }
+  }
+
+  .tool-card {
+    background-color: $bg-panel;
+    border-radius: variables.$border-radius-lg;
+    padding: variables.$space-lg;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: variables.$shadow-md;
+    transition: all variables.$transition-duration-base ease-in-out;
+    border: 1px solid $border-dark;
+    position: relative; /* For glow effect */
+
+    &:hover {
+      transform: translateY(-5px) scale(1.02);
+      border-color: $color-accent;
+      box-shadow: 0 8px 25px rgba($color-accent, 0.4), inset 0 0 8px rgba($color-accent, 0.2);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      background-color: $color-primary;
+      border-radius: variables.$border-radius-base;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: variables.$space-md;
+      box-shadow: 0 4px 10px rgba($color-primary, 0.3);
+
+      svg {
+        color: $text-light;
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: variables.$font-weight-semibold;
+      color: $text-light;
+      margin: 0 0 variables.$space-sm 0;
+    }
+
+    .card-description {
+      font-size: variables.$font-size-body-sm;
+      color: $text-medium;
+      line-height: 1.5;
+      flex-grow: 1; /* Pushes actions to bottom */
+      margin-bottom: variables.$space-lg;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 12px; // No direct variable for 12px, keep as is or define if common
+      width: 100%;
+      justify-content: flex-end; /* Align buttons to the right */
+
+      .run-button {
+        background-color: $color-primary;
+        color: $text-light;
+        padding: 10px 20px; // Keep as is, or define $padding-button-md if common
+        border-radius: variables.$border-radius-sm;
+        font-size: variables.$font-size-body-sm;
+        font-weight: variables.$font-weight-medium;
+        border: none;
+        cursor: pointer;
+        transition: all variables.$transition-duration-fast ease-in-out;
+        flex-grow: 1; /* Fill available space */
+
+        &:hover {
+          background-color: variables.$primary-indigo-700;
+          box-shadow: 0 0 8px rgba($color-accent, 0.4);
+        }
+      }
+
+      .settings-dropdown {
+        position: relative;
+
+        .settings-button {
+          width: 40px;
+          height: 40px;
+          border-radius: variables.$border-radius-sm;
+          background-color: $border-light;
+          border: 1px solid $border-dark;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          transition: all variables.$transition-duration-fast ease-in-out;
+          color: $text-medium;
+
+          &:hover {
+            border-color: $color-accent;
+            color: $color-accent;
+            box-shadow: 0 0 8px rgba($color-accent, 0.3);
+          }
+        }
+        /* Dropdown content styling would go here */
+      }
+    }
+  }
+
+  /* (E) Empty State */
+  .empty-state {
+    background-color: $bg-panel;
+    border-radius: variables.$border-radius-lg;
+    padding: variables.$space-3xl variables.$space-xl;
+    text-align: center;
+    margin: variables.$space-xl auto; /* Center card with large margin */
+    max-width: 600px;
+    box-shadow: variables.$shadow-2xl;
+    border: 1px solid $border-light;
+
+    .empty-state-title {
+      font-size: 28px; // No direct variable for 28px, keeping literal for now
+      font-weight: variables.$font-weight-bold;
+      color: $text-light;
+      margin: 0 0 variables.$space-md 0;
+    }
+
+    .empty-state-subtitle {
+      font-size: variables.$font-size-body-lg;
+      color: $text-medium;
+      margin-bottom: variables.$space-xl;
+    }
+
+    .primary-button.large {
+      padding: 14px 28px; // Keep as is, or define $padding-button-lg if common
+      font-size: variables.$font-size-body-lg;
+      border-radius: variables.$border-radius-base;
+      background-color: $color-accent; /* Use accent for primary empty state action */
+      color: $bg-main; /* Dark text on bright button */
+      font-weight: variables.$font-weight-semibold;
+
+      &:hover {
+        background-color: variables.$accent-cyan-700;
+        box-shadow: 0 0 15px rgba($color-accent, 0.7);
+      }
+    }
+  }
+}
+
+/* (D) Right-Side Sliding Panel (Execution Panel) */
+.execution-panel {
+  flex-shrink: 0;
+  width: 0; /* Hidden by default */
+  max-width: 450px; /* Max width for the panel */ // Keep as is, or define $panel-max-width if common
+  background-color: $bg-panel;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$shadow-lg;
+  overflow: hidden; /* Hide content when collapsed */
+  transition: width variables.$transition-duration-base ease-out; /* Smooth sliding animation */
+  position: relative;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+
+  &.open {
+    width: 35%; /* Example open width */ // Keep as is, or define $panel-open-width if common
+    padding: variables.$space-lg;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: variables.$space-md;
+    padding-bottom: variables.$space-md;
+    border-bottom: 1px solid $border-light;
+
+    .panel-title {
+      font-size: variables.$font-size-section-title;
+      font-weight: variables.$font-weight-bold;
+      color: $text-light;
+      margin: 0;
+    }
+
+    .close-panel-button {
+      background: none;
+      border: none;
+      color: $text-medium;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: variables.$border-radius-sm;
+      transition: all variables.$transition-duration-fast ease-in-out;
+
+      &:hover {
+        color: $color-accent;
+        background-color: $border-dark;
+      }
+    }
+  }
+
+  .panel-description {
+    font-size: variables.$font-size-body-sm;
+    color: $text-medium;
+    margin-bottom: variables.$space-lg;
+  }
+
+  .panel-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: variables.$space-lg;
+
+    .input-section {
+      h4 {
+        font-size: variables.$font-size-body-md;
+        color: $text-light;
+        margin-bottom: 12px; // Keep as is, or define $space-s-md if common
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 10px 15px; // Keep as is, or define $padding-input if common
+        border-radius: variables.$border-radius-sm;
+        border: 1px solid $border-light;
+        background-color: $border-dark;
+        color: $text-light;
+        font-family: variables.$font-family-primary;
+        font-size: variables.$font-size-body-sm;
+        margin-bottom: 12px; // Keep as is
+
+        &:focus {
+          outline: none;
+          border-color: $color-accent;
+          box-shadow: 0 0 5px rgba($color-accent, 0.3);
+        }
+      }
+      .primary-button.small {
+        background-color: $border-light;
+        color: $text-light;
+        &:hover {
+          background-color: $bg-secondary-focus; /* Using defined variable */
+        }
+      }
+    }
+
+    .run-tool-button {
+      width: 100%;
+      padding: 14px 28px; // Keep as is
+      font-size: variables.$font-size-body-lg;
+      border-radius: variables.$border-radius-base;
+      background-color: $color-primary;
+      color: $text-light;
+      font-weight: variables.$font-weight-semibold;
+
+      &:hover {
+        background-color: variables.$primary-indigo-700;
+        box-shadow: 0 0 15px rgba($color-accent, 0.6);
+      }
+    }
+
+    .results-section {
+      margin-top: variables.$space-lg;
+      h4 {
+        font-size: variables.$font-size-body-md;
+        color: $text-light;
+        margin-bottom: 12px; // Keep as is
+      }
+      .result-tabs {
+        display: flex;
+        margin-bottom: variables.$space-md;
+        border-bottom: 1px solid $border-dark;
+        button {
+          background: none;
+          border: none;
+          padding: variables.$space-sm variables.$space-md;
+          color: $text-medium;
+          font-size: variables.$font-size-body-sm;
+          cursor: pointer;
+          transition: all variables.$transition-duration-fast ease-in-out;
+          border-bottom: 2px solid transparent;
+
+          &:hover {
+            color: $color-accent;
+          }
+          &.active {
+            color: $text-light;
+            border-bottom-color: $color-accent;
+            font-weight: 500;
+          }
+        }
+      }
+      .output-area {
+        background-color: $border-dark;
+        border-radius: variables.$border-radius-sm;
+        padding: variables.$space-md;
+        min-height: 150px; // Keep as is, or define $output-area-min-height if common
+        font-family: variables.$font-family-code;
+        font-size: variables.$font-size-body-sm; // Using SM for code, might need a specific code font size
+        color: $text-light;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        border: 1px solid $border-light;
+      }
+      .apply-fixes-button {
+        width: 100%;
+        margin-top: variables.$space-md;
+        padding: 14px 28px; // Keep as is
+        font-size: variables.$font-size-body-lg;
+        border-radius: variables.$border-radius-base;
+        background-color: $color-accent;
+        color: $bg-main;
+        font-weight: variables.$font-weight-semibold;
+
+        &:hover {
+          background-color: variables.$accent-cyan-700;
+          box-shadow: 0 0 15px rgba($color-accent, 0.7);
+        }
+      }
+    }
+  }
+}

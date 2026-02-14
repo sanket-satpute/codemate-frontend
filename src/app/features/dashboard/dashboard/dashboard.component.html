@@ -1,0 +1,111 @@
+<div class="dashboard-container">
+  <!-- Top Summary / Metrics Bar -->
+  <section class="metrics-bar">
+    <div class="metric-card" *ngFor="let metric of metrics">
+      <i [class]="metric.icon"></i>
+      <div class="metric-info">
+        <h3>{{ metric.value }}</h3>
+        <p>{{ metric.name }}</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="main-content-grid">
+    <div class="left-column">
+      <!-- Recent Activity / Timeline -->
+      <section class="recent-activity card">
+        <h2>Recent Activity</h2>
+        <div class="activity-timeline">
+          <div class="activity-item" *ngFor="let activity of recentActivities">
+            <i [class]="activity.icon"></i>
+            <div class="activity-details">
+              <p class="activity-description">{{ activity.description }}</p>
+              <span class="activity-time">{{ activity.time }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects Overview / Cards -->
+      <section class="projects-overview">
+        <h2>Projects Overview</h2>
+        <div class="project-cards-grid">
+          <div class="project-card" *ngFor="let project of projects">
+            <h3>{{ project.name }}</h3>
+            <p class="project-status">Status: <span>{{ project.status }}</span></p>
+            <p>Last Analysis: {{ project.lastAnalysis }}</p>
+            <p>Health Score: <span class="health-score" [class.good]="project.healthScore >= 80" [class.average]="project.healthScore >= 60 && project.healthScore < 80" [class.poor]="project.healthScore < 60">{{ project.healthScore }}</span></p>
+            <p class="recommendation">{{ project.recommendation }}</p>
+            <div class="project-actions">
+              <button class="action-btn view" (click)="viewProject(project.id)">View</button>
+              <button class="action-btn analyze" (click)="analyzeProject(project.id)">Analyze</button>
+              <button class="action-btn chat" (click)="chatProject(project.id)">Chat</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="right-column">
+      <!-- Quick Actions / Shortcuts -->
+      <section class="quick-actions card">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+          <button class="action-button" (click)="createNewProject()">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create New Project</span>
+          </button>
+          <button class="action-button" (click)="uploadProject()">
+            <i class="fas fa-upload"></i>
+            <span>Upload Project</span>
+          </button>
+          <button class="action-button" (click)="runAIAnalysis()">
+            <i class="fas fa-robot"></i>
+            <span>Run AI Analysis</span>
+          </button>
+          <button class="action-button" (click)="openAIChat()">
+            <i class="fas fa-comments"></i>
+            <span>Open AI Chat</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- System / AI Insights Widget -->
+      <section class="ai-insights card">
+        <h2>AI Insights</h2>
+        <p>Highlight most common issues, recommended improvements, AI tips.</p>
+        <!-- Placeholder for graphs/progress bars -->
+        <div class="insight-item">
+          <p>Common Issue: Unused imports</p>
+          <div class="progress-bar">
+            <div class="progress" style="width: 70%;"></div>
+          </div>
+        </div>
+        <div class="insight-item">
+          <p>Recommendation: Implement more unit tests</p>
+          <div class="progress-bar">
+            <div class="progress" style="width: 50%;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notifications / Alerts Preview -->
+      <section class="notifications-preview card">
+        <h2>Notifications</h2>
+        <div class="notification-list">
+          <div class="notification-item">
+            <span class="badge">New</span>
+            <p>Job "Backend API Analysis" failed.</p>
+          </div>
+          <div class="notification-item">
+            <p>New AI chat message from "Project Alpha".</p>
+          </div>
+          <div class="notification-item">
+            <span class="badge">Warning</span>
+            <p>System update required.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

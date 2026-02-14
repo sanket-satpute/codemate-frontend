@@ -1,0 +1,19 @@
+<div class="chat-room-container">
+  <div class="chat-messages" #messageContainer>
+    <app-loader *ngIf="loading()"></app-loader>
+
+    <ng-container *ngIf="!loading()">
+      <ng-container *ngIf="messages().length > 0; else emptyState">
+        <app-chat-message *ngFor="let message of messages()" [message]="message"></app-chat-message>
+      </ng-container>
+
+      <ng-template #emptyState>
+        <app-empty-state message="Start a conversation with AI!"></app-empty-state>
+      </ng-template>
+    </ng-container>
+  </div>
+
+  <div class="chat-input-area">
+    <app-chat-input [sending]="sending()" (sendMessage)="onSendMessage($event)"></app-chat-input>
+  </div>
+</div>

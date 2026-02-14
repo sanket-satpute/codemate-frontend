@@ -1,0 +1,228 @@
+@use 'sass:color';
+@use '../../../styles/_variables.scss' as variables;
+@use '../../../styles/_mixins.scss' as mixins;
+
+.help-center-container {
+  padding: variables.$space-xl;
+  background-color: variables.$bg-primary-navy-black;
+  font-family: variables.$font-family-primary;
+  color: variables.$text-primary;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: variables.$space-3xl;
+  padding-bottom: variables.$space-xl;
+  border-bottom: 1px solid variables.$border-neutral;
+
+  .page-title {
+    font-size: variables.$font-size-display-title;
+    font-weight: variables.$font-weight-bold;
+    color: variables.$text-primary;
+    margin-bottom: variables.$space-sm;
+  }
+
+  .subtitle {
+    font-size: variables.$font-size-body-lg;
+    color: variables.$text-muted;
+    margin-bottom: variables.$space-xl;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: variables.$bg-secondary;
+    border: 1px solid variables.$border-neutral;
+    border-radius: variables.$border-radius-base;
+    padding: variables.$space-sm variables.$space-md;
+    transition: all variables.$transition-duration-fast variables.$ease-in-out;
+
+    .search-icon {
+      color: variables.$text-muted;
+      margin-right: variables.$space-sm;
+      font-size: variables.$font-size-subtitle;
+    }
+
+    input {
+      flex-grow: 1;
+      background: none;
+      border: none;
+      color: variables.$text-primary;
+      font-family: variables.$font-family-primary;
+      font-size: variables.$font-size-body-md;
+      outline: none;
+
+      &::placeholder {
+        color: variables.$text-muted;
+      }
+    }
+
+    &:focus-within {
+      border-color: variables.$accent-cyan-400;
+      box-shadow: 0 0 8px rgba(variables.$accent-cyan-400, 0.4);
+    }
+  }
+}
+
+/* Main Categories Grid */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: variables.$space-lg;
+  margin-bottom: variables.$space-3xl;
+
+  .category-card {
+    @include mixins.card-base;
+    background-color: variables.$surface-card;
+    padding: variables.$space-lg;
+    text-align: center;
+    transition: all variables.$transition-duration-fast variables.$ease-in-out;
+
+    &:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: variables.$shadow-md;
+      border-color: variables.$primary-indigo-600;
+    }
+
+    .card-icon {
+      font-size: variables.$font-size-page-title;
+      color: variables.$primary-indigo-600;
+      margin-bottom: variables.$space-md;
+    }
+
+    .card-title {
+      font-size: variables.$font-size-section-title;
+      font-weight: variables.$font-weight-semibold;
+      color: variables.$text-primary;
+      margin-bottom: variables.$space-xs;
+    }
+
+    .card-description {
+      font-size: variables.$font-size-body-md;
+      color: variables.$text-muted;
+    }
+  }
+}
+
+/* Popular Articles Section */
+.popular-articles-section {
+  margin-bottom: variables.$space-3xl;
+
+  .section-title {
+    font-size: variables.$font-size-section-title;
+    font-weight: variables.$font-weight-bold;
+    color: variables.$text-primary;
+    margin-bottom: variables.$space-xl;
+    padding-bottom: variables.$space-md;
+    border-bottom: 1px solid variables.$border-neutral;
+  }
+
+  .article-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: variables.$space-md;
+
+    .article-item {
+      @include mixins.card-base;
+      background-color: variables.$surface-card;
+      padding: variables.$space-md variables.$space-lg;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all variables.$transition-duration-fast variables.$ease-in-out;
+
+      &:hover {
+        transform: translateX(variables.$space-xs);
+        box-shadow: variables.$shadow-md;
+        border-color: variables.$accent-cyan-400;
+
+        .arrow-icon {
+          color: variables.$accent-cyan-400;
+          transform: translateX(variables.$space-xs);
+        }
+      }
+
+      .article-content {
+        flex-grow: 1;
+
+        .article-title {
+          font-size: variables.$font-size-body-lg;
+          font-weight: variables.$font-weight-semibold;
+          color: variables.$text-primary;
+          margin-bottom: variables.$space-xs;
+        }
+
+        .article-description {
+          font-size: variables.$font-size-body-md;
+          color: variables.$text-muted;
+        }
+      }
+
+      .arrow-icon {
+        color: variables.$text-muted;
+        font-size: variables.$font-size-subtitle;
+        transition: transform variables.$transition-duration-fast variables.$ease-in-out, color variables.$transition-duration-fast variables.$ease-in-out;
+      }
+    }
+  }
+}
+
+/* Contact & Support Section */
+.contact-support-section {
+  display: flex;
+  justify-content: center;
+  margin-top: auto; // Pushes this section to the bottom
+
+  .contact-card {
+    @include mixins.card-base;
+    background-color: variables.$surface-card;
+    padding: variables.$space-3xl variables.$space-xl;
+    text-align: center;
+    max-width: 800px;
+    border: 1px solid variables.$border-neutral;
+
+    .section-title {
+      font-size: variables.$font-size-page-title;
+      font-weight: variables.$font-weight-bold;
+      color: variables.$text-primary;
+      margin-bottom: variables.$space-md;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .subtitle {
+      font-size: variables.$font-size-body-lg;
+      color: variables.$text-muted;
+      margin-bottom: variables.$space-xl;
+    }
+
+    .contact-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: variables.$space-md;
+      justify-content: center;
+
+      .primary-button {
+        @include mixins.button-primary;
+        font-size: variables.$font-size-body-md;
+        padding: variables.$space-sm variables.$space-lg;
+      }
+
+      .secondary-button {
+        @include mixins.button-secondary;
+        font-size: variables.$font-size-body-md;
+        padding: variables.$space-sm variables.$space-lg;
+      }
+    }
+  }
+}

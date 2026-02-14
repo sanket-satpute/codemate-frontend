@@ -1,0 +1,26 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+
+.settings-container {
+  padding: v.$space-lg;
+  max-width: 800px;
+  margin: 0 auto;
+
+  h2 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: v.$space-lg;
+  }
+
+  .settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-lg;
+  }
+
+  .error-state {
+    color: var(--danger-color);
+    text-align: center;
+    margin-top: v.$space-md;
+  }
+}

@@ -1,0 +1,30 @@
+.progress-bar-container {
+  width: 100%;
+  background-color: var(--input-background);
+  border-radius: 8px;
+  overflow: hidden;
+  height: 20px;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary-color);
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .progress-percentage {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 20px; // Center vertically
+    color: var(--text-color-inverted); // Assuming a light color for text on primary background
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+}

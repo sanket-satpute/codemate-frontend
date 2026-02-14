@@ -1,0 +1,19 @@
+<div class="notification-item" [class.unread]="!notification.read">
+  <div class="content">
+    <h4 class="title">{{ notification.title }}</h4>
+    <p class="message">{{ notification.message }}</p>
+
+    <div class="footer">
+      <span class="timestamp">{{ notification.timestamp | date: 'short' }}</span>
+
+      <app-button
+        variant="ghost"
+        size="sm"
+        (click)="onMarkAsRead()"
+        *ngIf="!notification.read"
+      >
+        Mark as read
+      </app-button>
+    </div>
+  </div>
+</div>

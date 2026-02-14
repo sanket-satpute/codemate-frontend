@@ -1,0 +1,38 @@
+@use '../../../../styles/_variables' as v;
+@use '../../../../styles/_mixins' as m;
+
+.table-container {
+  overflow-x: auto;
+  background-color: v.$surface-card;
+  border-radius: v.$border-radius-base;
+  box-shadow: v.$shadow-sm;
+  border: 1px solid v.$border-neutral;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+      padding: v.$space-xxs v.$space-sm;
+      text-align: left;
+      border-bottom: 1px solid v.$border-neutral;
+    }
+
+    th {
+      background-color: var(--bg-secondary);
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      
+      &:hover {
+        background-color: rgba(v.$bg-secondary, 0.8);
+      }
+    }
+
+    tbody tr {
+      &:hover {
+        background-color: rgba(v.$bg-secondary, 0.6);
+      }
+    }
+  }
+}

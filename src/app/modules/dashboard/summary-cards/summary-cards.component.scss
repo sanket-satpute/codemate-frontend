@@ -1,0 +1,49 @@
+@use '_variables' as v;
+@use '../../../../styles/mixins' as m; // Import mixins for card-base
+
+.summary-cards {
+  display: flex;
+  gap: v.$space-m; /* Use M spacing */
+  margin-bottom: v.$space-2xl; /* Use 2XL spacing */
+}
+
+.card {
+  @include m.glass-card; /* Use glass-card mixin for premium look */
+  padding: v.$space-lg; /* Consistent large spacing */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 150px; /* Ensure a good height */
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-xl); /* More pronounced shadow on hover */
+  }
+
+  .card-icon-wrapper {
+    font-size: 2.5rem; /* Prominent icon size */
+    color: var(--accent-color); /* Accent color for visual pop */
+    margin-bottom: v.$space-md;
+    text-shadow: 0 0 10px rgba(var(--accent-color-rgb-channels), 0.5); /* Soft neon glow for icon */
+  }
+
+  .card-title {
+    margin-bottom: v.$space-xs; /* Smaller spacing */
+    font-size: var(--font-size-body-lg); /* Slightly larger title for impact */
+    font-weight: v.$font-weight-medium;
+    color: var(--text-muted); /* Subtler title color */
+  }
+
+  .card-value {
+    font-size: var(--font-size-page-title); /* Very large value for emphasis */
+    font-weight: v.$font-weight-bold;
+    color: var(--primary-color); /* Primary color for key values */
+    letter-spacing: -0.05em; /* Tighter letter spacing for numbers */
+    line-height: 1; /* Keep it tight */
+  }
+}

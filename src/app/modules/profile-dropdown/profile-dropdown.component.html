@@ -1,0 +1,46 @@
+<!-- ============================================================================
+     PREMIUM PROFILE DROPDOWN
+     Fixed positioning with proper z-index
+     ============================================================================ -->
+<div 
+  *ngIf="isVisible" 
+  #dropdownPanel
+  class="profile-dropdown-panel"
+  role="menu"
+  aria-label="User profile menu"
+  @dropdownAnimation
+>
+  
+  <!-- User Information Section -->
+  <div class="user-info" role="group" aria-label="User information">
+    <p class="username">{{ username || 'Guest User' }}</p>
+    <p class="email">{{ email || 'guest@example.com' }}</p>
+  </div>
+
+  <!-- Optional: Additional Menu Items (Uncomment to use) -->
+  <!--
+  <a href="/profile" class="dropdown-menu-item" role="menuitem">
+    <i class="fas fa-user-circle"></i>
+    <span>View Profile</span>
+  </a>
+
+  <a href="/settings" class="dropdown-menu-item" role="menuitem">
+    <i class="fas fa-cog"></i>
+    <span>Settings</span>
+  </a>
+
+  <div class="dropdown-divider"></div>
+  -->
+
+  <!-- Logout Button -->
+  <button 
+    class="logout-btn" 
+    (click)="onLogoutClick()"
+    role="menuitem"
+    aria-label="Logout from account"
+  >
+    <i class="fas fa-sign-out-alt"></i>
+    <span>Logout</span>
+  </button>
+
+</div>  

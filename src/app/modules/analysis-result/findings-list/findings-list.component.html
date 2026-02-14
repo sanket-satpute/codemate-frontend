@@ -1,0 +1,19 @@
+<div class="findings-list-container">
+  <div *ngIf="issues.length > 0; else noIssues">
+    <div *ngFor="let group of groupedIssues() | keyvalue" class="severity-group">
+      <h3 [class]="'severity-header ' + group.key.toLowerCase()">{{ group.key }}</h3>
+      <ul class="findings-list">
+        <li *ngFor="let issue of group.value" class="finding-item" (click)="selectIssue(issue)">
+          <div class="finding-details">
+            <p class="finding-message">{{ issue.message }}</p>
+            <span class="finding-location">Line {{ issue.line }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <ng-template #noIssues>
+    <div class="empty-state">
+      <p>No issues found for the selected file and severity filters.</p>
+    </div>
+  </ng-template>

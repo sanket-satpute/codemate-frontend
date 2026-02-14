@@ -1,0 +1,120 @@
+<div class="project-overview-container">
+  <!-- 1. Top Section — Project Header -->
+  <header class="project-header card">
+    <div class="header-main-info">
+      <h1>{{ projectName }}</h1>
+      <p class="description">{{ projectDescription }}</p>
+      <div class="tags-tech-stack">
+        <span class="tag-chip" *ngFor="let tag of projectTags"><i class="fas fa-tag"></i> {{ tag }}</span>
+      </div>
+      <div class="metadata-row">
+        <span><i class="fas fa-calendar-plus"></i> Created: {{ projectMetadata.createdDate }}</span>
+        <span><i class="fas fa-redo-alt"></i> Last Updated: {{ projectMetadata.lastUpdated }}</span>
+        <span><i class="fas fa-file-code"></i> Total Files: {{ projectMetadata.totalFiles }}</span>
+        <span><i class="fas fa-hdd"></i> Project Size: {{ projectMetadata.projectSize }}</span>
+      </div>
+    </div>
+    <div class="action-bar">
+      <button class="action-btn" (click)="editProject()"><i class="fas fa-edit"></i> Edit Project</button>
+      <button class="action-btn" (click)="reRunAnalysis()"><i class="fas fa-play"></i> Re-run Analysis</button>
+      <button class="action-btn" (click)="downloadReport()"><i class="fas fa-download"></i> Download Report</button>
+      <button class="action-btn delete-btn" (click)="deleteProject()"><i class="fas fa-trash-alt"></i> Delete Project</button>
+    </div>
+  </header>
+
+  <div class="middle-layout-grid">
+    <div class="left-column">
+      <!-- 2. Middle Section — Project Health Summary -->
+      <section class="health-summary-grid">
+        <div class="health-card" *ngFor="let score of projectHealthScores" [class]="score.colorClass" [attr.data-tooltip]="score.tooltip">
+          <i [class]="score.icon"></i>
+          <div class="score-info">
+            <h3>{{ score.score }}</h3>
+            <p>{{ score.name }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Quick Stats Section -->
+      <section class="quick-stats-section card">
+        <h2>Quick Stats</h2>
+        <div class="stats-grid">
+          <div class="stat-item" *ngFor="let stat of quickStats">
+            <span class="label">{{ stat.label }}:</span>
+            <span class="value">{{ stat.value }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Major Issues Section -->
+      <section class="major-issues-section card">
+        <h2>Major Issues</h2>
+        <p class="last-scan">Last scan: {{ majorIssues.lastScanDate }}</p>
+        <div class="issue-counts">
+          <span class="critical"><i class="fas fa-bug"></i> Critical: {{ majorIssues.criticalIssuesCount }}</span>
+          <span class="high"><i class="fas fa-fire"></i> High: {{ majorIssues.highIssues }}</span>
+          <span class="medium"><i class="fas fa-exclamation-triangle"></i> Medium: {{ majorIssues.mediumIssues }}</span>
+          <span class="low"><i class="fas fa-info-circle"></i> Low: {{ majorIssues.lowIssues }}</span>
+        </div>
+        <h3>Top Critical Problems:</h3>
+        <ul class="critical-problems-list">
+          <li *ngFor="let problem of majorIssues.topCriticalProblems"><i class="fas fa-times-circle"></i> {{ problem }}</li>
+        </ul>
+        <button class="full-analysis-btn" (click)="viewFullAnalysis()">View Full Analysis <i class="fas fa-arrow-right"></i></button>
+      </section>
+    </div>
+
+    <div class="right-column">
+      <!-- 5. File Structure Preview -->
+      <section class="file-structure-preview card">
+        <h2>File Structure Preview</h2>
+        <ul class="file-tree">
+          <ng-template #fileTreeTemplate let-nodes>
+            <li *ngFor="let node of nodes">
+              <div class="node-item" (click)="node.children && toggleFileExplorerNode(node, $event)">
+                <i *ngIf="node.children" class="fas" [class.fa-folder-open]="node.expanded" [class.fa-folder]="!node.expanded"></i>
+                <i *ngIf="!node.children" class="fas fa-file-code"></i>
+                <span>{{ node.name }}</span>
+              </div>
+              <ul *ngIf="node.children && node.expanded">
+                <ng-container *ngTemplateOutlet="fileTreeTemplate; context: { $implicit: node.children }"></ng-container>
+              </ul>
+            </li>
+          </ng-template>
+          <ng-container *ngTemplateOutlet="fileTreeTemplate; context: { $implicit: fileStructurePreview }"></ng-container>
+        </ul>
+        <button class="open-full-explorer-btn" (click)="openFullFileExplorer()">Open Full File Explorer <i class="fas fa-external-link-alt"></i></button>
+      </section>
+
+      <!-- 6. Recent Activity / Recent Jobs -->
+      <section class="recent-activity-section card">
+        <h2>Recent Activity</h2>
+        <div class="activity-timeline">
+          <div class="activity-item" *ngFor="let activity of recentActivities">
+            <i [class]="activity.icon"></i>
+            <div class="activity-details">
+              <p class="description">{{ activity.description }}</p>
+              <span class="time">{{ activity.time }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- 7. Bottom Section — Quick Actions -->
+  <section class="bottom-quick-actions">
+    <button class="large-action-btn" (click)="uploadMoreFiles()">
+      <i class="fas fa-upload"></i>
+      <span>Upload More Files</span>
+    </button>
+    <button class="large-action-btn" (click)="runDeepAnalysis()">
+      <i class="fas fa-flask"></i>
+      <span>Run Deep Analysis</span>
+    </button>
+    <button class="large-action-btn" (click)="openDebugView()">
+      <i class="fas fa-bug"></i>
+      <span>Open Debug View</span>
+    </button>
+  </section>
+</div>

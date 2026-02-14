@@ -1,0 +1,29 @@
+@use 'variables' as v;
+@use 'mixins' as m; // Import mixins for card-base
+
+.analysis-history {
+  @include m.card-base; /* Use card-base mixin */
+  padding: v.$space-m; /* Use M spacing */
+
+  h3 {
+    margin-bottom: v.$space-m; /* Use M spacing */
+    font-size: var(--font-size-section-title); /* Use section title font size */
+    color: var(--text-primary); /* Use primary text color */
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: v.$space-s 0; /* Use S spacing */
+      border-bottom: 1px solid var(--border-neutral); /* Use border-neutral */
+      color: var(--text-primary); /* Ensure text color is primary */
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}

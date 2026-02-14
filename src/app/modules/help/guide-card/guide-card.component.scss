@@ -1,0 +1,50 @@
+@use '../../../../styles/_variables' as v;
+@use '../../../../styles/_mixins' as m;
+
+.guide-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: v.$surface-card;
+  border: 1px solid v.$border-neutral;
+  border-radius: v.$border-radius;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: all 0.2s ease-in-out;
+  box-shadow: v.$shadow-sm;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: v.$shadow-md;
+
+    .card-icon {
+      color: var(--primary-color);
+    }
+
+    .card-title {
+      color: var(--primary-color);
+    }
+  }
+
+  .card-icon {
+    font-size: 3rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    transition: color 0.2s ease-in-out;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--heading-color);
+    transition: color 0.2s ease-in-out;
+  }
+
+  .card-description {
+    color: v.$text-muted;
+    font-size: 1rem;
+  }
+}

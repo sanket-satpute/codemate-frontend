@@ -1,0 +1,229 @@
+<div class="ai-chat-page-container" [class.sidebar-open]="isSidebarOpen" [class.tools-drawer-open]="isToolsDrawerOpen">
+  <!-- 1️⃣ Top Bar (Header) -->
+  <header class="top-bar">
+    <div class="header-left">
+      <button class="icon-btn" (click)="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="page-title-group">
+        <h1>{{ pageTitle }}</h1>
+        <p class="subtitle">{{ pageSubtitle }}</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="action-btn" (click)="clearChat()">
+        <i class="fas fa-eraser"></i> Clear Chat
+      </button>
+      <button class="action-btn" (click)="downloadConversation()">
+        <i class="fas fa-download"></i> Download Conversation
+      </button>
+      <button class="action-btn" (click)="openSettings()">
+        <i class="fas fa-cog"></i> Settings
+      </button>
+      <button class="icon-btn" (click)="toggleToolsDrawer()">
+        <i class="fas fa-tools"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- 2️⃣ Left Sidebar — Project Context Panel -->
+    <aside class="left-sidebar project-context-panel" [class.open]="isSidebarOpen">
+      <div class="panel-header">
+        <h3>Project Context</h3>
+        <button class="icon-btn close-btn" (click)="toggleSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="panel-content">
+        <!-- Project Summary -->
+        <div class="section-card card">
+          <h4>Project Summary</h4>
+          <div class="summary-item">
+            <strong>Tech Stack:</strong>
+            <span class="value">{{ projectSummary.techStack.join(', ') }}</span>
+          </div>
+          <div class="summary-item">
+            <strong>LOC:</strong>
+            <span class="value">{{ projectSummary.linesOfCode }}</span>
+          </div>
+          <div class="summary-item">
+            <strong>Frameworks:</strong>
+            <span class="value">{{ projectSummary.frameworks.join(', ') }}</span>
+          </div>
+          <div class="summary-item">
+            <strong>Languages:</strong>
+            <span class="value">{{ projectSummary.languagesBreakdown.join(', ') }}</span>
+          </div>
+        </div>
+
+        <!-- Recent Issues -->
+        <div class="section-card card">
+          <h4>Recent Issues</h4>
+          <ul class="issue-list">
+            <li *ngFor="let issue of recentIssues" class="issue-item">
+              <span class="severity-dot {{ issue.severity | lowercase }}"></span>
+              <span class="issue-title">{{ issue.title }}</span>
+              <span class="issue-source">{{ issue.source }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- File Explorer (VS Code style) -->
+        <div class="section-card card file-explorer-card">
+          <h4>File Explorer</h4>
+          <div class="file-tree-container">
+            <ng-template #recursiveFileTree let-nodes>
+              <ul>
+                <li *ngFor="let node of nodes">
+                  <div class="node-item" (click)="toggleFileNode(node, $event); selectFileForContext(node)">
+                    <i class="fas"
+                      [class.fa-folder]="node.isFolder && !node.isExpanded"
+                      [class.fa-folder-open]="node.isFolder && node.isExpanded"
+                      [class.fa-file-code]="!node.isFolder"
+                    ></i>
+                    <span>{{ node.name }}</span>
+                  </div>
+                  <div class="node-children" *ngIf="node.children && node.isExpanded">
+                    <ng-container *ngTemplateOutlet="recursiveFileTree; context: { $implicit: node.children }"></ng-container>
+                  </div>
+                </li>
+              </ul>
+            </ng-template>
+            <ng-container *ngTemplateOutlet="recursiveFileTree; context: { $implicit: projectFiles }"></ng-container>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Chat Area Wrapper -->
+    <div class="chat-area-wrapper">
+      <!-- File Context Tabs -->
+      <div class="file-context-tabs" *ngIf="fileContextTabs.length > 0">
+        <div *ngFor="let tab of fileContextTabs" class="context-tab card">
+          <span>{{ tab.name }}</span>
+          <button class="icon-btn" (click)="closeFileContextTab(tab)">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Chat Area -->
+      <div class="main-chat-area">
+        <!-- Pinned Context Card -->
+        <div class="pinned-context-card card">
+          <div class="context-item">
+            <strong>Project:</strong> <span>{{ currentProjectName }}</span>
+          </div>
+          <div class="context-item">
+            <strong>Model:</strong> <span>{{ modelSelected }}</span>
+          </div>
+          <div class="context-item">
+            <strong>Mode:</strong> <span class="mode-badge {{ activeMode | lowercase }}">{{ activeMode }}</span>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-messages-container">
+          <div *ngFor="let message of chatMessages" class="chat-message" [class.user]="message.sender === 'user'" [class.ai]="message.sender === 'ai'">
+            <div class="message-bubble card">
+              <div class="message-content">
+                <span *ngIf="message.isLoading" class="loading-animation"></span>
+                <ng-container *ngIf="!message.isCode">
+                  <p [innerHTML]="message.content | markdownToHtml"></p>
+                </ng-container>
+                <div *ngIf="message.isCode" class="code-block-wrapper">
+                  <pre class="code-block" [class.expanded]="message.isExpanded">
+                    <code [attr.class]="'language-' + message.language">{{ message.content }}</code>
+                  </pre>
+                  <div class="code-actions">
+                    <button class="icon-btn" (click)="copyCode(message.content)">
+                      <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="icon-btn" *ngIf="message.content.length > 200" (click)="toggleMessageExpand(message)">
+                      <i class="fas" [class.fa-expand-alt]="!message.isExpanded" [class.fa-compress-alt]="message.isExpanded"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="message-footer">
+                <span class="timestamp">{{ message.timestamp }}</span>
+                <div class="quick-actions" *ngIf="message.quickActions && !message.isLoading">
+                  <button *ngFor="let action of message.quickActions" class="quick-action-chip" (click)="performQuickAction(action, message.id)">
+                    {{ action }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Diff Viewer -->
+          <div *ngIf="codeDiffViewer" class="code-diff-viewer card">
+            <h3>Changes for {{ codeDiffViewer.fileName }}</h3>
+            <div class="diff-wrapper" [class.side-by-side]="codeDiffViewer.type === 'side-by-side'" [class.unified]="codeDiffViewer.type === 'unified'">
+              <div class="diff-block before">
+                <h4>Before</h4>
+                <pre><code>{{ codeDiffViewer.before }}</code></pre>
+              </div>
+              <div class="diff-block after">
+                <h4>After</h4>
+                <pre><code>{{ codeDiffViewer.after }}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5️⃣ Bottom Input Section -->
+        <div class="bottom-input-section"
+          [class.drag-over]="dragOver"
+          (dragover)="handleDragOver($event)"
+          (dragleave)="handleDragLeave($event)"
+          (drop)="handleDrop($event)">
+          <div class="input-area">
+            <textarea
+              [(ngModel)]="chatInput"
+              placeholder="Ask CodeMate AI..."
+              rows="1"
+              (keydown.enter)="sendMessage()"
+            ></textarea>
+            <div class="input-actions">
+              <button class="icon-btn attach-file-btn">
+                <i class="fas fa-paperclip"></i>
+              </button>
+              <select [(ngModel)]="activeMode" class="mode-selector">
+                <option value="Coding">Coding</option>
+                <option value="Debugging">Debugging</option>
+                <option value="Documentation">Documentation</option>
+                <option value="Explanation">Explanation</option>
+                <option value="Architecture">Architecture</option>
+              </select>
+              <button class="action-btn send-btn primary" (click)="sendMessage()">
+                <i class="fas fa-paper-plane"></i> Send
+              </button>
+            </div>
+          </div>
+          <div class="drag-drop-overlay" *ngIf="dragOver">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Drop files here to add context</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4️⃣ Right Tools Drawer (Optional) -->
+    <aside class="right-tools-drawer" [class.open]="isToolsDrawerOpen">
+      <div class="panel-header">
+        <h3>AI Tools</h3>
+        <button class="icon-btn close-btn" (click)="toggleToolsDrawer()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="panel-content">
+        <button *ngFor="let tool of availableTools" class="tool-btn card" (click)="executeTool(tool.action)">
+          <i class="fas {{ tool.icon }}"></i>
+          <span>{{ tool.label }}</span>
+        </button>
+      </div>
+    </aside>
+  </div>
+</div>

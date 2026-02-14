@@ -1,0 +1,39 @@
+@use 'variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.summary-container {
+  display: flex;
+  gap: v.$space-sm; /* Changed to v.$space-sm (16px) */
+  justify-content: space-between;
+  margin-bottom: v.$space-lg; /* Changed to v.$space-lg (32px) */
+}
+
+.summary-card {
+  @include m.glass-card;
+  padding: v.$space-sm; /* Changed to v.$space-sm (16px) */
+  border-radius: v.$border-radius-lg; /* Using v.$border-radius-lg (18px) */
+  flex-grow: 1;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0, 0.1); /* Changed rgb(0,0,0) to 0,0,0 */
+  }
+
+  .value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+
+abel {
+    font-size: 1rem;
+    color: v.$text-muted;
+  }
+
+  &.critical .value { color: v.$error-color; }
+  &.high .value { color: v.$warning-color; }
+  &.medium .value { color: v.$info-color; }
+  &.low .value { color: v.$success-color; }
+}

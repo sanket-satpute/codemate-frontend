@@ -1,0 +1,13 @@
+<div class="empty-state">
+  <div class="icon-wrapper">
+    <ng-container *ngIf="showSvgIcon; else fontAwesomeIcon">
+      <div [innerHtml]="svgContent" class="custom-svg-icon"></div>
+    </ng-container>
+    <ng-template #fontAwesomeIcon>
+      <i [class]="iconClass"></i>
+    </ng-template>
+  </div>
+  <h3 class="title">{{ title }}</h3>
+  <p class="message">{{ message }}</p>
+  <button *ngIf="showCta" class="cta-button" [routerLink]="ctaLink">{{ ctaText }}</button>
+</div>

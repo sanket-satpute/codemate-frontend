@@ -1,0 +1,26 @@
+@use 'variables' as v;
+
+.chat-message {
+  display: flex;
+  margin-bottom: 1rem;
+
+  &.user {
+    justify-content: flex-end;
+  }
+
+  .message-content {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-base); // Using base border-radius (12px)
+    max-width: 70%;
+  }
+
+  &.user .message-content {
+    background-color: var(--primary-color);
+    color: var(--color-white);
+  }
+
+  &.bot .message-content {
+    background-color: var(--color-icon-gray);
+    color: var(--color-text-primary);
+  }
+}

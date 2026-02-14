@@ -1,0 +1,26 @@
+<div *ngIf="isVisible" class="notifications-panel">
+  <div class="panel-header">
+    <h2>Notifications</h2>
+    <button class="clear-btn" (click)="clearAll()" *ngIf="notifications().length > 0">Clear All</button>
+  </div>
+
+  <app-loader *ngIf="loading()"></app-loader>
+
+  <app-empty-state
+    *ngIf="!loading() && notifications().length === 0"
+    message="You're all caught up. No notifications."
+  ></app-empty-state>
+
+  <div *ngIf="error()" class="error-state">
+    {{ error() }}
+  </div>
+
+  <div class="notifications-list" *ngIf="!loading() && notifications().length > 0">
+    <app-notification-item
+      *ngFor="let notification of notifications()"
+      [notification]="notification"
+      (markAsRead)="markAsRead($event)"
+    >
+    </app-notification-item>
+  </div>
+</div>

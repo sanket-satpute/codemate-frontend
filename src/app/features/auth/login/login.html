@@ -1,0 +1,44 @@
+<!-- path: src/app/features/auth/login/login.html -->
+<div class="login-container">
+  <div class="login-box">
+    <div class="logo">
+      <img src="assets/logo.svg" alt="CodeScope Logo" />
+      <h1>CodeScope</h1>
+    </div>
+    <p class="subtitle">Sign in to your account</p>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="loginRequest.email"
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="loginRequest.password"
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Sign In</span>
+        <span *ngIf="isLoading" class="spinner"></span>
+      </button>
+    </form>
+  </div>
+</div>

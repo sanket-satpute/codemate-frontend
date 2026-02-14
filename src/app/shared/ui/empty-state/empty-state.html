@@ -1,0 +1,8 @@
+<div class="empty-state-container">
+  <div class="empty-state-icon">{{ icon }}</div>
+  <h3 class="empty-state-title">{{ title }}</h3>
+  <p class="empty-state-message">{{ message }}</p>
+  <button *ngIf="buttonText" class="empty-state-button" (click)="onButtonClick()">
+    {{ buttonText }}
+  </button>
+</div>

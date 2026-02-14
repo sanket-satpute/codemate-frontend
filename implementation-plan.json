@@ -1,0 +1,120 @@
+{
+  "sprints": [
+    {
+      "sprint": 1,
+      "tasks": [
+        {
+          "title": "Implement Login Page",
+          "description": "Create the login page with a form to authenticate users using Firebase.",
+          "files_to_create_or_modify": [
+            "src/app/features/auth/login/login.ts",
+            "src/app/features/auth/login/login.html",
+            "src/app/features/auth/login/login.scss"
+          ],
+          "acceptance_criteria": [
+            "User can enter their credentials and log in.",
+            "JWT is stored in local storage upon successful login.",
+            "User is redirected to the dashboard page after login."
+          ],
+          "estimated_hours": 8,
+          "priority": "P0",
+          "risk": "Low"
+        },
+        {
+          "title": "Implement Dashboard Page",
+          "description": "Create the dashboard page to display a list of projects.",
+          "files_to_create_or_modify": [
+            "src/app/pages/dashboard/dashboard.ts",
+            "src/app/pages/dashboard/dashboard.html",
+            "src/app/pages/dashboard/dashboard.scss"
+          ],
+          "acceptance_criteria": [
+            "Dashboard displays a list of projects.",
+            "Each project is displayed as a card with its name, description, and creation date.",
+            "User can click on a project card to navigate to the project detail page."
+          ],
+          "estimated_hours": 8,
+          "priority": "P0",
+      "risk": "Low"
+        }
+      ]
+    },
+    {
+      "sprint": 2,
+      "tasks": [
+        {
+          "title": "Implement Upload Page",
+          "description": "Create the upload page to allow users to upload a single file.",
+          "files_to_create_or_modify": [
+            "src/app/pages/upload/upload.ts",
+            "src/app/pages/upload/upload.html",
+            "src/app/pages/upload/upload.scss"
+          ],
+          "acceptance_criteria": [
+            "User can select a file to upload.",
+            "A progress bar is displayed during the upload.",
+            "A new project is created upon successful upload.",
+            "User is redirected to the project detail page after the upload is complete."
+          ],
+          "estimated_hours": 8,
+          "priority": "P0",
+          "risk": "Medium"
+        },
+        {
+          "title": "Implement Project Detail Page",
+          "description": "Create the project detail page to display the file list, code viewer, and chat area.",
+          "files_to_create_or_modify": [
+            "src/app/pages/project-detail/project-detail.ts",
+            "src/app/pages/project-detail/project-detail.html",
+            "src/app/pages/project-detail/project-detail.scss"
+          ],
+          "acceptance_criteria": [
+            "Project detail page displays the file list.",
+            "User can click on a file to view its content in the code viewer.",
+            "Chat area is displayed and connected to the WebSocket."
+          ],
+          "estimated_hours": 16,
+          "priority": "P0",
+      "risk": "High"
+        }
+      ]
+    },
+    {
+      "sprint": 3,
+      "tasks": [
+        {
+          "title": "Implement Job Status Polling",
+          "description": "Implement a mechanism to poll the job status endpoint and update the UI accordingly.",
+          "files_to_create_or_modify": [
+            "src/app/core/services/job.service.ts"
+          ],
+          "acceptance_criteria": [
+            "Job status is polled every 5 seconds.",
+            "UI is updated with the latest job status.",
+            "Polling stops when the job is completed or fails."
+          ],
+          "estimated_hours": 4,
+          "priority": "P1",
+          "risk": "Medium"
+        },
+        {
+          "title": "Implement Analysis Result View",
+          "description": "Create a component to display the analysis result.",
+          "files_to_create_or_modify": [
+            "src/app/features/projects/analysis-result/analysis-result.ts",
+            "src/app/features/projects/analysis-result/analysis-result.html",
+            "src/app/features/projects/analysis-result/analysis-result.scss"
+          ],
+          "acceptance_criteria": [
+            "Analysis result is displayed in a user-friendly format.",
+            "Findings are highlighted in the code viewer.",
+            "User can download the report."
+          ],
+          "estimated_hours": 8,
+          "priority": "P1",
+          "risk": "Medium"
+        }
+      ]
+    }
+  ]
+}

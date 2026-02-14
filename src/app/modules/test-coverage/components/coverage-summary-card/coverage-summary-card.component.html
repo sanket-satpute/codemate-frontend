@@ -1,0 +1,24 @@
+<div class="summary-card" *ngIf="summary">
+  <div class="coverage-meter">
+    <svg class="meter-svg" viewBox="0 0 100 100">
+      <circle class="meter-background" cx="50" cy="50" r="45"></circle>
+      <circle class="meter-foreground" cx="50" cy="50" r="45"
+              [style.stroke-dasharray]="getStrokeDashArray()"></circle>
+    </svg>
+    <div class="meter-text">{{ summary.coveragePercent | number:'1.0-1' }}%</div>
+  </div>
+  <div class="summary-stats">
+    <div class="stat-item">
+      <span class="stat-label">Total Files</span>
+      <span class="stat-value">{{ summary.totalFiles }}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Covered Files</span>
+      <span class="stat-value covered">{{ summary.coveredFiles }}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Uncovered Files</span>
+      <span class="stat-value uncovered">{{ summary.uncoveredFiles }}</span>
+    </div>
+  </div>
+</div>

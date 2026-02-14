@@ -1,0 +1,49 @@
+<div class="help-center-container">
+  <!-- Header Section -->
+  <header class="header-section">
+    <h1 class="page-title">Help Center</h1>
+    <p class="subtitle">Find answers, explore tutorials, and get help quickly.</p>
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" placeholder="Search help articles or common issues...">
+    </div>
+  </header>
+
+  <!-- Main Categories Grid -->
+  <section class="categories-grid">
+    <div *ngFor="let category of categories" class="category-card">
+      <div class="card-icon">
+        <i [class]="category.icon"></i>
+      </div>
+      <h3 class="card-title">{{ category.title }}</h3>
+      <p class="card-description">{{ category.description }}</p>
+    </div>
+  </section>
+
+  <!-- Popular Articles Section -->
+  <section class="popular-articles-section">
+    <h2 class="section-title">Popular Articles</h2>
+    <ul class="article-list">
+      <li *ngFor="let article of popularArticles" class="article-item">
+        <div class="article-content">
+          <h4 class="article-title">{{ article.title }}</h4>
+          <p class="article-description">{{ article.description }}</p>
+        </div>
+        <i class="fas fa-arrow-right arrow-icon"></i>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Contact & Support Section -->
+  <section class="contact-support-section">
+    <div class="contact-card">
+      <h2 class="section-title">Need More Help?</h2>
+      <p class="subtitle">If you still have questions, reach out to us.</p>
+      <div class="contact-buttons">
+        <button class="primary-button">Contact Support</button>
+        <button class="secondary-button">Report a Bug</button>
+        <button class="secondary-button">Request a Feature</button>
+      </div>
+    </div>
+  </section>
+</div>

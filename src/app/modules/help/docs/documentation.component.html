@@ -1,0 +1,26 @@
+<div class="documentation-container">
+  <aside class="sidebar">
+    <h2>Documentation</h2>
+    <nav>
+      <ul>
+        <li *ngFor="let section of sections">
+          <a 
+            [routerLink]="['/help/docs', section.id]" 
+            [class.active]="selectedSection()?.id === section.id"
+            (click)="selectSection(section.id)">
+            {{ section.title }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <div *ngIf="selectedSection(); else noSectionSelected">
+      <markdown [data]="selectedSection()!.content"></markdown>
+    </div>
+    <ng-template #noSectionSelected>
+      <app-empty-state message="Please select a documentation section from the sidebar."></app-empty-state>
+    </ng-template>
+  </main>
+</div>

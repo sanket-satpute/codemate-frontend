@@ -1,0 +1,23 @@
+@use '../../../styles/_variables' as v;
+@use '../../../styles/_mixins' as m;
+@use '../../../styles/_theme' as t;
+
+:host {
+  display: block;
+  padding: 2rem;
+  background-color: var(--background-color); // Corrected variable
+  min-height: 100vh;
+}
+
+.ai-fix-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.content-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 8rem); // Adjust based on header/footer
+}

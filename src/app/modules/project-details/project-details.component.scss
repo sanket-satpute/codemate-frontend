@@ -1,0 +1,69 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+.project-details-page {
+  padding: v.$space-l; /* Using L for page-level spacing */
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  min-height: calc(100vh - #{v.$header-height} - #{v.$footer-height}); /* Adjust to fit layout */
+}
+
+.project-header {
+  margin-bottom: v.$space-l; /* Use L spacing */
+  border-bottom: 1px solid var(--border-neutral); /* Use border-neutral */
+  padding-bottom: v.$space-m; /* Use M spacing */
+
+  h1 {
+    font-size: var(--font-size-page-title); /* Use page title font size */
+    font-weight: v.$font-weight-bold; /* Use bold weight */
+    color: var(--primary-color);
+    margin-bottom: v.$space-s; /* Use small spacing */
+  }
+
+  .project-meta {
+    display: flex;
+    gap: v.$space-l; /* Use L spacing */
+    font-size: var(--font-size-body-sm); /* Use small body font size */
+    color: var(--text-muted); /* Corrected variable name */
+    margin-bottom: v.$space-m; /* Use M spacing */
+  }
+
+  .header-actions {
+    .btn {
+      @include m.button-primary;
+      background-color: var(--primary-color);
+      color: var(--text-color-inverted); /* Corrected variable name */
+      &:hover {
+        background-color: var(--primary-dark-color); /* Use dark primary color for hover */
+      }
+    }
+
+    .btn-outline {
+      @include m.button-outline-primary; // Use the new outline mixin
+    }
+  }
+}
+
+.job-progress-banner {
+  margin-top: v.$space-m; /* Use M spacing */
+  margin-bottom: v.$space-l; /* Use L spacing */
+  border-left: 5px solid var(--info-color);
+}
+
+.run-analysis-section,
+.files-list-section,
+.analysis-history-section {
+  margin-bottom: v.$space-2xl; /* Use 2XL spacing */
+  background-color: var(--surface-card); /* Use surface-card */
+  padding: v.$space-l; /* Use L spacing */
+  border-radius: v.$border-radius-card; /* Use card border radius */
+  box-shadow: var(--shadow-card); /* Use card shadow */
+  border: 1px solid var(--border-neutral); /* Use border-neutral */
+
+  h2 {
+    font-size: var(--font-size-section-title); /* Use section title font size */
+    font-weight: v.$font-weight-semibold; /* Use semibold weight */
+    margin-bottom: v.$space-m; /* Use M spacing */
+    color: var(--text-primary); /* Use primary text color */
+  }
+}

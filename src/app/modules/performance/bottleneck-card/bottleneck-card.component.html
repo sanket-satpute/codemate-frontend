@@ -1,0 +1,13 @@
+<div class="bottleneck-card">
+  <div class="card-header">
+    <h3 class="bottleneck-type">{{ item.type }}</h3>
+    <span class="severity-badge" [ngClass]="'severity-' + item.severity">
+      {{ item.severity }}
+    </span>
+  </div>
+  <p class="bottleneck-description">{{ item.description }}</p>
+  <p class="bottleneck-filepath">{{ item.filePath }}</p>
+  <div class="bottleneck-suggestion">
+    <strong>Suggestion:</strong> {{ item.suggestion }}
+  </div>
+</div>

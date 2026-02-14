@@ -1,0 +1,73 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+:host {
+  display: block;
+}
+
+.bottleneck-card {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+}
+
+.bottleneck-type {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.severity-badge {
+  padding: 0.25em 0.6em;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+
+  &.severity-low {
+    background-color: var(--color-success);
+  }
+  &.severity-medium {
+    background-color: var(--color-warning);
+  }
+  &.severity-high {
+    background-color: var(--color-danger);
+  }
+  &.severity-critical {
+    background-color: var(--color-critical);
+  }
+}
+
+.bottleneck-description {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: var(--spacing-md);
+}
+
+.bottleneck-filepath {
+  font-family: var(--font-family-mono);
+  font-size: 0.85rem;
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--spacing-md);
+}
+
+.bottleneck-suggestion {
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+
+  strong {
+    font-weight: 600;
+  }
+}

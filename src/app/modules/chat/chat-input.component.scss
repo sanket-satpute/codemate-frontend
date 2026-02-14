@@ -1,0 +1,18 @@
+@use '_variables' as v;
+
+.chat-input {
+  display: flex;
+  padding: 1rem;
+  border-top: 1px solid v.$icon-gray;
+}
+
+input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid v.$border-neutral;
+  border-radius: v.$border-radius;
+}
+
+button {
+  margin-left: 1rem;
+}

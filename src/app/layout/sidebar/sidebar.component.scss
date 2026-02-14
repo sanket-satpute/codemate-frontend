@@ -1,0 +1,312 @@
+@use '../../../styles/_variables' as v;
+@use '../../../styles/_mixins' as m;
+@use '../../../styles/_theme' as t; // Use theme for CSS variables
+@use 'sass:color'; // Import sass:color for adjust function
+
+.sidebar {
+  @include m.glass-card; /* Apply glassmorphism */
+  position: relative;
+  top: var(--space-lg); /* 24px */
+  left: var(--space-lg); /* 24px */
+  height: calc(100vh - (2 * var(--space-lg))); /* Full height minus outer shell padding */
+  width: var(--sidebar-width); /* Expanded width */
+  border: 1px solid transparent; /* Use a transparent border to create space for the gradient */
+  
+  /* Apply gradient to the background, and clip the inner part out */
+  background: 
+    var(--gradient-sidebar-border) border-box,
+    linear-gradient(rgba(v.$bg-secondary, 0.4), rgba(v.$bg-secondary, 0.4)) padding-box; /* Use v.$bg-secondary */
+  background-clip: border-box, padding-box;
+  background-origin: border-box, padding-box;
+  
+  /* The border-radius will now apply perfectly to the gradient in the border-box */
+  box-shadow: var(--shadow-xl); /* Professional shadow system */
+  border-radius: var(--border-radius-lg); /* Rounded radius 18px */
+  padding: var(--space-lg); /* Consistent padding: 24px */
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  @include m.transition-ease(width, var(--transition-duration-slow), var(--ease-in-out-cubic));
+  @include m.transition-ease(background, var(--transition-duration-slow), var(--ease-in-out)); // Combined transitions
+  @include m.transition-ease(box-shadow, var(--transition-duration-slow), var(--ease-in-out)); // Combined transitions
+  z-index: 1000;
+  font-family: var(--font-family-primary); /* Inter for UI */
+  color: var(--color-text-primary); /* High-contrast text hierarchy */
+
+  padding: 24px 12px;
+  border: 0.1px solid rgba(102, 102, 102, 0.586);
+
+  &:hover {
+    box-shadow: var(--shadow-2xl), var(--shadow-neon-indigo); /* Subtle hover glow for the sidebar itself */
+  }
+
+  &.collapsed {
+    width: 88px; /* Improved collapsed state */
+    padding: var(--space-lg) var(--space-md); /* Adjusted padding for collapsed state */
+    
+    .sidebar-header {
+      justify-content: center; /* Center content when collapsed */
+      margin-bottom: var(--space-lg); /* Consistent spacing */
+      .logo {
+        opacity: 0;
+        transform: translateX(-20px);
+        width: 0;
+      }
+      .toggle-btn {
+        transform: rotate(180deg) scale(0.9);
+        &:hover {
+          transform: rotate(180deg) scale(1.1);
+        }
+      }
+    }
+
+    .sidebar-nav ul li a {
+      justify-content: center;
+      i { /* Target the icon directly in collapsed state */
+        margin-right: 0;
+      }
+      .icon {
+        display: flex; /* Make icon a flex container */
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
+        width: 100%; /* Take full width to allow centering */
+      }
+      span {
+        opacity: 0;
+        width: 0;
+        pointer-events: none;
+      }
+      &::before {
+        left: -4px; /* Hide the active indicator */
+      }
+      &:hover {
+        background: rgba(v.$primary-indigo-600, 0.1); /* Lighter hover for collapsed */
+        box-shadow: var(--shadow-neon-cyan); /* Cyan glow for collapsed hover */
+        span {
+          opacity: 1; /* Show text on hover for collapsed state */
+          width: auto;
+          position: absolute;
+          left: 70px; /* Position next to the icon */
+          background: var(--color-bg-secondary);
+          padding: var(--space-xs) var(--space-sm);
+          border-radius: var(--border-radius-sm);
+          box-shadow: var(--shadow-md);
+          z-index: 10;
+        }
+      }
+    }
+  }
+
+  .sidebar-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Space between content when expanded */
+    align-items: center;
+    margin-bottom: var(--space-xl); /* Section gaps: 32px */
+    padding-bottom: var(--space-md); /* Consistent padding */
+    border-bottom: 1px solid rgba(v.$border-neutral, 0.5); /* Softer border, use v.$border-neutral */
+
+    .logo {
+      height: 48px; /* Slightly larger logo */
+      width: auto;
+      @include m.transition-ease(all, v.$transition-duration-slow, v.$ease-in-out-cubic);
+      transform: translateX(20px);
+    }
+
+    .toggle-btn {
+      @include m.flex-center;
+      background: rgba(v.$primary-indigo-600, 0.2); // Use v.$primary-indigo-600
+      border: 1px solid rgba(v.$primary-indigo-600, 0.4); // Use v.$primary-indigo-600
+      border-radius: v.$border-radius-base; /* Rounded radius */
+      color: v.$accent-cyan-400; /* Futuristic toggle button */
+      font-size: v.$font-size-body-lg; // Corrected syntax: removed extra ')'
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      @include m.transition-ease(all, v.$transition-duration-base, v.$ease-in-out);
+      box-shadow: var(--shadow-sm); /* Professional shadow */
+
+      &:hover {
+        background: rgba(v.$primary-indigo-600, 0.4); // Use v.$primary-indigo-600
+        box-shadow: var(--shadow-neon-indigo); /* Hover glow animation */
+        color: v.$white; // Use v.$white
+        transform: scale(1.05);
+      }
+      &:active {
+        transform: scale(0.95);
+        box-shadow: none;
+      }
+    }
+  }
+
+  .sidebar-nav {
+    flex-grow: 1;
+    width: 100%;
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0 0;
+
+      li {
+        margin-bottom: v.$space-sm; /* Vertical rhythm: 8px baseline grid */
+
+        a {
+          display: flex;
+          align-items: center;
+          padding: v.$space-md v.$space-lg; /* Consistent padding for items: 16px vertical, 24px horizontal */
+          color: v.$text-muted; /* High-contrast text hierarchy */
+          font-weight: v.$font-weight-medium;
+          text-decoration: none;
+          border-radius: v.$border-radius-base; /* Rounded radius */
+          position: relative;
+          @include m.transition-ease(all, v.$transition-duration-base, v.$ease-in-out); /* Smooth transitions */
+          overflow: hidden;
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 6px; /* Enhanced active state indicator */
+            background: transparent;
+            border-radius: v.$border-radius-sm;
+            @include m.transition-ease(all, v.$transition-duration-base, v.$ease-in-out);
+            transform: translateX(-100%);
+          }
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle at center, rgba(v.$accent-cyan-400, 0.2) 0%, transparent 70%); /* Inner glow effect */
+            @include m.transition-ease((width, height, top, left), v.$transition-duration-slow, v.$ease-out-back); // Use v.$ease-out-back
+            transform: translate(-50%, -50%);
+            z-index: 0;
+          }
+
+          &:hover {
+            color: v.$white; /* High-contrast text */
+            background: rgba(v.$primary-indigo-600, 0.1);
+            box-shadow: var(--shadow-neon-cyan); /* Hover glow animation */
+            transform: translateY(-2px); /* Subtle micro-interaction */
+
+            &::before {
+              transform: translateX(0);
+              background: v.$gradient-nav-item-active-border; /* Gradient accent for hover */
+            }
+
+            &::after {
+              width: 150%;
+              height: 150%;
+              top: -25%;
+              left: -25%;
+            }
+          }
+
+          &.active {
+            color: v.$white;
+            background: v.$gradient-nav-item-hover; /* Soft gradient accent for active */
+            box-shadow: var(--shadow-neon-indigo); /* Stronger glow for active state */
+            font-weight: v.$font-weight-semibold; /* Stronger visual hierarchy */
+
+            &::before {
+              transform: translateX(0);
+              background: v.$gradient-nav-item-active-border; /* Enhanced active state indicator */
+            }
+          }
+
+          i {
+            font-size: v.$font-size-body-lg;
+            margin-right: v.$space-md; /* Spacing: 16px */
+            width: 24px; /* Fixed width for icons */
+            text-align: center;
+            color: var(--color-icon-gray);
+            @include m.transition-ease((color, margin-right), v.$transition-duration-base, v.$ease-in-out);
+            &.fas {
+              font-family: 'Font Awesome 5 Free';
+              font-weight: 900;
+            }
+          }
+
+          span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 1;
+            @include m.transition-ease((opacity, width), v.$transition-duration-base, v.$ease-in-out);
+          }
+        }
+
+        &.has-submenu {
+          & > a {
+            justify-content: space-between;
+          }
+          .submenu-icon {
+            @include m.transition-ease(transform, v.$transition-duration-base, v.$ease-in-out);
+          }
+          &.active .submenu-icon {
+            transform: rotate(90deg);
+          }
+          .submenu {
+            list-style: none;
+            padding: 0;
+            margin: v.$space-xs 0 v.$space-sm v.$space-lg; /* Indent sub-options */
+            overflow: hidden;
+            max-height: 0; /* Initial collapsed state for transition */
+            @include m.transition-ease(max-height, v.$transition-duration-slow, v.$ease-in-out-cubic);
+
+            li a {
+              padding: v.$space-sm v.$space-lg; /* Smaller padding for sub-items */
+              font-size: v.$font-size-body-sm;
+              &::before {
+                width: 4px; /* Smaller active indicator for sub-items */
+              }
+            }
+          }
+          &.expanded .submenu {
+            max-height: 500px; /* Adjust as needed, a large enough value to show all sub-items */
+          }
+          
+          .submenu-icon.rotated {
+            transform: rotate(90deg);
+          }
+        }
+      }
+    }
+  }
+
+  &.collapsed {
+    .sidebar-nav ul li.has-submenu {
+      .submenu-toggle {
+        .submenu-icon {
+          display: none; /* Hide arrow in collapsed state */
+        }
+      }
+      .submenu {
+        margin-left: 0; /* Remove indent when collapsed */
+        position: absolute;
+        left: 100%; /* Position submenu next to the collapsed parent */
+        top: 0;
+        background: v.$bg-secondary; /* Background for the pop-out submenu, use v.$bg-secondary */
+        border-radius: v.$border-radius-base;
+        box-shadow: var(--shadow-xl);
+        min-width: 200px;
+        z-index: 10;
+        padding: v.$space-sm;
+        max-height: none !important; /* Always show submenu when hovered in collapsed state */
+
+        li a {
+          span {
+            opacity: 1;
+            width: auto;
+            position: static;
+          }
+        }
+      }
+    }
+  }
+}

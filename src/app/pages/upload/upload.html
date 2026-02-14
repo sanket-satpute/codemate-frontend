@@ -1,0 +1,84 @@
+<!-- path: src/app/pages/upload/upload.html -->
+<div class="upload-container">
+  <div class="upload-box">
+    <h2>Upload Project</h2>
+    <p class="subtitle">Initiate deep code analysis by uploading your project files.</p>
+
+    <div
+      class="drop-area"
+      (drop)="onFileDropped($event)"
+      (dragover)="onDragOver($event)"
+      (click)="fileInput.click()"
+    >
+      <input
+        type="file"
+        #fileInput
+        style="display: none"
+        (change)="onFileSelected($event)"
+        accept=".js,.ts,.java,.py,.cs,.go,.rb,.php,.cpp,.c,.html,.css,.scss,.json,.xml,.yaml,.yml,.md"
+      />
+      <p *ngIf="!selectedFile">
+        <i class="fas fa-folder-open"></i>
+        Drag & drop your project here, or click to browse files.
+      </p>
+      <div *ngIf="selectedFile" class="selected-file">
+        <i class="fas fa-file-code"></i>
+        <span>{{ selectedFile.name }}</span>
+        <button class="btn-clear" (click)="selectedFile = null; $event.stopPropagation()" title="Remove selected file">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="projectName">Project Name</label>
+      <input
+        id="projectName"
+        type="text"
+        [(ngModel)]="projectName"
+        name="projectName"
+        placeholder="e.g., My Awesome Project"
+      />
+      <small class="helper-text">Give your analysis a clear identifier.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="projectDescription">Project Description</label>
+      <textarea
+        id="projectDescription"
+        rows="3"
+        [(ngModel)]="projectDescription"
+        name="projectDescription"
+        placeholder="Summarize your project's purpose or key features."
+      ></textarea>
+      <small class="helper-text">Provide context for a more insightful analysis.</small>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <app-job-progress-card
+      *ngIf="jobStatus()"
+      [status]="jobStatus()!"
+    ></app-job-progress-card>
+
+    <div class="upload-actions">
+      <button
+        class="btn-primary"
+        (click)="uploadFile()"
+        [disabled]="!selectedFile || isUploading"
+      >
+        <span *ngIf="!isUploading">Analyze Project</span>
+        <span *ngIf="isUploading" class="spinner"></span>
+      </button>
+      <button
+        class="btn-secondary"
+        (click)="retryUpload()"
+        [disabled]="isUploading || (!errorMessage && !uploadSuccess)"
+      >
+        Clear Selection
+      </button>
+    </div>
+  </div>
+</div>

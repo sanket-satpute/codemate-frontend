@@ -1,0 +1,46 @@
+.file-viewer-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+
+.toolbar button {
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.toolbar button:hover {
+  background-color: #e0e0e0;
+}
+
+.code-container {
+  flex-grow: 1;
+  overflow: auto;
+  background-color: #2e2e2e; /* Dark background for code */
+  color: #f0f0f0; /* Light text for code */
+  padding: 1rem;
+  border-radius: 4px;
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 0.9rem;
+}
+
+.code-container.word-wrap pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.code-container pre {
+  margin: 0;
+}

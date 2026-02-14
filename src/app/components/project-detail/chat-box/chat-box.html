@@ -1,0 +1,45 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <h3 class="title">AI Chat</h3>
+    <p class="subtitle">Get instant AI assistance for your project.</p>
+  </div>
+  <div class="messages" #messagesContainer>
+    <div *ngIf="messages.length === 0 && !loading" class="empty-state">
+      <app-empty-state
+        icon="fas fa-comments"
+        title="Start a conversation"
+        message="Ask about your code, get explanations, or request fixes."
+      ></app-empty-state>
+    </div>
+    <div *ngFor="let msg of messages" class="bubble-container" [ngClass]="{ 'user-bubble-container': msg.sender === 'user', 'ai-bubble-container': msg.sender !== 'user' }">
+      <div class="bubble" [ngClass]="{ 'user-bubble': msg.sender === 'user', 'ai-bubble': msg.sender !== 'user' }">
+        <p class="message-content">{{ msg.message }}</p>
+        <span class="timestamp">{{ msg.timestamp | date:'shortTime' }}</span>
+      </div>
+    </div>
+    <div *ngIf="loading" class="bubble-container ai-bubble-container">
+      <div class="bubble ai-bubble">
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="info-message">AI is typing...</p>
+      </div>
+    </div>
+  </div>
+  <div class="input-bar">
+    <textarea
+      [(ngModel)]="input"
+      (keydown.enter)="sendMessage(); $event.preventDefault()"
+      placeholder="Ask AI about this project..."
+      [disabled]="loading"
+    ></textarea>
+    <button (click)="sendMessage()" [disabled]="loading || !input.trim()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="send-icon">
+        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+      </svg>
+      <span>Send</span>
+    </button>
+  </div>
+</div>

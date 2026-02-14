@@ -1,0 +1,24 @@
+<a [routerLink]="['/projects', project.id]" class="project-card">
+  <div class="card-header">
+    <h3 class="project-name">{{ project.name }}</h3>
+    <span class="status-badge" [class.status-completed]="project.status === 'COMPLETED'">
+      {{ project.status || 'N/A' }}
+    </span>
+  </div>
+  <p class="project-description">{{ project.description || 'No description provided.' }}</p>
+  <div *ngIf="project.status === 'RUNNING'" class="progress-bar-container">
+    <div class="progress-bar" [style.width.%]="project.progress || 0"></div>
+    <span class="progress-text">{{ project.progress || 0 }}% Complete</span>
+  </div>
+  <div class="card-footer">
+    <span class="creation-date">Created: {{ formattedDate }}</span>
+    <div class="actions">
+      <button class="btn-icon" (click)="editProject(project.id)">
+        <i class="fas fa-edit"></i>
+      </button>
+      <button class="btn-icon" (click)="deleteProject(project.id)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+</a>

@@ -1,0 +1,50 @@
+@use 'sass:color';
+@use './_variables' as v;
+@use './_theme' as t;
+
+/*
+  Global Micro-interaction and Animation Language
+
+  This file defines and documents the core animation philosophy and reusable animation utilities
+  for a consistent, premium, and performant user experience across the application.
+
+  Philosophy:
+  - Purposeful & Subtle: Animations should enhance user feedback and delight without being distracting.
+  - Performance-focused: Prioritize `transform` and `opacity` for smooth animations.
+  - Thematic Consistency: Incorporate "neon" glows, "glassmorphism" transitions, and brand colors.
+  - Hierarchical: Reserve more dramatic effects for primary interactions; use subtle effects for secondary ones.
+  - Unified Timing/Easing: Leverage CSS custom properties (from _variables.scss) for consistent durations and easing.
+*/
+
+/* --- Keyframe Animations --- */
+
+// Pulse animation for status indicators, badges, etc.
+@keyframes pulse {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.7; }
+}
+
+/* --- Common Mixins --- */
+
+// Mixin for applying a standard "lift and subtle glow" hover effect
+@mixin hover-lift-glow($lift: -3px, $shadow: var(--shadow-lg), $glow: var(--shadow-neon-cyan)) {
+  transition: transform var(--transition-duration-fast) var(--ease-in-out),
+              box-shadow var(--transition-duration-fast) var(--ease-in-out);
+
+  &:hover {
+    transform: translateY($lift);
+    box-shadow: $shadow, $glow;
+  }
+}
+
+// Mixin for applying a focus glow effect to interactive elements
+@mixin focus-glow($color-rgb-channels: var(--accent-color-rgb-channels)) {
+  transition: box-shadow var(--transition-duration-fast) var(--ease-in-out);
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($color-rgb-channels, 0.4), var(--shadow-neon-cyan);
+  }
+}
+
+// Add other generic animation mixins here as common patterns emerge

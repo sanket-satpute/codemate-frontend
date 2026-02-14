@@ -1,0 +1,34 @@
+<div class="graph-container">
+  <svg class="dependency-graph">
+    <ng-container *ngFor="let edge of edges">
+      <ng-container *ngIf="getNodeById(edge.from) as fromNode">
+        <ng-container *ngIf="getNodeById(edge.to) as toNode">
+          <line
+            [attr.x1]="fromNode.x"
+            [attr.y1]="fromNode.y"
+            [attr.x2]="toNode.x"
+            [attr.y2]="toNode.y"
+            class="dependency-edge"
+          ></line>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngFor="let node of nodesWithCoordinates()">
+      <circle
+        [attr.cx]="node.x"
+        [attr.cy]="node.y"
+        r="15"
+        class="dependency-node"
+        [attr.fill]="getNodeColor(node.riskScore)"
+        (click)="onNodeClick(node.id)"
+      ></circle>
+      <text
+        [attr.x]="node.x"
+        [attr.y]="node.y + 25"
+        text-anchor="middle"
+        class="node-label"
+      >{{ node.name }}</text>
+    </ng-container>
+  </svg>
+</div>

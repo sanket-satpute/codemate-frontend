@@ -1,0 +1,25 @@
+<div class="impact-analysis-container">
+  <div class="impact-list-header">
+    <h3 class="section-title">Impact Analysis</h3>
+  </div>
+  <div class="impact-list-body">
+    <div *ngIf="impactList.length > 0; else emptyState">
+      <div *ngFor="let item of impactList" class="impact-card">
+        <div class="card-header">
+          <span class="file-name">{{ item.file }}</span>
+          <span class="severity-badge" [ngClass]="'severity-' + item.severity">
+            {{ item.severity }}
+          </span>
+        </div>
+        <p class="impact-reason">{{ item.reason }}</p>
+      </div>
+    </div>
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <img src="assets/images/no-impact.svg" alt="No Impact" class="empty-state-image">
+        <p class="empty-state-message">No impact analysis data available.</p>
+        <p class="empty-state-details">Select a node in the graph to see its potential impact.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+@use 'variables' as v;
+@use 'mixins' as m; // Import mixins for card-base
+
+.projects-dashboard {
+  padding: v.$space-2xl; /* Use 2XL for page padding */
+  background-color: var(--background-color); /* Add background color for consistency */
+  color: var(--text-primary); /* Add text color for consistency */
+  min-height: calc(100vh - #{v.$header-height} - #{v.$footer-height}); /* Ensure it fills height */
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: v.$space-2xl; /* Use 2XL spacing */
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: v.$space-l; /* Use L spacing for gap */
+  margin-bottom: v.$space-2xl; /* Use 2XL spacing */
+}
+
+.summary-card {
+  @include m.card-base; /* Use card-base mixin for consistent styling */
+  text-align: center;
+  padding: v.$space-l; /* Adjust padding for summary card */
+  border-radius: v.$border-radius-card; /* Ensure card border radius */
+}
+
+.recent-projects {
+  @include m.card-base; /* Use card-base mixin */
+  padding: v.$space-l; /* Adjust padding for recent projects card */
+  border-radius: v.$border-radius-card; /* Ensure card border radius */
+}

@@ -1,0 +1,67 @@
+{
+  "services": {
+    "Api": {
+      "dependencies": "HttpClient"
+    },
+    "AuthGuard": {
+      "dependencies": "AuthService"
+    },
+    "AuthService": {
+      "dependencies": "HttpClient"
+    },
+    "JobService": {
+      "dependencies": "HttpClient"
+    },
+    "DashboardService": {
+      "dependencies": "HttpClient"
+    },
+    "AuthInterceptor": {
+      "dependencies": "AuthService"
+    },
+    "ProjectService": {
+      "dependencies": "HttpClient"
+    },
+    "ChatService": {
+      "dependencies": "HttpClient"
+    },
+    "AnalysisService": {
+      "dependencies": "HttpClient"
+    },
+    "UploadService": {
+      "dependencies": "HttpClient"
+    },
+    "Upload": {
+      "dependencies": "HttpClient"
+    },
+    "ReportService": {
+      "dependencies": "HttpClient"
+    }
+  },
+  "components": {
+    "ChatBox": {
+      "dependencies": "DatePipe"
+    },
+    "ProjectDetailComponent": {
+      "dependencies": "ActivatedRoute"
+    },
+    "Home": {
+      "dependencies": "Api"
+    },
+    "ChatRoomComponent": {
+      "dependencies": "ChatService"
+    },
+    "DashboardComponent": {
+      "dependencies": "DashboardService"
+    },
+    "LoginComponent": {
+      "dependencies": "AuthService"
+    },
+    "UploadComponent": {
+      "dependencies": "UploadService"
+    },
+    "ProjectListComponent": {
+      "dependencies": "ProjectService"
+    }
+  },
+  "routes": {}
+}

@@ -1,0 +1,67 @@
+<!-- path: src/app/pages/project-detail/project-detail.html -->
+<div class="project-detail-container">
+  <div *ngIf="isLoading" class="loader-overlay">
+    <app-empty-state
+      icon="fas fa-spinner"
+      title="Loading Project"
+      message="Please wait while we fetch project details."
+    ></app-empty-state>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <app-empty-state
+      icon="fas fa-exclamation-triangle"
+      title="Error Loading Project"
+      [message]="errorMessage"
+      actionText="Go to Dashboard"
+      routerLink="/dashboard"
+    ></app-empty-state>
+  </div>
+
+  <ng-container *ngIf="projectDetails$ | async as project; else noProject">
+    <div class="project-header">
+      <h1>{{ project.name }}</h1>
+      <p class="subtitle">Comprehensive overview and analysis of your codebase.</p>
+      <div class="project-meta">
+        <span>Created: {{ project.createdAt | date }}</span>
+        <span>Status: {{ project.status || 'N/A' }}</span>
+      </div>
+      <div class="project-actions">
+        <button class="btn-secondary" title="Modify project name or description">Edit Project</button>
+        <button class="btn-danger" title="Permanently remove this project">Delete Project</button>
+      </div>
+    </div>
+
+    <div class="project-content">
+      <div class="file-explorer-panel">
+        <app-file-explorer
+          [files]="project.files"
+          [selectedFile]="selectedFile"
+          (fileSelected)="onFileSelected($event)"
+          title="Select to view file content"
+        ></app-file-explorer>
+      </div>
+
+      <div class="main-content-panel">
+        <div class="code-viewer-area">
+          <app-code-viewer [fileContent]="selectedFile?.filePath || ''" title="View and interact with your code"></app-code-viewer>
+        </div>
+        <div class="chat-area">
+          <app-chat-box [projectId]="project.id" title="Engage with AI for code assistance"></app-chat-box>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #noProject>
+    <div *ngIf="!isLoading && !errorMessage" class="empty-state">
+      <app-empty-state
+        icon="fas fa-question-circle"
+        title="Project Not Found"
+        message="The requested project could not be found. It might have been deleted or never existed."
+        actionText="Go to Dashboard"
+        routerLink="/dashboard"
+      ></app-empty-state>
+    </div>
+  </ng-template>
+</div>

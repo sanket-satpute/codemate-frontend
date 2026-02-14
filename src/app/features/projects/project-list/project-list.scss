@@ -1,0 +1,81 @@
+@use 'variables' as v;
+
+.project-list-container {
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  input[type="text"],
+  select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-neutral);
+    border-radius: var(--border-radius-base);
+    font-size: 0.9rem;
+  }
+}
+
+.project-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-surface-card);
+  box-shadow: var(--shadow-sm);
+
+  thead {
+    background-color: var(--color-icon-gray);
+  }
+
+  th,
+  td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-neutral);
+  }
+
+  th {
+    font-weight: 600;
+  }
+
+  tbody tr {
+    &:hover {
+      background-color: rgba(var(--primary-color), 0.05);
+    }
+  }
+}
+
+.actions {
+  button {
+    margin-right: 0.5rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 1.5rem;
+
+  span {
+    margin: 0 1rem;
+    font-size: 0.9rem;
+  }
+}

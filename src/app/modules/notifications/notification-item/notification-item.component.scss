@@ -1,0 +1,76 @@
+@use '../../../../styles/variables' as v;
+
+.notification-item {
+  display: flex;
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+
+  background: rgba(v.$bg-secondary, 0.35);
+  backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(v.$accent-cyan-400, 0.12);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+
+  transition: all 0.25s ease;
+  animation: fadeSlide 0.3s ease-out;
+
+  &:hover {
+    border-color: rgba(v.$accent-cyan-400, 0.4);
+    box-shadow:
+      0 6px 28px rgba(0, 0, 0, 0.4),
+      0 0 12px rgba(v.$accent-cyan-400, 0.35);
+    transform: translateY(-2px);
+  }
+
+  &.unread {
+    border-left: 4px solid v.$accent-cyan-400;
+    background: rgba(v.$accent-cyan-400, 0.12);
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: v.$text-primary;
+    letter-spacing: -0.2px;
+  }
+
+  .message {
+    margin: 0;
+    color: v.$text-muted;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .timestamp {
+    font-size: 11px;
+    color: v.$text-muted;
+    letter-spacing: 0.3px;
+  }
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

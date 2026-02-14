@@ -1,0 +1,13 @@
+<div class="settings-container">
+  <h2>User Settings</h2>
+
+  <app-loader *ngIf="loading()"></app-loader>
+  <app-empty-state *ngIf="!loading() && !currentUser()" message="No user data found."></app-empty-state>
+
+  <div *ngIf="!loading() && currentUser()" class="settings-content">
+    <app-profile-form [currentUser]="currentUser()!"></app-profile-form>
+    <app-change-password></app-change-password>
+  </div>
+
+  <div *ngIf="error()" class="error-state">{{ error() }}</div>
+</div>

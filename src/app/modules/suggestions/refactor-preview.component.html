@@ -1,0 +1,30 @@
+<div class="refactor-preview-container">
+  <div *ngIf="loading; else previewContent" class="loader-container">
+    <app-loader text="Generating refactor preview..."></app-loader>
+  </div>
+
+  <ng-template #previewContent>
+    <div *ngIf="preview; else noPreview" class="preview-content">
+      <div class="code-diff-container">
+        <div class="code-pane">
+          <h4 class="pane-title">Original Code</h4>
+          <pre class="code-block"><code>{{ preview.originalCode }}</code></pre>
+        </div>
+        <div class="code-pane">
+          <h4 class="pane-title">Refactored Code</h4>
+          <pre class="code-block"><code>{{ preview.refactoredCode }}</code></pre>
+        </div>
+      </div>
+      <div class="explanation-container">
+        <h4 class="explanation-title">Explanation</h4>
+        <p class="explanation-text">{{ preview.explanation }}</p>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #noPreview>
+    <div class="empty-state">
+      <p>Select a suggestion to see the refactor preview.</p>
+    </div>
+  </ng-template>
+</div>

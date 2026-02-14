@@ -1,0 +1,669 @@
+/* Global Variables and Mixins - Assuming these are defined in a global styles file like styles/_variables.scss or imported */
+
+@use 'sass:color';
+@use '../../../styles/global.scss' as global;
+@use '../../../styles/_variables.scss' as variables;
+@use '../../../styles/_mixins.scss' as mixins;
+@use '../../../styles/_animations.scss' as animations;
+
+// Directly use variables with their namespace
+$color-primary: variables.$primary-indigo-600;
+$color-accent: variables.$accent-cyan-400;
+$bg-main: variables.$bg-primary-navy-black;
+$bg-surface: variables.$bg-secondary; // Use bg-secondary for cards & panels as per requirements
+$text-light: variables.$text-primary;
+$text-medium: variables.$text-muted;
+$border-grey: variables.$border-neutral; // For general UI borders
+
+.templates-starters-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: $bg-main;
+  font-family: variables.$font-family-primary;
+  color: $text-light;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* 1. Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: variables.$space-lg variables.$space-xl;
+  background-color: $bg-main;
+  border-bottom: 1px solid $border-grey;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .header-content {
+    h1 {
+      font-size: variables.$font-size-page-title;
+      font-weight: variables.$font-weight-bold;
+      color: $text-light;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    p {
+      font-size: variables.$font-size-body-lg;
+      color: $text-medium;
+      margin-top: variables.$space-sm;
+      line-height: 1.4;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: variables.$space-md;
+    align-items: center;
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background-color: $bg-surface;
+      border: 1px solid $border-grey;
+      border-radius: variables.$border-radius-base;
+      padding: variables.$space-sm variables.$space-md;
+      transition: all variables.$transition-duration-fast ease-in-out;
+
+      .search-icon {
+        color: $text-medium;
+        margin-right: variables.$space-sm;
+        width: 20px;
+        height: 20px;
+      }
+
+      input {
+        flex-grow: 1;
+        background: none;
+        border: none;
+        color: $text-light;
+        font-family: variables.$font-family-primary;
+        font-size: variables.$font-size-body-md;
+        outline: none;
+
+        &::placeholder {
+          color: $text-medium;
+        }
+      }
+
+      &:focus-within {
+        border-color: $color-accent;
+        box-shadow: 0 0 8px rgba($color-accent, 0.4);
+      }
+    }
+  }
+}
+
+.main-content-wrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: variables.$space-xl; /* Padding for the main content area */
+  display: flex;
+  flex-direction: column;
+  gap: variables.$space-xl; /* Spacing between main sections */
+}
+
+/* 2. Category Filters (Horizontal Bar) */
+.category-filters {
+  padding-bottom: variables.$space-lg;
+  border-bottom: 1px solid $border-grey;
+  margin-bottom: variables.$space-xl;
+
+  .filter-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap; /* Allow filters to wrap */
+    gap: variables.$space-sm;
+    justify-content: center; /* Center align filters */
+
+    .filter-item {
+      .filter-button {
+        background-color: variables.$dark-blue-gray; // Grey #334155 is not a direct variable name
+        border: 1px solid $border-grey;
+        border-radius: variables.$border-radius-pill;
+        padding: 8px 16px;
+        font-family: variables.$font-family-primary;
+        font-size: variables.$font-size-body-sm;
+        color: $text-medium;
+        cursor: pointer;
+        transition: all variables.$transition-duration-fast ease-in-out;
+        white-space: nowrap;
+
+        &:hover {
+          border-color: $color-accent;
+          color: $color-accent;
+          box-shadow: 0 0 5px rgba($color-accent, 0.3);
+        }
+
+        &.selected {
+          background-color: $color-primary;
+          border-color: $color-primary;
+          color: $text-light;
+          box-shadow: 0 0 8px rgba($color-accent, 0.5);
+        }
+      }
+    }
+  }
+}
+
+/* 4. Featured Templates (Optional Section at Top) */
+.featured-templates-section {
+  margin-bottom: variables.$space-xl;
+
+  .section-title {
+    font-size: variables.$font-size-section-title;
+    font-weight: variables.$font-weight-bold;
+    color: $text-light;
+    margin-bottom: variables.$space-lg;
+  }
+
+  .featured-templates-list {
+    display: flex;
+    overflow-x: auto; /* Horizontal scroll */
+    gap: variables.$space-lg;
+    padding-bottom: variables.$space-sm; /* For scrollbar visibility */
+
+    /* Custom Scrollbar */
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background: $bg-main;
+      border-radius: variables.$border-radius-pill;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: $color-primary;
+      border-radius: variables.$border-radius-pill;
+      &:hover {
+        background: rgba(var(--primary-600), 0.7); /* Use rgba directly with CSS variable */
+      }
+    }
+
+    .featured-card {
+      flex-shrink: 0; /* Prevent cards from shrinking */
+      width: 320px; /* Fixed width for featured cards */
+      background-color: $bg-surface;
+      border-radius: variables.$border-radius-lg;
+      padding: variables.$space-lg;
+      box-shadow: variables.$shadow-md;
+      transition: all variables.$transition-duration-base ease-in-out;
+      border: 1px solid $border-grey;
+      position: relative;
+      overflow: hidden;
+
+      &:hover {
+        transform: translateY(-5px) scale(1.02);
+        border-color: $color-accent;
+        box-shadow: 0 8px 25px rgba($color-accent, 0.4), inset 0 0 8px rgba($color-accent, 0.2);
+
+        .card-glow {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+
+      .card-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, rgba($color-accent, 0.3) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0.1);
+        opacity: 0;
+        transition: all 0.5s ease-out;
+        z-index: 0;
+      }
+
+      .card-title {
+        font-size: variables.$font-size-section-title;
+        font-weight: variables.$font-weight-bold;
+        color: $text-light;
+        margin: 0 0 variables.$space-sm 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: variables.$space-xs;
+        margin-bottom: variables.$space-md;
+        position: relative;
+        z-index: 1;
+
+        .tag {
+          background-color: $border-grey;
+          color: $text-medium;
+          font-size: variables.$font-size-body-xs;
+          padding: 4px 8px;
+          border-radius: variables.$border-radius-xs;
+          white-space: nowrap;
+        }
+      }
+
+      .card-actions {
+        display: flex;
+        gap: variables.$space-sm;
+        margin-top: auto; /* Push actions to bottom */
+        width: 100%;
+        position: relative;
+        z-index: 1;
+
+        .use-button, .preview-button {
+          flex-grow: 1;
+          padding: 10px 15px;
+          border-radius: variables.$border-radius-sm;
+          font-size: variables.$font-size-body-sm;
+          font-weight: variables.$font-weight-medium;
+          cursor: pointer;
+          transition: all variables.$transition-duration-fast ease-in-out;
+        }
+
+        .use-button {
+          background-color: $color-primary;
+          color: $text-light;
+          border: none;
+
+          &:hover {
+            background-color: variables.$primary-indigo-700; /* Use predefined darker shade */
+            box-shadow: 0 0 8px rgba($color-accent, 0.4);
+          }
+        }
+
+        .preview-button {
+          background-color: transparent;
+          color: $color-accent;
+          border: 1px solid $color-accent;
+
+          &:hover {
+            background-color: $color-accent;
+            color: $bg-main;
+            box-shadow: 0 0 8px rgba($color-accent, 0.6);
+          }
+        }
+      }
+    }
+  }
+}
+
+/* 3. Template Grid (Main Content) */
+.template-grid-section {
+  flex-grow: 1; /* Take remaining space */
+  display: flex;
+  flex-direction: column;
+
+  .template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: variables.$space-lg;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .template-card {
+    background-color: $bg-surface;
+    border-radius: variables.$border-radius-lg;
+    padding: variables.$space-lg;
+    box-shadow: variables.$shadow-md;
+    transition: all variables.$transition-duration-base ease-in-out;
+    border: 1px solid $border-grey;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      transform: translateY(-5px) scale(1.02);
+      border-color: $color-accent;
+      box-shadow: 0 8px 25px rgba($color-accent, 0.4), inset 0 0 8px rgba($color-accent, 0.2);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      background-color: $color-primary;
+      border-radius: variables.$border-radius-base;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: variables.$space-md;
+      box-shadow: 0 4px 10px rgba($color-primary, 0.3);
+
+      svg {
+        color: $text-light;
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .card-title {
+      font-size: variables.$font-size-section-title;
+      font-weight: variables.$font-weight-bold;
+      color: $text-light;
+      margin: 0 0 variables.$space-sm 0;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: variables.$space-xs;
+      margin-bottom: variables.$space-md;
+
+      .tag {
+        background-color: $border-grey;
+        color: $text-medium;
+        font-size: variables.$font-size-body-xs;
+        padding: variables.$space-xs variables.$space-sm;
+        border-radius: variables.$border-radius-xs;
+        white-space: nowrap;
+      }
+    }
+
+    .card-description {
+      font-size: variables.$font-size-body-sm;
+      color: $text-medium;
+      line-height: 1.5;
+      flex-grow: 1; /* Pushes meta and actions to bottom */
+      margin-bottom: variables.$space-md;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* Limit to 2 lines */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: auto; /* Push to bottom */
+      margin-bottom: variables.$space-md;
+      padding-top: variables.$space-md;
+      border-top: 1px solid $border-grey;
+
+      .star-rating, .download-count {
+        display: flex;
+        align-items: center;
+        gap: variables.$space-xs;
+        color: $text-medium;
+        font-size: variables.$font-size-body-sm;
+
+        svg {
+          color: variables.$accent-yellow-400; /* Star color */
+          width: 16px;
+          height: 16px;
+        }
+        &.download-count svg {
+          color: $text-medium; /* Download icon color */
+        }
+      }
+    }
+
+    .card-actions {
+      display: flex;
+      gap: variables.$space-sm;
+      width: 100%;
+
+      .use-button, .preview-button {
+        flex-grow: 1;
+        padding: 10px 15px;
+        border-radius: variables.$border-radius-sm;
+        font-size: variables.$font-size-body-sm;
+        font-weight: variables.$font-weight-medium;
+        cursor: pointer;
+        transition: all variables.$transition-duration-fast ease-in-out;
+      }
+
+      .use-button {
+        background-color: $color-primary;
+        color: $text-light;
+        border: none;
+
+      &:hover {
+        background-color: variables.$primary-indigo-700; /* Use predefined darker shade */
+        box-shadow: 0 0 8px rgba($color-accent, 0.4);
+      }
+      }
+
+      .preview-button {
+        background-color: transparent;
+        color: $color-accent;
+        border: 1px solid $color-accent;
+
+        &:hover {
+          background-color: $color-accent;
+          color: $bg-main;
+          box-shadow: 0 0 8px rgba($color-accent, 0.6);
+        }
+      }
+    }
+  }
+
+  /* 6. Empty State (When No Templates Found) */
+  .empty-state {
+    background-color: $bg-surface;
+    border-radius: variables.$border-radius-lg;
+    padding: variables.$space-3xl variables.$space-xl;
+    text-align: center;
+    margin: variables.$space-xl auto;
+    max-width: 700px;
+    box-shadow: variables.$shadow-2xl;
+    border: 1px solid $border-grey;
+    display: none; /* Hidden by default, show when no templates found */
+    flex-direction: column;
+    align-items: center;
+    gap: variables.$space-md;
+
+    .empty-state-icon {
+      color: $text-medium;
+      width: 80px;
+      height: 80px;
+      margin-bottom: variables.$space-md;
+      filter: drop-shadow(0 0 10px rgba($color-accent, 0.4)); /* Soft glowing effect */
+    }
+
+    .empty-state-title {
+      font-size: variables.$font-size-section-title;
+      font-weight: variables.$font-weight-bold;
+      color: $text-light;
+      margin: 0;
+    }
+
+    .empty-state-subtitle {
+      font-size: variables.$font-size-body-lg;
+      color: $text-medium;
+      margin-bottom: variables.$space-lg;
+    }
+
+    .empty-state-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: variables.$space-sm;
+      justify-content: center;
+
+      .suggestion-button {
+        background-color: $border-grey;
+        border: 1px solid $border-grey;
+        border-radius: variables.$border-radius-pill;
+        padding: variables.$space-sm variables.$space-md;
+        font-family: variables.$font-family-primary;
+        font-size: variables.$font-size-body-sm;
+        color: $text-medium;
+        cursor: pointer;
+        transition: all variables.$transition-duration-fast ease-in-out;
+
+        &:hover {
+          border-color: $color-accent;
+          color: $color-accent;
+          box-shadow: 0 0 5px rgba($color-accent, 0.3);
+        }
+      }
+    }
+  }
+}
+
+/* 5. Template Details Drawer / Modal */
+.template-details-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 0; /* Hidden by default */
+  max-width: 600px; /* Max width for the drawer */
+  background-color: $bg-surface;
+  box-shadow: -8px 0 20px rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
+  transition: width variables.$transition-duration-base ease-in-out;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+
+  &.open {
+    width: 450px; /* Example open width */
+    padding: variables.$space-xl;
+  }
+
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: variables.$space-lg;
+    padding-bottom: variables.$space-md;
+    border-bottom: 1px solid $border-grey;
+
+    .drawer-title {
+      font-size: variables.$font-size-section-title;
+      font-weight: variables.$font-weight-bold;
+      color: $text-light;
+      margin: 0;
+    }
+
+    .close-drawer-button {
+      background: none;
+      border: none;
+      color: $text-medium;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: variables.$border-radius-sm;
+      transition: all variables.$transition-duration-fast ease-in-out;
+
+      &:hover {
+        color: $color-accent;
+        background-color: $border-grey;
+      }
+    }
+  }
+
+  .drawer-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: variables.$space-lg;
+
+    .full-description {
+      font-size: variables.$font-size-body-md;
+      color: $text-medium;
+      line-height: 1.6;
+    }
+
+    .detail-section {
+      h4 {
+        font-size: variables.$font-size-body-lg;
+        color: $text-light;
+        margin-bottom: variables.$space-md;
+      }
+
+      .tech-stack-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: variables.$space-xs;
+
+        .tag {
+          background-color: $border-grey;
+          color: $text-medium;
+          font-size: variables.$font-size-body-xs;
+          padding: variables.$space-xs variables.$space-sm;
+          border-radius: variables.$border-radius-xs;
+          white-space: nowrap;
+        }
+      }
+
+      .folder-structure-tree {
+        background-color: variables.$border-neutral;
+        border-radius: variables.$border-radius-sm;
+        padding: variables.$space-md;
+        font-family: variables.$font-family-code;
+        font-size: variables.$font-size-body-sm;
+        color: $text-light;
+        overflow-x: auto;
+        white-space: pre;
+        border: 1px solid $border-grey;
+      }
+
+      ul {
+        list-style: none;
+        padding-left: variables.$space-md;
+        margin: 0;
+        li {
+          font-size: variables.$font-size-body-md;
+          color: $text-medium;
+          margin-bottom: variables.$space-xs;
+          &::before {
+            content: "•";
+            color: $color-primary;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+          }
+        }
+      }
+
+      .screenshot-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: variables.$space-md;
+
+        img {
+          width: 100%;
+          height: auto;
+          border-radius: variables.$border-radius-sm;
+          border: 1px solid $border-grey;
+          box-shadow: variables.$shadow-sm;
+        }
+      }
+    }
+
+    .create-project-button {
+      width: 100%;
+      padding: 14px 28px;
+      font-size: variables.$font-size-body-lg;
+      border-radius: variables.$border-radius-base;
+      background-color: $color-accent;
+      color: $bg-main;
+      font-weight: variables.$font-weight-semibold;
+      border: none;
+      cursor: pointer;
+      transition: all variables.$transition-duration-fast ease-in-out;
+      margin-top: auto; /* Push to bottom of drawer */
+
+      &:hover {
+        background-color: variables.$accent-cyan-700; /* Use predefined darker shade */
+        box-shadow: 0 0 15px rgba($color-accent, 0.7);
+      }
+    }
+  }
+}

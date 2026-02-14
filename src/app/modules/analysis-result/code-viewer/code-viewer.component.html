@@ -1,0 +1,23 @@
+<div class="code-viewer-container">
+  <app-loader *ngIf="loading()"></app-loader>
+  
+  <div *ngIf="fileContent() as content; else noContent">
+    <div class="viewer-header">
+      <h4>{{ filePath }}</h4>
+    </div>
+    <pre class="code-block">
+      <code [innerHTML]="highlightedLines() | codeHighlighter"></code>
+    </pre>
+    <div class="suggestion-box">
+      <h5>AI Suggestion</h5>
+      <p>{{ issue.suggestion }}</p>
+      <button class="btn-primary">Apply Fix</button>
+    </div>
+  </div>
+
+  <ng-template #noContent>
+    <div class="empty-state" *ngIf="!loading()">
+      <p>Could not load file content.</p>
+    </div>
+  </ng-template>
+</div>

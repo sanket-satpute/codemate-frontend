@@ -1,0 +1,41 @@
+<div class="analysis-history-container">
+  <ng-container *ngIf="jobs.length > 0; else emptyState">
+    <div class="job-list">
+      <div *ngFor="let job of jobs" class="job-item">
+        <span>{{ job.id }}</span>
+        <span class="badge" [ngClass]="'status-' + job.status.toLowerCase()">{{ job.status }}</span>
+        <span>{{ job.startedAt | date:'medium' }}</span>
+        <span>{{ job.completedAt | date:'medium' }}</span>
+        <button class="btn btn-secondary" (click)="viewResult.emit(job.id)">View Result</button>
+      </div>
+    </div>
+
+    <div *ngIf="analysisResult" class="analysis-result-container">
+      <div class="tabs">
+        <button (click)="selectTab('summary')" [class.active]="selectedTab === 'summary'">Summary</button>
+        <button (click)="selectTab('issues')" [class.active]="selectedTab === 'issues'">Issues</button>
+        <button (click)="selectTab('suggestions')" [class.active]="selectedTab === 'suggestions'">Suggestions</button>
+        <button (click)="selectTab('file-insights')" [class.active]="selectedTab === 'file-insights'">File Insights</button>
+      </div>
+
+      <div class="tab-content">
+        <div *ngIf="selectedTab === 'summary'">
+          <p>{{ analysisResult.summary }}</p>
+        </div>
+        <div *ngIf="selectedTab === 'issues'">
+          <!-- Issues list -->
+        </div>
+        <div *ngIf="selectedTab === 'suggestions'">
+          <!-- Suggestions list -->
+        </div>
+        <div *ngIf="selectedTab === 'file-insights'">
+          <!-- File insights list -->
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <app-empty-state message="No analysis history found for this project."></app-empty-state>
+  </ng-template>
+</div>

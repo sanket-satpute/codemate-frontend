@@ -1,0 +1,94 @@
+@use 'variables' as v;
+@use '../../../styles/mixins' as m;
+
+.help-center-container {
+  padding: 2rem;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
+}
+
+.help-center-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--primary-color);
+  }
+
+  p {
+    font-size: 1.2rem;
+    color: v.$text-muted;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  max-width: 600px;
+  margin: 2rem auto;
+  position: relative;
+
+  input {
+    flex-grow: 1;
+    @include m.input-styles;
+    padding-left: 3rem; 
+  }
+
+  i {
+    position: absolute;
+    left: 1rem;
+    color: v.$text-muted;
+    font-size: 1.2rem;
+  }
+}
+
+.guide-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.quick-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 3rem;
+
+  .link-card {
+    background-color: v.$surface-card;
+    border: 1px solid v.$border-neutral;
+    border-radius: v.$border-radius;
+    padding: 1.5rem;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-color);
+    flex: 1;
+    max-width: 300px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: v.$shadow-sm;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: v.$shadow-md;
+      color: var(--primary-color);
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+
+    p {
+      color: v.$text-muted;
+      font-size: 1rem;
+    }
+  }
+}

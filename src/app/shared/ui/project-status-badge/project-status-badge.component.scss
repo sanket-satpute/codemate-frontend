@@ -1,0 +1,30 @@
+@use 'variables' as v;
+
+.badge {
+  padding: v.$space-xs v.$space-sm; /* Using spacing variables */
+  border-radius: v.$border-radius-pill; /* Use pill radius for badge */
+  font-size: var(--font-size-body-sm); /* Use small body font size */
+  font-weight: v.$font-weight-semibold; /* Use semibold weight */
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.status-pending {
+  background-color: var(--bg-secondary); /* Use secondary background for muted look */
+  color: var(--text-muted); /* Use muted text color */
+}
+
+.status-running {
+  background-color: var(--info-color); /* Use CSS variable for consistency */
+  color: var(--text-color-inverted); /* Use inverted text color for contrast on colored backgrounds */
+}
+
+.status-completed {
+  background-color: var(--success-color); /* Use CSS variable for consistency */
+  color: var(--text-color-inverted); /* Use inverted text color */
+}
+
+.status-failed {
+  background-color: var(--error-color); /* Use CSS variable for consistency */
+  color: var(--text-color-inverted); /* Use inverted text color */
+}

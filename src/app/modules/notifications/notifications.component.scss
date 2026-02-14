@@ -1,0 +1,90 @@
+@use '../../../styles/variables' as v;
+
+.notifications-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+
+  width: 340px;
+  max-height: 480px;
+  overflow-y: auto;
+
+  background: rgba(v.$bg-secondary, 0.45);
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(v.$accent-cyan-400, 0.12);
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    inset 0 0 12px rgba(34, 211, 238, 0.08);
+
+  padding: v.$space-l;
+  z-index: 2000;
+  animation: panelFadeIn 0.25s ease-out;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(v.$accent-cyan-400, 0.35);
+    border-radius: 8px;
+  }
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: v.$space-l;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: v.$text-primary;
+    letter-spacing: -0.2px;
+  }
+
+  .clear-btn {
+    background: rgba(v.$accent-cyan-400, 0.1);
+    border: 1px solid rgba(v.$accent-cyan-400, 0.25);
+    color: v.$accent-cyan-300;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(v.$accent-cyan-400, 0.2);
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.35);
+    }
+  }
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-m;
+}
+
+.error-state {
+  text-align: center;
+  padding: v.$space-m;
+  color: v.$error-color;
+  font-size: 14px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 10px;
+}
+
+@keyframes panelFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

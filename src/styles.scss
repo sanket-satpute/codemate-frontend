@@ -1,0 +1,42 @@
+@use 'sass:color';
+@use '_variables' as v;
+@use '_mixins' as m;
+@use '_theme'; // Import the theme file
+@use 'global'; // Import global styles
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'); // Import Font Awesome
+
+/* Global styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-family-base, #{v.$font-family-primary});
+  font-size: var(--font-size-body-md, 14px);
+  color: var(--text-primary, #{v.$text-primary});
+  background-color: var(--background-color, #{v.$bg-primary-navy-black});
+  line-height: 1.5;
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
+}
+
+body {
+  overflow-x: hidden; // Prevent horizontal scrolling
+}
+
+/* Smooth transition for all elements affected by theme change */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+// The :root now defaults to light theme variables defined in _theme.scss
+// The dark theme is applied when the 'dark-theme' class is added to the body element.
+
+code, pre {
+  font-family: var(--font-family-code, #{v.$font-family-secondary});
+}

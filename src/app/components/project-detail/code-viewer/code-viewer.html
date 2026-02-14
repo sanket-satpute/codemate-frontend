@@ -1,0 +1,16 @@
+<div class="code-viewer-container">
+  <div class="code-viewer-header">
+    <h3 class="title">Code Viewer</h3>
+    <p class="subtitle">View and interact with your project's source code.</p>
+  </div>
+  <div class="code-viewer-content">
+    <pre *ngIf="fileContent; else emptyState"><code class="language-typescript">{{ fileContent }}</code></pre>
+    <ng-template #emptyState>
+      <app-empty-state
+        icon="fas fa-file-code"
+        title="No File Selected"
+        message="Select a file from the explorer to view its content."
+      ></app-empty-state>
+    </ng-template>
+  </div>
+</div>

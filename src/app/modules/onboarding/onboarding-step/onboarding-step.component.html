@@ -1,0 +1,248 @@
+<!-- Premium Onboarding Step Component -->
+<div class="onboarding-step-premium">
+  <!-- Step Visual Header -->
+  <div class="step-header">
+    <div class="step-visual">
+      <div class="step-icon-wrapper" role="img" [attr.aria-label]="'Step ' + stepNumber + ' icon'">
+        <svg class="step-icon" [attr.viewBox]="getIconViewBox()" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path *ngIf="icon === 'project'" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          <path *ngIf="icon === 'upload'" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          <path *ngIf="icon === 'analysis'" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          <path *ngIf="icon === 'chat'" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          <path *ngIf="icon === 'results'" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="step-number" role="status" [attr.aria-label]="'Step ' + stepNumber">{{ stepNumber }}</div>
+    </div>
+
+    <div class="step-meta">
+      <h1 class="step-title">{{ title }}</h1>
+      <p class="step-subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+    </div>
+  </div>
+
+  <!-- Step Content -->
+  <div class="step-content">
+    <div class="content-visual" aria-hidden="true">
+      <div class="illustration-wrapper">
+        <svg class="step-illustration" [attr.viewBox]="getIllustrationViewBox()" fill="none" stroke="currentColor" stroke-width="1.5">
+          <!-- Project Creation Illustration -->
+          <g *ngIf="icon === 'project'">
+            <path d="M12 2L2 12L12 22L22 12L12 2Z" fill="url(#gradProject)" opacity="0.1"/>
+            <path d="M12 4L4 12L12 20L20 12L12 4Z" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 2" class="anim-dash"/>
+            <path d="M12 12L18 12M12 12L12 18M12 12L6 12M12 12L12 6" stroke="currentColor" stroke-width="2" class="anim-line-draw"/>
+            <defs>
+              <linearGradient id="gradProject" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:rgb(99,102,241);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(139,92,246);stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </g>
+
+          <!-- Upload Files Illustration -->
+          <g *ngIf="icon === 'upload'">
+            <path d="M5 17C5 14.2386 7.23858 12 10 12C12.7614 12 15 14.2386 15 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="anim-cloud-shape"/>
+            <path d="M19 17C19 14.2386 16.7614 12 14 12C11.2386 12 9 14.2386 9 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="anim-cloud-shape"/>
+            <path d="M12 18V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="anim-arrow-line"/>
+            <path d="M15 9L12 6L9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="anim-arrow-head"/>
+          </g>
+
+          <!-- Analysis Illustration -->
+          <g *ngIf="icon === 'analysis'">
+            <path d="M3 10V14C3 15.6569 4.34315 17 6 17H18C19.6569 17 21 15.6569 21 14V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="anim-wave-path"/>
+            <path d="M3 10C3 8.34315 4.34315 7 6 7H18C19.6569 7 21 8.34315 21 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="anim-wave-path"/>
+            <circle cx="6" cy="12" r="2" fill="url(#gradAnalysis)" class="anim-circle-pulse"/>
+            <circle cx="12" cy="12" r="2" fill="url(#gradAnalysis)" class="anim-circle-pulse" style="animation-delay: 0.5s"/>
+            <circle cx="18" cy="12" r="2" fill="url(#gradAnalysis)" class="anim-circle-pulse" style="animation-delay: 1s"/>
+            <defs>
+              <linearGradient id="gradAnalysis" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:rgb(50,205,50);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(0,255,127);stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </g>
+
+          <!-- Chat Illustration -->
+          <g *ngIf="icon === 'chat'">
+            <path d="M7 11.5L12 6.5L17 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="anim-bubble-path"/>
+            <path d="M17 12C17 14.2091 15.2091 16 13 16H8C5.79086 16 4 14.2091 4 12V8C4 5.79086 5.79086 4 8 4H13C15.2091 4 17 5.79086 17 8V12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="anim-bubble-shape"/>
+            <circle cx="9" cy="9" r="1" fill="url(#gradChat)" class="anim-dot-fade"/>
+            <circle cx="12" cy="9" r="1" fill="url(#gradChat)" class="anim-dot-fade" style="animation-delay: 0.3s"/>
+            <circle cx="15" cy="9" r="1" fill="url(#gradChat)" class="anim-dot-fade" style="animation-delay: 0.6s"/>
+            <defs>
+              <linearGradient id="gradChat" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:rgb(173,216,230);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(135,206,250);stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </g>
+
+          <!-- Results Illustration -->
+          <g *ngIf="icon === 'results'">
+            <path d="M4 18V6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="anim-rect-outline"/>
+            <path d="M8 16L12 12L16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="anim-chart-line"/>
+            <circle cx="8" cy="16" r="1.5" fill="url(#gradResults)" class="anim-chart-dot"/>
+            <circle cx="12" cy="12" r="1.5" fill="url(#gradResults)" class="anim-chart-dot" style="animation-delay: 0.5s"/>
+            <circle cx="16" cy="16" r="1.5" fill="url(#gradResults)" class="anim-chart-dot" style="animation-delay: 1s"/>
+            <path d="M6 8H18" stroke="currentColor" stroke-width="1" stroke-linecap="round" class="anim-grid-line"/>
+            <path d="M6 12H18" stroke="currentColor" stroke-width="1" stroke-linecap="round" class="anim-grid-line" style="animation-delay: 0.2s"/>
+            <defs>
+              <linearGradient id="gradResults" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:rgb(255,215,0);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(255,165,0);stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="content-text">
+      <p class="content-description">{{ description }}</p>
+
+      <!-- Project Creation Form (conditionally rendered for 'project' icon) -->
+      <div *ngIf="icon === 'project'" class="project-creation-form">
+        <form (ngSubmit)="createProject()">
+          <div class="form-group">
+            <label for="projectName">Project Name</label>
+            <input id="projectName" type="text" [(ngModel)]="projectName" name="projectName" required placeholder="e.g., My E-commerce Backend">
+          </div>
+          <div class="form-group">
+            <label for="projectDescription">Description (Optional)</label>
+            <textarea id="projectDescription" [(ngModel)]="projectDescription" name="projectDescription" rows="3" placeholder="A brief overview of your project"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Visibility</label>
+            <div class="radio-group">
+              <input type="radio" id="visibilityPrivate" [(ngModel)]="projectVisibility" name="projectVisibility" value="private" checked>
+              <label for="visibilityPrivate">Private</label>
+              <input type="radio" id="visibilityTeam" [(ngModel)]="projectVisibility" name="projectVisibility" value="team">
+              <label for="visibilityTeam">Team</label>
+              <input type="radio" id="visibilityPublic" [(ngModel)]="projectVisibility" name="projectVisibility" value="public">
+              <label for="visibilityPublic">Public</label>
+            </div>
+          </div>
+          <button type="submit" class="submit-button">Create Project</button>
+        </form>
+      </div>
+
+      <!-- Action Items -->
+      <div class="action-items" *ngIf="actionItems && actionItems.length > 0 && icon !== 'project'">
+        <h2 class="action-title">What you'll do:</h2>
+        <ol class="action-list" role="list">
+          <li *ngFor="let item of actionItems; let i = index" class="action-item">
+            <span class="action-number" aria-hidden="true">{{ i + 1 }}</span>
+            <span class="action-text">{{ item }}</span>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Tips Section -->
+      <div class="tips-section" *ngIf="tips && tips.length > 0 && icon !== 'project'">
+        <div class="tips-header">
+          <svg class="tips-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+            <path d="M12 17h.01"/>
+          </svg>
+          <h2 class="tips-title">Pro Tips</h2>
+        </div>
+        <ul class="tips-list" role="list">
+          <li *ngFor="let tip of tips" class="tip-item">
+            <span class="tip-icon" aria-hidden="true">💡</span>
+            <span>{{ tip }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Visual Storytelling for Each Step -->
+  <div class="step-visual-showcase" *ngIf="showInteractions">
+    <!-- Visual for Create Project -->
+    <div *ngIf="icon === 'project'" class="visual-card project-creation-visual">
+      <h3>Effortless Project Setup</h3>
+      <p>Quickly define your project with a name, description, and visibility settings.</p>
+      <div class="visual-mockup" aria-hidden="true">
+        <svg viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="5" width="90" height="60" rx="4" fill="#3A3A5B"/>
+          <rect x="10" y="12" width="80" height="8" rx="2" fill="#4B4B7C"/>
+          <rect x="10" y="24" width="70" height="6" rx="1" fill="#4B4B7C"/>
+          <rect x="10" y="34" width="50" height="6" rx="1" fill="#4B4B7C"/>
+          <path d="M75 50L80 55L75 60" stroke="#8A8AC9" stroke-width="2"/>
+          <path d="M65 55H80" stroke="#8A8AC9" stroke-width="2"/>
+          <circle cx="70" cy="55" r="3" fill="#8A8AC9"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Visual for Upload Files -->
+    <div *ngIf="icon === 'upload'" class="visual-card file-upload-visual">
+      <h3>Integrate Your Codebase Seamlessly</h3>
+      <p>Drag and drop files or connect to your favorite version control system.</p>
+      <div class="visual-mockup" aria-hidden="true">
+        <svg viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="15" y="15" width="70" height="40" rx="4" fill="#3A3A5B"/>
+          <path d="M30 35L45 50L60 35" stroke="#8A8AC9" stroke-width="3"/>
+          <path d="M45 50V25" stroke="#8A8AC9" stroke-width="3"/>
+          <rect x="30" y="20" width="10" height="8" rx="1" fill="#4B4B7C"/>
+          <rect x="60" y="20" width="10" height="8" rx="1" fill="#4B4B7C"/>
+          <circle cx="45" cy="10" r="4" fill="#8A8AC9"/>
+          <path d="M45 14L45 20" stroke="#8A8AC9" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Visual for Run Analysis -->
+    <div *ngIf="icon === 'analysis'" class="visual-card code-analysis-visual">
+      <h3>AI-Powered Code Scan in Action</h3>
+      <p>Our intelligent engine analyzes for bugs, vulnerabilities, and performance issues.</p>
+      <div class="visual-mockup" aria-hidden="true">
+        <svg viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="5" width="90" height="60" rx="4" fill="#3A3A5B"/>
+          <circle cx="20" cy="20" r="8" fill="#5C5C8E"/>
+          <path d="M30 20H80" stroke="#8A8AC9" stroke-width="2"/>
+          <path d="M20 35H70" stroke="#8A8AC9" stroke-width="2"/>
+          <path d="M20 50H60" stroke="#8A8AC9" stroke-width="2"/>
+          <polyline points="70 50 80 40 70 30 80 20" stroke="#FFD700" stroke-width="2"/>
+          <rect x="55" y="45" width="10" height="10" fill="#FF4500" rx="2"/>
+          <rect x="40" y="25" width="8" height="8" fill="#32CD32" rx="1"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Visual for Chat with AI -->
+    <div *ngIf="icon === 'chat'" class="visual-card ai-chat-visual">
+      <h3>Your Personal AI Assistant</h3>
+      <p>Get instant explanations, refactoring suggestions, and code examples.</p>
+      <div class="visual-mockup" aria-hidden="true">
+        <svg viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="5" width="90" height="60" rx="4" fill="#3A3A5B"/>
+          <path d="M15 15H85V45H25L15 55V15Z" fill="#4B4B7C"/>
+          <circle cx="25" cy="25" r="3" fill="#8A8AC9"/>
+          <circle cx="35" cy="25" r="3" fill="#8A8AC9"/>
+          <circle cx="45" cy="25" r="3" fill="#8A8AC9"/>
+          <rect x="20" y="35" width="50" height="6" rx="1" fill="#8A8AC9"/>
+          <rect x="25" y="45" width="40" height="6" rx="1" fill="#8A8AC9"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Visual for View Results -->
+    <div *ngIf="icon === 'results'" class="visual-card analysis-results-visual">
+      <h3>Comprehensive Reports & Actionable Insights</h3>
+      <p>Explore detailed dashboards, filter issues, and track code health over time.</p>
+      <div class="visual-mockup" aria-hidden="true">
+        <svg viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="5" width="90" height="60" rx="4" fill="#3A3A5B"/>
+          <rect x="15" y="15" width="20" height="15" rx="2" fill="#4B4B7C"/>
+          <rect x="40" y="15" width="20" height="15" rx="2" fill="#4B4B7C"/>
+          <rect x="65" y="15" width="20" height="15" rx="2" fill="#4B4B7C"/>
+          <path d="M15 40L30 55L45 40L60 55L75 40" stroke="#8A8AC9" stroke-width="2"/>
+          <circle cx="30" cy="55" r="3" fill="#32CD32"/>
+          <circle cx="60" cy="55" r="3" fill="#FF4500"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>

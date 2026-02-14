@@ -1,0 +1,49 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Your Projects</h1>
+    <button class="btn btn-primary">Upload New Project</button>
+  </header>
+
+  <div class="content">
+    <!-- Loading Skeleton -->
+    <div *ngIf="isLoading()" class="skeleton-loader">
+      <div class="skeleton-card" *ngFor="let i of [1, 2, 3]"></div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error()" class="error-message">
+      <p>{{ error() }}</p>
+      <button (click)="loadProjects()" class="btn btn-secondary">Retry</button>
+    </div>
+
+    <!-- Project Grid -->
+    <div *ngIf="!isLoading() && !error() && projects().length > 0" class="project-grid">
+      <div class="project-card" *ngFor="let project of projects()">
+        <div class="card-header">
+          <h3 class="project-name">{{ project.name }}</h3>
+          <span class="project-date">Uploaded: {{ project.createdAt | date: 'short' }}</span>
+        </div>
+        <div class="card-body">
+          <div class="status-section">
+            <span>Status:</span>
+            <app-project-status-badge [status]="project.status"></app-project-status-badge>
+          </div>
+          <!-- Progress bar will go here -->
+        </div>
+        <div class="card-footer">
+          <button (click)="viewAnalysis(project.id)" class="btn btn-sm btn-outline">View Analysis</button>
+          <button (click)="openChat(project.id)" class="btn btn-sm btn-outline">Open Chat</button>
+          <button (click)="rerunAnalysis(project.id)" class="btn btn-sm btn-secondary">Re-run</button>
+          <button (click)="deleteProject(project.id)" class="btn btn-sm btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading() && !error() && projects().length === 0" class="empty-state">
+      <h2>No Projects Yet</h2>
+      <p>Upload your first project to get started.</p>
+      <button class="btn btn-primary">Upload Project</button>
+    </div>
+  </div>
+</div>

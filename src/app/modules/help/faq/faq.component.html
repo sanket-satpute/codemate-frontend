@@ -1,0 +1,26 @@
+<div class="faq-container">
+  <header class="faq-header">
+    <h1>Frequently Asked Questions</h1>
+    <p>Find quick answers to common questions about CodeScope.</p>
+  </header>
+
+  <div class="faq-content">
+    <ng-container *ngIf="faqCategories.length > 0; else noFaqs">
+      <div *ngFor="let category of faqCategories" class="faq-category">
+        <h2 (click)="toggleCategory(category.category)" class="category-title">
+          {{ category.category }}
+          <i class="fas" [class.fa-chevron-down]="openCategory() !== category.category" [class.fa-chevron-up]="openCategory() === category.category"></i>
+        </h2>
+        <div [@accordionToggle]="openCategory() === category.category ? 'expanded' : 'collapsed'" class="category-items">
+          <div *ngFor="let item of category.items" class="faq-item">
+            <h3 class="question">{{ item.question }}</h3>
+            <p class="answer">{{ item.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #noFaqs>
+      <app-empty-state message="No FAQs available at the moment. Please check back later."></app-empty-state>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+.file-tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.node-item {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.node-item:hover {
+  background-color: #e0e0e0;
+}
+
+.node-item.selected {
+  background-color: #cce5ff;
+}
+
+.icon {
+  margin-right: 0.5rem;
+}
+
+.name {
+  font-family: monospace;
+}

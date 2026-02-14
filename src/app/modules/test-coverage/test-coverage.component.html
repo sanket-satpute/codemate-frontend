@@ -1,0 +1,28 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1>Test Coverage Insights</h1>
+    <p>Analyze test coverage and generate smart test cases with AI.</p>
+  </header>
+
+  <div class="summary-section">
+    <app-coverage-summary-card [summary]="summary()"></app-coverage-summary-card>
+  </div>
+
+  <div class="main-layout">
+    <div class="file-list-section">
+      <h2 class="section-title">File-Level Coverage</h2>
+      <app-coverage-file-list
+        [files]="files()"
+        (generateTests)="onGenerateTests($event)"
+      ></app-coverage-file-list>
+    </div>
+    <div class="generator-section">
+      <h2 class="section-title">Test Generator</h2>
+      <app-test-generator
+        [projectId]="projectId"
+        [selectedFile]="selectedFile()"
+        (testGenerated)="onTestGenerated($event)"
+      ></app-test-generator>
+    </div>
+  </div>
+</div>

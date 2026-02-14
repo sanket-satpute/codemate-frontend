@@ -1,0 +1,13 @@
+@use 'variables' as v;
+
+.footer {
+  height: var(--footer-height); /* Height: 48px */
+  color: var(--text-muted); /* Muted gray text */
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06); /* Subtle 1px top border */
+  font-size: v.$font-size-body-sm; /* Small font size for copyright */
+  padding: 0 v.$space-l; /* Outer shell padding: 24px */
+}

@@ -1,0 +1,11 @@
+<div class="empty-state-container">
+  <i [class]="icon" class="empty-state-icon"></i>
+  <h3 class="empty-state-title">{{ title }}</h3>
+  <p class="empty-state-message">{{ message }}</p>
+  <app-button
+    *ngIf="showButton"
+    [variant]="buttonType"
+    [routerLink]="buttonLink">
+    {{ buttonText }}
+  </app-button>
+</div>

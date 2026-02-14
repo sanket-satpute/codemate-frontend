@@ -1,0 +1,128 @@
+<!-- ============================================================================
+     PREMIUM NAVBAR - Clean, Modern, Sophisticated
+     Integrated flow with proper spacing and visual hierarchy
+     ============================================================================ -->
+<nav class="navbar" role="navigation" aria-label="Main navigation bar">
+  
+  <!-- Left Section: Search (Primary Action) -->
+  <div class="navbar-section navbar-left">
+    <div class="search-container">
+      <button class="search-trigger" (click)="focusSearch()" aria-label="Quick search">
+        <i class="fas fa-search search-icon"></i>
+      </button>
+      <input 
+        #searchInput
+        type="text" 
+        class="search-input"
+        placeholder="Quick search or ⌘K" 
+        aria-label="Search"
+        (focus)="onSearchFocus()"
+        (blur)="onSearchBlur()"
+      />
+      <kbd class="search-kbd">⌘K</kbd>
+    </div>
+  </div>
+
+  <!-- Right Section: Actions & Profile -->
+  <div class="navbar-section navbar-right">
+    
+    <!-- Action Icons Group -->
+    <div class="actions-group">
+      
+      <!-- Help Icon -->
+      <a 
+        routerLink="/help" 
+        class="nav-icon-btn" 
+        title="Help & Support"
+        aria-label="Help and Support Center"
+      >
+        <i class="fas fa-question-circle"></i>
+      </a>
+
+      <!-- Theme Toggle -->
+      <button 
+        class="nav-icon-btn theme-toggle" 
+        (click)="toggleTheme()" 
+        [attr.aria-label]="'Switch to ' + (currentTheme() === 'dark' ? 'light' : 'dark') + ' theme'"
+        title="Toggle theme"
+      >
+        <svg 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          class="theme-icon"
+          aria-hidden="true"
+        >
+          <!-- Moon Icon (Dark Mode) -->
+          <path
+            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+            class="moon-icon"
+            [class.active]="currentTheme() === 'dark'"
+          />
+          <!-- Sun Icon (Light Mode) -->
+          <g class="sun-icon" [class.active]="currentTheme() === 'light'">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </g>
+        </svg>
+      </button>
+
+      <!-- Notifications -->
+      <div class="notification-container" #notificationContainer>
+        <button 
+          class="nav-icon-btn notification-btn" 
+          (click)="toggleNotifications()" 
+          aria-label="Notifications"
+          [class.has-notifications]="unreadCount() > 0"
+        >
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge" *ngIf="unreadCount() > 0" aria-live="polite">
+            {{ unreadCount() > 9 ? '9+' : unreadCount() }}
+          </span>
+        </button>
+        <app-notifications [isVisible]="showNotifications()"></app-notifications>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="navbar-divider" aria-hidden="true"></div>
+
+    <!-- Profile Section (Premium Treatment) -->
+    <div class="profile-container" #profileContainer>
+      <button 
+        #profileButton
+        class="profile-btn" 
+        (click)="toggleProfileDropdown()" 
+        aria-label="User profile and settings"
+        [class.active]="showProfileDropdown()"
+      >
+        <div class="profile-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="profile-info" *ngIf="currentUser()">
+          <span class="profile-name">{{ currentUser()?.name }}</span>
+          <i class="fas fa-chevron-down profile-chevron"></i>
+        </div>
+      </button>
+      <app-profile-dropdown
+        [isVisible]="showProfileDropdown()"
+        [triggerElement]="profileButton"
+        [username]="currentUser()?.name ?? null"
+        [email]="currentUser()?.email ?? null"
+        (logout)="onLogout()"
+      ></app-profile-dropdown>
+    </div>
+
+  </div>
+
+</nav>

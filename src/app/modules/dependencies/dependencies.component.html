@@ -1,0 +1,22 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1>Live Dependencies Graph & Impact Analysis</h1>
+    <p>Visualize project dependencies and analyze the potential impact of changes.</p>
+  </header>
+
+  <div class="main-layout">
+    <div class="graph-section">
+      <h2 class="section-title">Dependency Graph</h2>
+      <div class="graph-visualizer">
+        <app-dependencies-graph
+          [nodes]="nodes()"
+          [edges]="edges()"
+          (nodeSelected)="onNodeSelected($event)"
+        ></app-dependencies-graph>
+      </div>
+    </div>
+    <div class="impact-section">
+      <app-impact-analysis [impactList]="impactList()"></app-impact-analysis>
+    </div>
+  </div>
+</div>

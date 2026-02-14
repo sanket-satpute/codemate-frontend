@@ -1,0 +1,128 @@
+<div class="auth-container">
+  <!-- Left side with hero content -->
+  <div class="auth-hero-section">
+    <div class="auth-hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Welcome back</h1>
+        <p class="hero-subtitle">Code analysis that works with your team</p>
+        <div class="hero-features">
+          <div class="feature-item">
+            <i class="fas fa-bolt"></i>
+            <span>Lightning Fast</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure & Private</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-brain"></i>
+            <span>AI Powered</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-illustration">
+        <div class="illustration-placeholder">
+          <i class="fas fa-code-branch"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right side with login form -->
+  <div class="auth-form-section">
+    <div class="auth-form-container">
+      <div class="form-header">
+        <div class="logo-wrapper">
+          <img src="assets/logo.svg" alt="CodeScope Logo" class="auth-logo" />
+        </div>
+        <h1 class="form-title">Sign in to CodeScope</h1>
+        <p class="form-subtitle">Enter your credentials to access your workspace</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+        <div class="form-group">
+          <label for="email" class="form-label">Email address</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope input-icon"></i>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="your@email.com"
+              class="form-input"
+              [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            />
+          </div>
+          <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</span>
+            <span *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder="••••••••"
+              class="form-input"
+              [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            />
+          </div>
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</span>
+            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-wrapper">
+            <input type="checkbox" id="remember" class="checkbox-input">
+            <span class="checkbox-mark"></span>
+            <span class="checkbox-label">Remember me</span>
+          </label>
+          <a href="#" class="forgot-link" tabindex="0">Forgot password?</a>
+        </div>
+
+        <div *ngIf="errorMessage()" class="alert alert-error" role="alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>{{ errorMessage() }}</span>
+        </div>
+
+        <app-button
+          label="Sign In"
+          variant="primary"
+          [fullWidth]="true"
+          [disabled]="loginForm.invalid || isLoading()"
+          [icon]="isLoading() ? 'fas fa-spinner fa-spin' : null"
+        ></app-button>
+
+        <div class="form-divider">
+          <span>or continue with</span>
+        </div>
+
+        <div class="social-login">
+          <button type="button" class="social-btn github-btn" tabindex="0">
+            <i class="fab fa-github"></i>
+            <span>GitHub</span>
+          </button>
+          <button type="button" class="social-btn google-btn" tabindex="0">
+            <i class="fab fa-google"></i>
+            <span>Google</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-footer">
+        <p>Don't have an account?
+          <a routerLink="/auth/register" class="auth-link" tabindex="0">Create one now</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

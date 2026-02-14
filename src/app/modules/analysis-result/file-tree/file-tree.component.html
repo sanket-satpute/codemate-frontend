@@ -1,0 +1,14 @@
+<div class="file-tree-container">
+  <h3 class="tree-header">Files with Issues</h3>
+  <ul class="file-list">
+    <li 
+      *ngFor="let file of files" 
+      class="file-item" 
+      [class.active]="file.path === selectedFilePath()"
+      (click)="selectFile(file)">
+      <i class="fas fa-file-code file-icon"></i>
+      <span class="file-path">{{ file.path }}</span>
+      <span class="issue-count">{{ file.issues.length }}</span>
+    </li>
+  </ul>
+</div>

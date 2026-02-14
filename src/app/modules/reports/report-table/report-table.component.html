@@ -1,0 +1,26 @@
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th (click)="sortBy('projectName')">Project Name</th>
+        <th (click)="sortBy('analysisJobName')">Job Name</th>
+        <th (click)="sortBy('status')">Status</th>
+        <th (click)="sortBy('createdAt')">Created At</th>
+        <th (click)="sortBy('completedAt')">Completed At</th>
+        <th (click)="sortBy('score')">Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let report of reports">
+        <td>{{ report.projectName }}</td>
+        <td>{{ report.analysisJobName }}</td>
+        <td>
+          <app-project-status-badge [status]="report.status"></app-project-status-badge>
+        </td>
+        <td>{{ report.createdAt | date:'medium' }}</td>
+        <td>{{ report.completedAt | date:'medium' }}</td>
+        <td>{{ report.score }}%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

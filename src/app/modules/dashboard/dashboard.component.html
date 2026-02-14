@@ -1,0 +1,233 @@
+<div class="dashboard-container">
+  <!-- Compact Hero Section -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="welcome-text">
+        <h1 class="page-title">Welcome back</h1>
+        <p class="subtitle">Here\"s your development health overview</p>
+      </div>
+      <div class="header-actions">
+        <app-button variant="secondary" icon="fa-plus">
+          New Project
+        </app-button>
+        <app-button variant="outline" icon="fa-refresh">
+          Quick Scan
+        </app-button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+      </div>
+      <p class="loading-text">Analyzing your projects...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error()" class="error-overlay">
+    <div class="error-content">
+      <div class="error-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h3>Unable to load dashboard</h3>
+      <p>{{ error() }}</p>
+      <app-button variant="primary" (btnClick)="retry()">
+        Try Again
+      </app-button>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <main *ngIf="!loading() && !error()" class="dashboard-main">
+    <!-- Key Metrics Row -->
+    <section class="metrics-section">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon">
+            <i class="fas fa-project-diagram"></i>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value">{{ dashboardData()?.totalProjects || 0 }}</span>
+            <span class="metric-label">Total Projects</span>
+            <div class="metric-change positive">
+              <i class="fas fa-arrow-up"></i>
+              +2 this week
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value">{{ dashboardData()?.healthScore || 0 }}%</span>
+            <div class="progress-ring">
+              <svg width="60" height="60">
+                <circle cx="30" cy="30" r="26" stroke="currentColor" stroke-width="4" fill="none" opacity="0.2"></circle>
+                <circle cx="30" cy="30" r="26" stroke="currentColor" stroke-width="4" fill="none"
+                        stroke-dasharray="163.36"
+                        [attr.stroke-dashoffset]="163.36 - (163.36 * (dashboardData()?.healthScore || 0) / 100)">
+                </circle>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">
+            <i class="fas fa-bug"></i>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value">{{ dashboardData()?.totalIssues || 0 }}</span>
+            <span class="metric-label">Open Issues</span>
+            <div class="metric-change negative">
+              <i class="fas fa-arrow-up"></i>
+              +5 this week
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value">{{ dashboardData()?.activeScans || 0 }}</span>
+            <span class="metric-label">Active Scans</span>
+            <div class="status-indicator" [class.active]="(dashboardData()?.activeScans || 0) > 0">
+              <span class="status-dot"></span>
+              {{ (dashboardData()?.activeScans || 0) > 0 ? 'Running' : 'Idle' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <section class="content-section">
+      <!-- Recent Projects -->
+      <div class="content-card projects-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-folder-open"></i>
+            Recent Projects
+          </h3>
+          <app-button variant="ghost" size="sm" icon="fa-external-link-alt" (btnClick)="navigateToProjects()">
+            View All
+          </app-button>
+        </div>
+        <div class="card-content">
+          <div *ngIf="(dashboardData()?.recentProjects?.length || 0) === 0" class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-folder-plus"></i>
+            </div>
+            <h4>No projects yet</h4>
+            <p>Get started by creating your first project</p>
+            <app-button variant="primary" size="sm" icon="fa-plus" (btnClick)="createProject()">
+              Create Project
+            </app-button>
+          </div>
+
+          <div *ngIf="(dashboardData()?.recentProjects?.length || 0) > 0" class="projects-list">
+            <div *ngFor="let project of (dashboardData()?.recentProjects || []).slice(0, 3)"
+                 class="project-item"
+                 (click)="openProject(project.id)">
+              <div class="project-icon">
+                <i class="fas" [class]="getProjectIcon(project.type)"></i>
+              </div>
+              <div class="project-details">
+                <h4 class="project-name">{{ project.name }}</h4>
+                <div class="project-meta">
+                  <span class="project-type">{{ project.type }}</span>
+                  <span class="project-date">{{ project.lastUpdated | date:'short' }}</span>
+                </div>
+                <div class="project-status">
+                  <span class="status-badge" [class]="project.status.toLowerCase()">
+                    {{ project.status }}
+                  </span>
+                  <span class="health-score">
+                    <i class="fas fa-heartbeat"></i>
+                    {{ project.healthScore }}%
+                  </span>
+                </div>
+              </div>
+              <div class="project-actions">
+                <app-button variant="ghost" size="xs" icon="fa-external-link-alt" (btnClick)="openProject(project.id); $event.stopPropagation()"></app-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Feed -->
+      <div class="content-card activity-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-activity"></i>
+            Activity Feed
+          </h3>
+          <app-button variant="ghost" size="sm" icon="fa-history">
+            View Timeline
+          </app-button>
+        </div>
+        <div class="card-content">
+          <div class="activity-list">
+            <div *ngFor="let activity of dashboardData()?.recentActivities?.slice(0, 5) || defaultActivities" class="activity-item">
+              <div class="activity-icon" [class]="getActivityIconClass(activity.type)">
+                <i class="fas" [class]="activity.icon"></i>
+              </div>
+              <div class="activity-content">
+                <h4 class="activity-title">{{ activity.title }}</h4>
+                <p class="activity-description">{{ activity.description }}</p>
+                <span class="activity-time">{{ activity.timestamp | date:'relative' }}</span>
+              </div>
+              <div class="activity-status" [class]="getActivityStatusClass(activity.status)">
+                {{ activity.status }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions Bottom -->
+    <section class="actions-section">
+      <div class="action-cards">
+        <div class="action-card" (click)="openProjectModal()">
+          <div class="action-icon">
+            <i class="fas fa-plus-circle"></i>
+          </div>
+          <div class="action-content">
+            <h4>New Analysis</h4>
+            <p>Upload and analyze a new project</p>
+          </div>
+        </div>
+
+        <div class="action-card" (click)="viewReports()">
+          <div class="action-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="action-content">
+            <h4>View Reports</h4>
+            <p>Access detailed analysis reports</p>
+          </div>
+        </div>
+
+        <div class="action-card" (click)="openSettings()">
+          <div class="action-icon">
+            <i class="fas fa-cog"></i>
+          </div>
+          <div class="action-content">
+            <h4>Settings</h4>
+            <p>Customize your workspace</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

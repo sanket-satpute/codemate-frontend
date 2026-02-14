@@ -1,0 +1,256 @@
+<!-- (A) Top Header -->
+<header class="code-analysis-header">
+  <div class="header-content">
+    <h1>Project Name → Code Analysis</h1>
+    <div class="header-metadata">
+      <span>Last Scan: {{ lastScanDate }}</span>
+      <span>Total Issues: {{ totalIssues }}</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="action-btn primary" (click)="reRunAnalysis()">
+      <i class="fas fa-redo"></i> Re-run Analysis
+    </button>
+    <button class="action-btn" (click)="downloadFullReport()">
+      <i class="fas fa-download"></i> Download Full Report
+    </button>
+    <button class="action-btn" (click)="exportPdfReport()">
+      <i class="fas fa-file-pdf"></i> Export PDF
+    </button>
+    <button class="action-btn" (click)="viewSummary()">
+      <i class="fas fa-chart-bar"></i> View Summary
+    </button>
+  </div>
+</header>
+
+<!-- (B) Severity Filter Bar (Sticky) -->
+<div class="severity-filter-bar">
+  <div
+    class="filter-chip"
+    [class.active]="selectedSeverityFilter === 'all'"
+    (click)="filterIssues('all')"
+  >
+    All
+    <span class="count">{{ issueCounts.all }}</span>
+  </div>
+  <div
+    class="filter-chip critical"
+    [class.active]="selectedSeverityFilter === 'critical'"
+    (click)="filterIssues('critical')"
+  >
+    Critical
+    <span class="count">{{ issueCounts.critical }}</span>
+  </div>
+  <div
+    class="filter-chip high"
+    [class.active]="selectedSeverityFilter === 'high'"
+    (click)="filterIssues('high')"
+  >
+    High
+    <span class="count">{{ issueCounts.high }}</span>
+  </div>
+  <div
+    class="filter-chip medium"
+    [class.active]="selectedSeverityFilter === 'medium'"
+    (click)="filterIssues('medium')"
+  >
+    Medium
+    <span class="count">{{ issueCounts.medium }}</span>
+  </div>
+  <div
+    class="filter-chip low"
+    [class.active]="selectedSeverityFilter === 'low'"
+    (click)="filterIssues('low')"
+  >
+    Low
+    <span class="count">{{ issueCounts.low }}</span>
+  </div>
+  <div
+    class="filter-chip info"
+    [class.active]="selectedSeverityFilter === 'info'"
+    (click)="filterIssues('info')"
+  >
+    Info
+    <span class="count">{{ issueCounts.info }}</span>
+  </div>
+  <div
+    class="filter-chip warning"
+    [class.active]="selectedSeverityFilter === 'warnings'"
+    (click)="filterIssues('warnings')"
+  >
+    Warnings
+    <span class="count">{{ issueCounts.warnings }}</span>
+  </div>
+  <div
+    class="filter-chip best-practice"
+    [class.active]="selectedSeverityFilter === 'bestPractices'"
+    (click)="filterIssues('bestPractices')"
+  >
+    Best Practices
+    <span class="count">{{ issueCounts.bestPractices }}</span>
+  </div>
+</div>
+
+<!-- (C) Two-Panel Layout -->
+<div class="two-panel-layout">
+  <!-- LEFT PANEL — File Explorer (25–30%) -->
+  <aside class="left-panel file-explorer-panel">
+    <input type="text" placeholder="Search file or folder..." class="search-input" [(ngModel)]="searchTerm" />
+    <div class="file-tree-container">
+      <ng-template #recursiveFileTree let-nodes>
+        <ul>
+          <li *ngFor="let node of nodes" [class.has-issues]="node.issueCount > 0">
+            <div class="node-item" (click)="toggleFileNode(node, $event); selectFile(node)" [class.selected]="selectedFile?.path === node.path">
+              <i
+                class="fas"
+                [class.fa-folder]="!node.isExpanded && node.children"
+                [class.fa-folder-open]="node.isExpanded && node.children"
+                [class.fa-file]="!node.children"
+              ></i>
+              <span>{{ node.name }}</span>
+              <span class="issue-badge" *ngIf="node.issueCount > 0">{{ node.issueCount }}</span>
+            </div>
+            <div class="node-children" *ngIf="node.children && node.isExpanded">
+              <ng-container *ngTemplateOutlet="recursiveFileTree; context: { $implicit: node.children }"></ng-container>
+            </div>
+          </li>
+        </ul>
+      </ng-template>
+      <ng-container *ngTemplateOutlet="recursiveFileTree; context: { $implicit: fileTree }"></ng-container>
+    </div>
+  </aside>
+
+  <!-- RIGHT PANEL — Detailed Analysis (70–75%) -->
+  <section class="right-panel detailed-analysis-panel">
+    <!-- 1. File Header -->
+    <div class="file-detail-header card">
+      <div class="file-info">
+        <h3>{{ selectedFilePath }}</h3>
+        <div class="file-metadata">
+          <span><i class="fas fa-exclamation-circle"></i> {{ selectedFileTotalIssues }} Issues</span>
+          <span><i class="fas fa-calendar-alt"></i> Last Modified: {{ selectedFileLastModified }}</span>
+          <span><i class="fas fa-code"></i> {{ selectedFileLOC }} LOC</span>
+        </div>
+      </div>
+      <div class="file-actions">
+        <button class="action-btn" (click)="openFullView()">Open Full View</button>
+        <button class="action-btn" (click)="copyFilePath()">Copy Path</button>
+      </div>
+    </div>
+
+    <!-- 2. Code Viewer -->
+    <div class="code-viewer card">
+      <div class="code-lines">
+        <div *ngFor="let line of codeLines" class="code-line" [class.has-issue]="line.hasIssue">
+          <span class="line-number">{{ line.lineNumber }}</span>
+          <span class="line-content">{{ line.content }}</span>
+          <div class="issue-indicator" *ngIf="line.hasIssue" [title]="'Issues on lines: ' + getIssueLines(line.issueIds)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Issues List (Accordion) -->
+    <div class="issues-list-accordion">
+      <h2 class="section-title">Issues in this File</h2>
+      <div *ngFor="let issue of issues" class="issue-card card" [class.expanded]="isIssueExpanded(issue.id)">
+        <div class="issue-summary" (click)="toggleIssueAccordion(issue.id)">
+          <span class="severity-indicator {{ issue.severity | lowercase }}"></span>
+          <h4 class="issue-title">{{ issue.title }}</h4>
+          <span class="issue-line-number">Line {{ issue.lineNumber }}</span>
+          <i class="fas" [class.fa-chevron-down]="!isIssueExpanded(issue.id)" [class.fa-chevron-up]="isIssueExpanded(issue.id)"></i>
+        </div>
+        <div class="issue-details" *ngIf="isIssueExpanded(issue.id)">
+          <p class="description">{{ issue.description }}</p>
+          <h5>Why this matters:</h5>
+          <p>{{ issue.whyMatters }}</p>
+          <h5>Fix Suggestion:</h5>
+          <p>{{ issue.fixSuggestion }}</p>
+          <h5>Impact:</h5>
+          <p class="impact-tag {{ issue.impact }}">{{ issue.impact | uppercase }}</p>
+          <div class="code-patch" *ngIf="issue.codePatch">
+            <h5>Code Patch:</h5>
+            <div class="patch-viewer">
+              <pre class="before"><code>{{ issue.codePatch.before }}</code></pre>
+              <pre class="after"><code>{{ issue.codePatch.after }}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Deep Analysis Section -->
+    <div class="deep-analysis-section">
+      <h2 class="section-title">Deep Analysis Metrics</h2>
+      <div class="metrics-grid">
+        <div class="metric-card card">
+          <span class="metric-label">Cyclomatic Complexity</span>
+          <span class="metric-value">{{ detailedAnalysis.cyclomaticComplexity }}</span>
+          <div class="metric-bar"><div class="fill" [style.width.%]="detailedAnalysis.cyclomaticComplexity"></div></div>
+        </div>
+        <div class="metric-card card">
+          <span class="metric-label">Code Duplication</span>
+          <span class="metric-value">{{ detailedAnalysis.codeDuplicationPercentage }}%</span>
+          <div class="metric-bar"><div class="fill" [style.width.%]="detailedAnalysis.codeDuplicationPercentage"></div></div>
+        </div>
+        <div class="metric-card card">
+          <span class="metric-label">Coupling</span>
+          <span class="metric-value">{{ detailedAnalysis.coupling }}</span>
+          <div class="metric-bar"><div class="fill" [style.width.%]="detailedAnalysis.coupling * 100"></div></div>
+        </div>
+        <div class="metric-card card">
+          <span class="metric-label">Cohesion</span>
+          <span class="metric-value">{{ detailedAnalysis.cohesion }}</span>
+          <div class="metric-bar"><div class="fill" [style.width.%]="detailedAnalysis.cohesion * 100"></div></div>
+        </div>
+        <div class="metric-card card">
+          <span class="metric-label">Lint Score</span>
+          <span class="metric-value">{{ detailedAnalysis.lintScore }}</span>
+          <div class="metric-bar"><div class="fill" [style.width.%]="(detailedAnalysis.lintScore === 'A' ? 100 : detailedAnalysis.lintScore === 'B' ? 75 : detailedAnalysis.lintScore === 'C' ? 50 : 25)"></div></div>
+        </div>
+        <div class="metric-card card">
+          <span class="metric-label">Security Warnings</span>
+          <span class="metric-value">{{ detailedAnalysis.securityWarnings }}</span>
+          <div class="metric-bar"><div class="fill" [style.width.%]="(detailedAnalysis.securityWarnings > 0 ? (100 - detailedAnalysis.securityWarnings * 10) : 100)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. File Summary -->
+    <div class="file-summary-card card">
+      <h2 class="section-title">File Summary</h2>
+      <p class="total-issues">Total Issues: {{ fileSummaryIssues }}</p>
+      <div class="severity-breakdown">
+        <span class="critical">Critical: {{ fileSummarySeverityBreakdown.critical }}</span>
+        <span class="high">High: {{ fileSummarySeverityBreakdown.high }}</span>
+        <span class="medium">Medium: {{ fileSummarySeverityBreakdown.medium }}</span>
+        <span class="low">Low: {{ fileSummarySeverityBreakdown.low }}</span>
+        <span class="info">Info: {{ fileSummarySeverityBreakdown.info }}</span>
+      </div>
+      <h5>Recommended Next Actions:</h5>
+      <ul>
+        <li>Prioritize critical and high-severity issues.</li>
+        <li>Review code changes in the context of detected issues.</li>
+        <li>Consult documentation for best practices and secure coding guidelines.</li>
+      </ul>
+      <button class="action-btn primary large-action-btn" (click)="fixMostCritical()">
+        <i class="fas fa-magic"></i> Fix Most Critical First
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- (D) Bottom Action Bar -->
+<div class="bottom-action-bar">
+  <button class="action-btn large-action-btn" (click)="downloadFullReport()">
+    <i class="fas fa-file-download"></i> Export Full Report
+  </button>
+  <button class="action-btn large-action-btn" (click)="viewSummary()">
+    <i class="fas fa-chart-line"></i> View Summary
+  </button>
+  <button class="action-btn large-action-btn" (click)="runDeepScan()">
+    <i class="fas fa-microscope"></i> Run Deep Scan
+  </button>
+  <button class="action-btn large-action-btn" (click)="openDebugger()">
+    <i class="fas fa-bug"></i> Open Debugger
+  </button>
+</div>

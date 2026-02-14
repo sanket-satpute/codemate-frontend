@@ -1,0 +1,91 @@
+<div class="container mx-auto p-4">
+  <div *ngIf="isLoading()" class="flex justify-center items-center h-64">
+    <p>Loading project summary...</p>
+  </div>
+
+  <div *ngIf="error()" class="text-red-500 text-center py-4">
+    {{ error() }}
+  </div>
+
+  <div *ngIf="projectSummary() as summary" class="space-y-6">
+    <!-- Header & Overview -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800">{{ summary.name }}</h1>
+          <p class="text-gray-600 mt-1">{{ summary.description }}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm text-gray-500">
+            Uploaded: {{ summary.uploadDate | date : 'mediumDate' }}
+          </p>
+          <p class="text-sm text-gray-500">
+            Last Analyzed: {{ summary.lastAnalyzed | date : 'mediumDate' }}
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4 mt-4">
+        <span
+          class="px-3 py-1 rounded-full text-sm font-semibold"
+          [ngClass]="{
+            'bg-green-100 text-green-800': true,
+            'bg-yellow-100 text-yellow-800': false,
+            'bg-red-100 text-red-800': false
+          }"
+        >
+          Analyzed
+        </span>
+      </div>
+    </div>
+
+    <!-- Insights & Risk Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Risk Score -->
+      <div class="bg-white shadow rounded-lg p-6 flex flex-col items-center">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Risk Score</h2>
+        <app-risk-meter [score]="summary.riskScore"></app-risk-meter>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <app-summary-card
+          title="Code Quality"
+          [metric]="summary.codeQuality + '%'"
+          description="Overall code quality score."
+        ></app-summary-card>
+        <app-summary-card
+          title="Issues Found"
+          [metric]="summary.issuesFound"
+          description="Total number of issues detected."
+        ></app-summary-card>
+        <!-- Optional cards -->
+        <app-summary-card
+          title="Lines of Code"
+          metric="12000"
+          description="Total lines of code in the project."
+        ></app-summary-card>
+        <app-summary-card
+          title="Complexity Score"
+          metric="Medium"
+          description="Average cyclomatic complexity."
+        ></app-summary-card>
+      </div>
+    </div>
+
+    <!-- Strengths List -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">
+        Project Strengths
+      </h2>
+      <ul class="list-disc list-inside text-gray-700">
+        <li *ngFor="let strength of summary.strengths">{{ strength }}</li>
+      </ul>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
+      <app-quick-actions [projectId]="summary.projectId"></app-quick-actions>
+    </div>
+  </div>
+</div>

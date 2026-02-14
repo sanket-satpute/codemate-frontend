@@ -1,0 +1,32 @@
+<mat-card *ngIf="status" class="job-progress-card" [ngClass]="'status-' + status.state.toLowerCase()">
+  <mat-card-header>
+    <mat-card-title>Analysis Progress</mat-card-title>
+    <mat-card-subtitle>Status: {{ status.state | lowercase }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p class="status-message">{{ status.message || 'Processing your project for deep analysis...' }}</p>
+    
+    <div class="progress-bar-container" *ngIf="isRunning()">
+      <mat-progress-bar
+        [mode]="progressMode()"
+        [value]="status.progress"
+        aria-label="Job progress">
+      </mat-progress-bar>
+      <span *ngIf="progressMode() === 'determinate'">{{ status.progress }}%</span>
+    </div>
+
+    <div class="last-updated">
+      Updated: {{ status.updatedAt | date:'shortTime' }}
+    </div>
+  </mat-card-content>
+  <mat-card-actions *ngIf="isCompleted()">
+    <a *ngIf="viewResultsLink" mat-raised-button color="primary" [routerLink]="viewResultsLink" [queryParams]="{ jobId: status.jobId }">
+      View Report
+    </a>
+  </mat-card-actions>
+  <mat-card-actions *ngIf="isFailed()">
+    <button mat-button color="warn">
+      View Error
+    </button>
+  </mat-card-actions>
+</mat-card>

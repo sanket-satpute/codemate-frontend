@@ -1,0 +1,36 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1>Intelligent Suggestions</h1>
+    <p>AI-powered recommendations to improve your code quality, performance, and security.</p>
+  </header>
+
+  <div *ngIf="loading(); else content" class="loader-container">
+    <app-loader></app-loader>
+  </div>
+
+  <ng-template #content>
+    <div *ngIf="suggestions().length > 0; else emptyState" class="suggestions-layout">
+      <div class="suggestions-list">
+        <app-suggestion-card
+          *ngFor="let suggestion of suggestions()"
+          [suggestion]="suggestion"
+          (previewRequested)="onPreviewRequested(suggestion)"
+          [class.selected]="suggestion.id === selectedSuggestion()?.id"
+        ></app-suggestion-card>
+      </div>
+      <div class="refactor-preview">
+        <app-refactor-preview
+          [preview]="preview()"
+          [loading]="previewLoading()"
+        ></app-refactor-preview>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #emptyState>
+    <app-empty-state
+      message="No suggestions available for this project."
+      details="Run a new analysis to generate intelligent suggestions."
+    ></app-empty-state>
+  </ng-template>
+</div>

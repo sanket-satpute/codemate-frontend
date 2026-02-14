@@ -1,0 +1,411 @@
+<div class="settings-container">
+  <!-- Left Sidebar (Settings navigation) -->
+  <aside class="settings-sidebar">
+    <nav class="sidebar-nav">
+      <a
+        *ngFor="let item of sidebarItems"
+        [routerLink]="['.', item.id]"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="selectSidebarItem(item.id)"
+      >
+        <i [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Right Side — Detailed Sections -->
+  <main class="settings-content">
+    <div class="settings-section" *ngIf="activeSection === 'profile'">
+      <h2 class="section-title">Profile</h2>
+      <p class="section-subtitle">Manage your personal information.</p>
+
+      <div class="card-grid">
+        <div class="card profile-photo">
+          <h3>Profile Photo</h3>
+          <div class="photo-area">
+            <img [src]="profile.photoUrl" alt="Profile Photo" class="profile-img">
+            <button class="upload-button">Upload Photo</button>
+            <button class="remove-button">Remove Photo</button>
+          </div>
+        </div>
+
+        <div class="card profile-details">
+          <h3>Details</h3>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" type="text" [(ngModel)]="profile.name">
+          </div>
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" type="text" [(ngModel)]="profile.username">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" type="email" [(ngModel)]="profile.email" readonly>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input id="phone" type="text" [(ngModel)]="profile.phone">
+          </div>
+          <div class="form-group">
+            <label for="role">Role</label>
+            <input id="role" type="text" [(ngModel)]="profile.role">
+          </div>
+          <button class="save-button">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section" *ngIf="activeSection === 'account-security'">
+      <h2 class="section-title">Account & Security</h2>
+      <p class="section-subtitle">Manage your login and security settings.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Password</h3>
+          <div class="form-group">
+            <label for="current-password">Current Password</label>
+            <input id="current-password" type="password">
+          </div>
+          <div class="form-group">
+            <label for="new-password">New Password</label>
+            <input id="new-password" type="password">
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirm New Password</label>
+            <input id="confirm-password" type="password">
+          </div>
+          <button class="save-button">Change Password</button>
+        </div>
+
+        <div class="card">
+          <h3>Two-Factor Authentication (2FA)</h3>
+          <div class="flex-row">
+            <span>Status: <strong>{{ twoFaEnabled ? 'Enabled' : 'Disabled' }}</strong></span>
+            <button class="toggle-2fa-button" (click)="toggle2fa()">{{ twoFaEnabled ? 'Disable' : 'Enable' }} 2FA</button>
+          </div>
+          <div *ngIf="twoFaEnabled" class="qr-code-section">
+            <img src="https://via.placeholder.com/150" alt="QR Code" class="qr-code">
+            <p>Scan this QR code with your authenticator app.</p>
+            <button class="generate-codes-button">Generate Backup Codes</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Devices & Sessions</h3>
+          <div class="device-list">
+            <div *ngFor="let device of loggedInDevices" class="device-item">
+              <span>{{ device.browser }} on {{ device.os }} ({{ device.ip }})</span>
+              <span>Logged in: {{ device.loginTime | date:'short' }}</span>
+            </div>
+          </div>
+          <button class="logout-all-button">Logout from All Other Devices</button>
+        </div>
+
+        <div class="card">
+          <h3>Login History</h3>
+          <div class="login-history-list">
+            <div *ngFor="let login of loginHistory" class="login-item">
+              <span>{{ login.browser }} - {{ login.os }} - {{ login.ip }}</span>
+              <span class="timestamp">{{ login.timestamp | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section" *ngIf="activeSection === 'preferences'">
+      <h2 class="section-title">Preferences</h2>
+      <p class="section-subtitle">Customize your CodeScope AI experience.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Theme</h3>
+          <div class="radio-group">
+            <label *ngFor="let theme of themes" class="radio-item">
+              <input type="radio" [value]="theme.value" [(ngModel)]="selectedTheme">
+              <span>{{ theme.label }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Developer Settings</h3>
+          <div class="toggle-group">
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="devSettings.lineNumbers">
+              <span>Show Line Numbers</span>
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="devSettings.minimap">
+              <span>Enable Minimap</span>
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="devSettings.autosave">
+              <span>Autosave</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="tab-size">Tab Size</label>
+            <input id="tab-size" type="number" [(ngModel)]="devSettings.tabSize">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Language & Region</h3>
+          <div class="form-group">
+            <label for="language">Language</label>
+            <select id="language" [(ngModel)]="selectedLanguage">
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="region">Region</label>
+            <select id="region" [(ngModel)]="selectedRegion">
+              <option value="us">United States</option>
+              <option value="eu">Europe</option>
+              <option value="asia">Asia</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Dashboard & Display</h3>
+          <div class="form-group">
+            <label for="default-project">Default Dashboard Project</label>
+            <select id="default-project" [(ngModel)]="defaultDashboardProject">
+              <option *ngFor="let project of availableProjects" [value]="project.id">{{ project.name }}</option>
+            </select>
+          </div>
+          <div class="radio-group">
+            <h4>Card Density</h4>
+            <label class="radio-item">
+              <input type="radio" value="comfortable" [(ngModel)]="cardDensity">
+              <span>Comfortable</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" value="compact" [(ngModel)]="cardDensity">
+              <span>Compact</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section" *ngIf="activeSection === 'notifications'">
+      <h2 class="section-title">Notifications Preferences</h2>
+      <p class="section-subtitle">Manage how you receive alerts and updates.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Categories Receiving Notifications</h3>
+          <div class="toggle-group">
+            <label *ngFor="let category of notificationPreferences.categories" class="toggle-item">
+              <input type="checkbox" [(ngModel)]="category.enabled">
+              <span>{{ category.label }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Delivery Methods</h3>
+          <div class="toggle-group">
+            <label *ngFor="let method of notificationPreferences.deliveryMethods" class="toggle-item">
+              <input type="checkbox" [(ngModel)]="method.enabled">
+              <span>{{ method.label }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Frequency</h3>
+          <div class="radio-group">
+            <label *ngFor="let freq of notificationPreferences.frequencies" class="radio-item">
+              <input type="radio" [value]="freq.value" [(ngModel)]="notificationPreferences.selectedFrequency">
+              <span>{{ freq.label }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section" *ngIf="activeSection === 'billing'">
+      <h2 class="section-title">Billing</h2>
+      <p class="section-subtitle">Manage your subscription, payment methods, and invoices.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Current Plan</h3>
+          <p><strong>{{ billing.currentPlan }}</strong> - Renews {{ billing.renewalCycle }}</p>
+          <button class="primary-button">Upgrade Plan</button>
+        </div>
+
+        <div class="card">
+          <h3>Payment Methods</h3>
+          <div *ngIf="billing.paymentMethods.length > 0; else noPaymentMethods">
+            <div *ngFor="let method of billing.paymentMethods" class="payment-method-item">
+              <span>**** **** **** {{ method.last4 }} ({{ method.type }})</span>
+              <button class="secondary-button">Remove</button>
+            </div>
+          </div>
+          <ng-template #noPaymentMethods>
+            <p class="text-muted">No payment methods on file.</p>
+          </ng-template>
+          <button class="primary-button">Add New Card</button>
+        </div>
+
+        <div class="card">
+          <h3>Usage Analytics</h3>
+          <p class="text-muted">Detailed usage coming soon!</p>
+          <!-- Placeholder for usage analytics chart/data -->
+        </div>
+
+        <div class="card">
+          <h3>Invoice History</h3>
+          <div class="invoice-list">
+            <div *ngFor="let invoice of billing.invoices" class="invoice-item">
+              <span>Invoice #{{ invoice.id }} - {{ invoice.date | date:'mediumDate' }}</span>
+              <span>{{ invoice.amount | currency }}</span>
+              <a [href]="invoice.pdfUrl" target="_blank" class="download-link">Download PDF</a>
+            </div>
+          </div>
+          <p *ngIf="billing.invoices.length === 0" class="text-muted">No invoices available.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section" *ngIf="activeSection === 'integrations'">
+      <h2 class="section-title">Integrations</h2>
+      <p class="section-subtitle">Connect CodeScope AI with your favorite tools.</p>
+
+      <div class="card-grid">
+        <div *ngFor="let integration of integrations" class="card integration-card">
+          <div class="integration-header">
+            <h4>{{ integration.name }}</h4>
+            <span [class]="{'status-connected': integration.connected, 'status-disconnected': !integration.connected}">
+              {{ integration.connected ? 'Connected' : 'Disconnected' }}
+            </span>
+          </div>
+          <p class="text-muted">Permissions: {{ integration.permissions }}</p>
+          <p *ngIf="integration.lastSynced" class="text-muted">Last Synced: {{ integration.lastSynced | date:'short' }}</p>
+          <button (click)="toggleIntegration(integration)" class="integration-button"
+                  [class.connect-button]="!integration.connected"
+                  [class.disconnect-button]="integration.connected">
+            {{ integration.connected ? 'Disconnect' : 'Connect' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section" *ngIf="activeSection === 'api-keys'">
+      <h2 class="section-title">API Keys</h2>
+      <p class="section-subtitle">Manage your API access tokens for external services.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Create New API Key</h3>
+          <div class="form-group">
+            <label for="key-name">Key Name</label>
+            <input id="key-name" type="text" [(ngModel)]="newApiKeyName">
+          </div>
+          <button class="primary-button" (click)="createApiKey()">Create Key</button>
+        </div>
+
+        <div class="card">
+          <h3>Existing API Keys</h3>
+          <div *ngIf="apiKeys.length > 0; else noApiKeys">
+            <div *ngFor="let key of apiKeys" class="api-key-item">
+              <span class="key-display">{{ key.partialKey }}</span>
+              <div class="key-actions">
+                <button class="icon-button" (click)="copyApiKey(key.fullKey)">
+                  <i class="fas fa-copy"></i>
+                </button>
+                <button class="icon-button" (click)="revokeApiKey(key.id)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+              <p class="text-muted">Last Used: {{ key.lastUsed | date:'short' }}</p>
+              <p class="text-muted">Expires: {{ key.expiryDate | date:'mediumDate' }}</p>
+            </div>
+          </div>
+          <ng-template #noApiKeys>
+            <p class="text-muted">No API keys created yet.</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section" *ngIf="activeSection === 'workspace-settings'">
+      <h2 class="section-title">Workspace Settings</h2>
+      <p class="section-subtitle">Manage your team, roles, and workspace resources.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Members</h3>
+          <div class="member-list">
+            <div *ngFor="let member of workspace.members" class="member-item">
+              <span>{{ member.name }} ({{ member.role }})</span>
+              <button class="secondary-button">Manage Role</button>
+            </div>
+          </div>
+          <button class="primary-button">Invite New Member</button>
+        </div>
+
+        <div class="card">
+          <h3>Project Limits</h3>
+          <p>Current: {{ workspace.projectLimit }} projects</p>
+          <button class="secondary-button">Adjust Limit</button>
+        </div>
+
+        <div class="card">
+          <h3>Storage Usage</h3>
+          <p>Used: {{ workspace.storageUsed }} / {{ workspace.storageLimit }}</p>
+          <div class="progress-bar">
+            <div class="progress" [style.width]="(workspace.storageUsed / workspace.storageLimit * 100) + '%'"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Custom Roles</h3>
+          <p class="text-muted">Define granular permissions for your team.</p>
+          <button class="secondary-button">Manage Roles</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section danger-zone-section" *ngIf="activeSection === 'danger-zone'">
+      <h2 class="section-title">Danger Zone</h2>
+      <p class="section-subtitle">Irreversible actions that require extra confirmation.</p>
+
+      <div class="card-grid">
+        <div class="card danger-card">
+          <h3>Delete Account</h3>
+          <p class="text-muted">Permanently delete your user account and all associated data.</p>
+          <button class="danger-button" (click)="confirmDeleteAccount()">Delete Account</button>
+        </div>
+
+        <div class="card danger-card">
+          <h3>Delete Workspace</h3>
+          <p class="text-muted">Permanently delete this workspace and all projects within it.</p>
+          <button class="danger-button" (click)="confirmDeleteWorkspace()">Delete Workspace</button>
+        </div>
+
+        <div class="card danger-card">
+          <h3>Transfer Ownership</h3>
+          <p class="text-muted">Transfer ownership of this workspace to another member.</p>
+          <button class="danger-button" (click)="confirmTransferOwnership()">Transfer Ownership</button>
+        </div>
+
+        <div class="card danger-card">
+          <h3>Reset All Settings</h3>
+          <p class="text-muted">Revert all your personal settings to their default values.</p>
+          <button class="danger-button" (click)="confirmResetSettings()">Reset Settings</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

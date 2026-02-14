@@ -1,0 +1,6 @@
+<div class="chat-message-container" [class.user-message]="isUserMessage()" [class.ai-message]="!isUserMessage()">
+  <div class="message-bubble">
+    <p>{{ message.content }}</p>
+    <span class="timestamp">{{ message.timestamp | date:'shortTime' }}</span>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<div class="security-dashboard-container">
+  <ng-container *ngIf="loading()">
+    <div class="loading-state">Loading security analysis...</div>
+  </ng-container>
+
+  <ng-container *ngIf="error()">
+    <div class="error-state">{{ error() }}</div>
+  </ng-container>
+
+  <ng-container *ngIf="!loading() && !error() && summary()">
+    <h2>Security Overview for Project: {{ projectId() }}</h2>
+
+    <!-- Security Summary Cards -->
+    <div class="summary-cards">
+      <div class="card summary-card">
+        <h4>Total Vulnerabilities</h4>
+        <p class="value total">{{ summary()!.totalVulnerabilities }}</p>
+      </div>
+      <div class="card summary-card severity-high">
+        <h4>High Severity</h4>
+        <p class="value">{{ summary()!.high }} ({{ getSeverityPercentage('HIGH') | number:'1.0-0' }}%)</p>
+      </div>
+      <div class="card summary-card severity-medium">
+        <h4>Medium Severity</h4>
+        <p class="value">{{ summary()!.medium }} ({{ getSeverityPercentage('MEDIUM') | number:'1.0-0' }}%)</p>
+      </div>
+      <div class="card summary-card severity-low">
+        <h4>Low Severity</h4>
+        <p class="value">{{ summary()!.low }} ({{ getSeverityPercentage('LOW') | number:'1.0-0' }}%)</p>
+      </div>
+      <div class="card summary-card last-scan">
+        <h4>Last Scan</h4>
+        <p class="value">{{ summary()!.lastScan | date:'medium' }}</p>
+      </div>
+    </div>
+
+    <!-- Vulnerability Heatmap -->
+    <app-vulnerability-heatmap [heatmapData]="heatmap()"></app-vulnerability-heatmap>
+
+    <!-- Vulnerability List -->
+    <div class="vulnerability-list-section card">
+      <h3>Detailed Vulnerabilities</h3>
+      <div *ngIf="vulnerabilities().length === 0" class="no-data">
+        No vulnerabilities found in this project.
+      </div>
+      <div class="vulnerability-list">
+        <app-vulnerability-item *ngFor="let vul of vulnerabilities()" [vulnerability]="vul"></app-vulnerability-item>
+      </div>
+    </div>
+
+    <!-- Charts (Placeholder for SVG/CSS Charts) -->
+    <div class="charts-section card">
+      <h3>Severity Distribution Chart</h3>
+      <div class="chart-placeholder">
+        <!-- Implement SVG/CSS chart here based on summary() data -->
+        <svg width="100%" height="200" viewBox="0 0 100 100" class="severity-pie-chart">
+          <circle cx="50" cy="50" r="40" fill="var(--color-background-alt)"></circle>
+          <!-- High Severity -->
+          <circle cx="50" cy="50" r="40" fill="var(--color-severity-high)"
+                  [attr.stroke-dasharray]="getPieChartStrokeDasharray('HIGH')"></circle>
+          <!-- Medium Severity -->
+          <circle cx="50" cy="50" r="40" fill="var(--color-severity-medium)"
+                  [attr.stroke-dasharray]="getPieChartStrokeDasharray('MEDIUM')"></circle>
+          <!-- Low Severity -->
+          <circle cx="50" cy="50" r="40" fill="var(--color-severity-low)"
+                  [attr.stroke-dasharray]="getPieChartStrokeDasharray('LOW')"></circle>
+        </svg>
+        <div class="chart-legend">
+          <div class="legend-item high"><span class="color-box"></span> High</div>
+          <div class="legend-item medium"><span class="color-box"></span> Medium</div>
+          <div class="legend-item low"><span class="color-box"></span> Low</div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

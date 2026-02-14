@@ -1,0 +1,27 @@
+<div class="help-center-container">
+  <header class="help-center-header">
+    <h1>Help & Support</h1>
+    <p>Find answers to your questions, explore documentation, or browse frequently asked questions.</p>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Search for topics..." (input)="searchTopics($event)">
+    <i class="fas fa-search"></i>
+  </div>
+
+  <div class="guide-cards-grid">
+    <!-- Guide cards will be rendered here -->
+    <app-guide-card *ngFor="let guide of filteredGuides()" [guide]="guide"></app-guide-card>
+  </div>
+
+  <div class="quick-links">
+    <a routerLink="/help/docs" class="link-card">
+      <h3>Documentation</h3>
+      <p>In-depth guides and technical details.</p>
+    </a>
+    <a routerLink="/help/faq" class="link-card">
+      <h3>FAQ</h3>
+      <p>Common questions and quick answers.</p>
+    </a>
+  </div>
+</div>

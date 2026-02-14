@@ -1,0 +1,149 @@
+@use 'variables' as v;
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px solid var(--border-neutral);
+  border-radius: v.$border-radius-card;
+  overflow: hidden;
+  background-color: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+
+.chat-messages {
+  flex-grow: 1;
+  padding: v.$space-m;
+  overflow-y: auto;
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-message {
+  display: flex;
+  margin-bottom: v.$space-s;
+}
+
+.user-message {
+  justify-content: flex-end;
+}
+
+.ai-message {
+  justify-content: flex-start;
+}
+
+.message-content {
+  max-width: 70%;
+  padding: v.$space-s v.$space-m;
+  border-radius: v.$border-radius-btn; /* Using button radius for message bubbles */
+  word-wrap: break-word;
+  line-height: 1.5;
+  font-size: var(--font-size-body-md);
+  color: var(--text-primary);
+}
+
+.user-message .message-content {
+  background-color: var(--primary-color);
+  color: var(--text-color-inverted);
+  border-bottom-right-radius: v.$border-radius-code; /* A slightly sharper corner for chat bubble style */
+}
+
+.ai-message .message-content {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-bottom-left-radius: v.$border-radius-code; /* A slightly sharper corner for chat bubble style */
+}
+
+.code-block {
+  background-color: var(--background-color); /* Use background color for code blocks, which is darker in dark mode */
+  color: var(--text-primary); /* Use primary text for code */
+  padding: v.$space-s;
+  border-radius: v.$border-radius-code;
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-body-sm);
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border-neutral);
+}
+
+.bullet-list {
+  list-style-type: disc;
+  margin-left: v.$space-l;
+  padding-left: 0;
+  color: var(--text-primary);
+}
+
+.bullet-list li {
+  margin-bottom: v.$space-xs;
+}
+
+.typing-indicator .message-content {
+  background-color: var(--bg-secondary);
+  color: var(--text-muted);
+  font-style: italic;
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-input-area {
+  display: flex;
+  padding: v.$space-s v.$space-m;
+  border-top: 1px solid var(--border-neutral);
+  background-color: var(--bg-secondary);
+}
+
+.chat-input-area input {
+  flex-grow: 1;
+  border: 1px solid var(--border-neutral);
+  border-radius: v.$border-radius-input;
+  padding: v.$space-s v.$space-m;
+  font-size: var(--font-size-body-md);
+  margin-right: v.$space-s;
+  outline: none;
+  background-color: var(--input-background);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-input-area input:focus {
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-neon-glow);
+}
+
+.chat-input-area button {
+  background-color: var(--primary-color);
+  color: var(--text-color-inverted);
+  border: none;
+  border-radius: v.$border-radius-btn;
+  padding: v.$space-s v.$space-m;
+  cursor: pointer;
+  font-size: var(--font-size-body-md);
+  transition: all 0.2s ease-in-out;
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-input-area button:hover {
+  background-color: var(--primary-dark-color);
+  box-shadow: var(--shadow-hover-glow);
+  transform: scale(1.02);
+}
+
+.chat-input-area button:active {
+  transform: scale(0.97);
+}
+
+.chat-input-area button:focus {
+  box-shadow: var(--shadow-neon-glow);
+}
+
+.chat-input-area button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  background-color: var(--primary-color);
+}

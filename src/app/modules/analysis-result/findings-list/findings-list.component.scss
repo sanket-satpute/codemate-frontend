@@ -1,0 +1,60 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+@use 'theme' as t; // Changed to alias 't'
+
+.findings-list-container {
+  .severity-group {
+    margin-bottom: 2rem;
+  }
+
+  .severity-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+
+    &.critical { color: var(--color-error); }
+    &.high { color: var(--color-warning); }
+    &.medium { color: var(--color-info); }
+    &.low { color: var(--color-success); }
+  }
+
+  .findings-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .finding-item {
+    background-color: rgba(rgb(0,0,0), 0.1); /* Changed variables.$black to rgb(0,0,0) */
+    border-left: 4px solid var(--border-color);
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateX(5px);
+      background-color: rgba(var(--primary-color), 0.1);
+      border-left-color: var(--primary-color);
+    }
+
+    .finding-message {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .finding-location {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--color-text-muted);
+  }
+}

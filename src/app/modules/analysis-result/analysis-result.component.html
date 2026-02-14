@@ -1,0 +1,129 @@
+<div class="analysis-page-container">
+  <app-loader *ngIf="loading()"></app-loader>
+
+  <ng-container *ngIf="hasRequiredParams(); else noParams">
+    <ng-container *ngIf="result() as res; else noResults">
+      <header class="analysis-header">
+        <div class="header-content">
+          <h1 class="page-title">Analysis Results <span class="project-name-highlight">for {{ projectName }}</span></h1>
+          <p class="job-id-display">Job ID: {{ jobId }}</p>
+          <div class="analysis-summary-overview">
+            <!-- analysisDate is not available in the model -->
+            <p class="overall-status" [class.status-success]="overallStatus() === 'SUCCESS'"
+                                     [class.status-warning]="overallStatus() === 'WARNING'"
+                                     [class.status-error]="overallStatus() === 'FAILURE'">
+              <span class="status-dot"></span> Status: {{ overallStatus() }}
+            </p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <app-button
+            [label]="'Back to Project'"
+            [variant]="'outline'"
+            [icon]="'fas fa-arrow-left'"
+            [routerLink]="['/projects', projectId]"
+          ></app-button>
+          <!-- Future: Export Report Button -->
+          <app-button
+            [label]="'Export Report'"
+            [variant]="'primary'"
+            [icon]="'fas fa-file-export'"
+          ></app-button>
+        </div>
+      </header>
+
+      <section class="analysis-overview-section card">
+        <h2 class="section-title">Overview Summary</h2>
+        <app-result-summary [summary]="res.summary"></app-result-summary>
+      </section>
+
+      <div class="analysis-main-grid">
+        <div class="left-panel-container">
+          <section class="file-tree-section card">
+            <h2 class="section-title">Files & Severity Filter</h2>
+            <app-file-tree
+              [files]="res.files"
+              (fileSelected)="onFileSelected($event)">
+            </app-file-tree>
+          </section>
+
+          <section class="severity-filter-section card">
+            <app-severity-filter
+              (severitiesChanged)="onSeveritiesChanged($event)">
+            </app-severity-filter>
+          </section>
+        </div>
+
+        <div class="center-panel-container">
+          <section class="issue-breakdown-section card">
+            <h2 class="section-title">Issue Breakdown by Severity</h2>
+            <div class="issue-breakdown-chart-container" *ngIf="chartData().length > 0; else noIssuesChart">
+              <div class="chart-visual">
+                <svg viewBox="0 0 100 100" class="pie-chart-svg">
+                  <ng-container *ngFor="let slice of chartData(); let i = index">
+                    <circle
+                      cx="50" cy="50" r="40" fill="transparent"
+                      [attr.stroke]="slice.color"
+                      stroke-width="8"
+                      [attr.stroke-dasharray]="slice.dasharray"
+                      [attr.stroke-dashoffset]="slice.dashoffset"
+                      [attr.data-tooltip]="slice.label + ': ' + slice.percentage + '%'" />
+                  </ng-container>
+                  <text x="50" y="55" text-anchor="middle" class="chart-center-text">{{ res.summary.totalIssues }} Issues</text>
+                </svg>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item" *ngFor="let slice of chartData()">
+                  <span class="legend-color" [style.background-color]="slice.color"></span>
+                  <span class="legend-label">{{ slice.label }} ({{ slice.percentage }}%)</span>
+                </div>
+              </div>
+            </div>
+            <ng-template #noIssuesChart>
+              <div class="chart-placeholder">
+                <div class="chart-visual">
+                  <svg viewBox="0 0 100 100" class="pie-chart-svg">
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="var(--color-border-neutral)" stroke-width="8" stroke-dasharray="100 0" stroke-dashoffset="0" />
+                    <text x="50" y="55" text-anchor="middle" class="chart-center-text">N/A</text>
+                  </svg>
+                </div>
+                <p class="chart-placeholder-message">No Issues Found</p>
+                <p class="sub-message">Your code is clean, or no analysis has been run yet.</p>
+              </div>
+            </ng-template>
+          </section>
+
+          <section class="detailed-findings-section card">
+            <h2 class="section-title">Detailed Findings ({{ selectedFile() ? getFileName(selectedFile()!.path) : 'All Files' }})</h2>
+            <app-findings-list
+              [issues]="filteredIssues()"
+              (issueSelected)="onIssueSelected($event)">
+            </app-findings-list>
+          </section>
+        </div>
+
+        <div class="right-panel-container">
+          <section class="code-viewer-section card" [class.open]="selectedIssue()">
+            <h2 class="section-title">Code Viewer</h2>
+            <app-code-viewer *ngIf="selectedIssue() && selectedFile()" [projectId]="projectId!" [filePath]="selectedFile()!.path" [issue]="selectedIssue()!"></app-code-viewer>
+            <app-empty-state
+              *ngIf="!selectedIssue()"
+              title="No Issue Selected"
+              message="Click on a finding in the list to see the relevant code snippet and details."
+              [showCta]="false"
+              [svgContent]="emptyCodeViewerSvg"
+            ></app-empty-state>
+          </section>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #noResults>
+    <app-empty-state *ngIf="!loading() && hasRequiredParams()" message="No analysis results found for this job."></app-empty-state>
+  </ng-template>
+
+  <ng-template #noParams>
+    <app-empty-state *ngIf="!loading()" message="Project ID and Job ID are required to view analysis results. Please navigate via a project or provide valid IDs in the URL."></app-empty-state>
+  </ng-template>
+</div>

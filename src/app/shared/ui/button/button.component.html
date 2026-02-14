@@ -1,0 +1,39 @@
+<button
+  [ngClass]="buttonClasses"
+  [disabled]="disabled || loading"
+  [attr.aria-describedby]="loading ? 'button-loading' : null"
+  (click)="onClick($event)"
+  [type]="type === 'submit' ? 'submit' : 'button'"
+>
+  <!-- Left Icon -->
+  <i
+    *ngIf="icon && iconPosition === 'left' && !loading"
+    [class]="icon"
+    class="btn-icon btn-icon-left"
+    aria-hidden="true"
+  ></i>
+
+  <!-- Loading Spinner -->
+  <span
+    *ngIf="loading"
+    class="btn-loading-spinner"
+    aria-hidden="true"
+  >
+    <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+  </span>
+
+  <!-- Button Text -->
+  <span *ngIf="displayText" class="btn-text">{{ displayText }}</span>
+  <span *ngIf="!displayText && !loading && icon && hasOnlyIcon" class="sr-only">{{ ariaLabel || 'Button' }}</span>
+
+  <!-- Right Icon -->
+  <i
+    *ngIf="icon && iconPosition === 'right' && !loading"
+    [class]="icon"
+    class="btn-icon btn-icon-right"
+    aria-hidden="true"
+  ></i>
+
+  <!-- Loading Screen Reader Text -->
+  <span id="button-loading" class="sr-only" *ngIf="loading">{{ loadingText }}</span>
+</button>

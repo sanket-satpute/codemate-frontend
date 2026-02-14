@@ -1,0 +1,72 @@
+@use 'variables' as v;
+@use 'sass:color';
+
+:root {
+  // Light Theme Defaults (overrides for dark mode are applied in .dark-theme)
+  // Colors
+  --background: var(--grey-50);
+  --surface-default: var(--white);
+  --surface-card: var(--white);
+  --surface-card-focused: var(--grey-100); // ADDED
+  --border-default: var(--grey-200);
+  --border-neutral: var(--grey-300);
+  --text-primary: var(--grey-900);
+  --text-muted: var(--grey-600);
+  --text-white: var(--white);
+  --text-link: var(--primary-600);
+  --error: #EF4444;
+  --success: #22C55E;
+  --warning: #F59E0B;
+
+  // Shadows (adjust for light mode if needed, e.g., less harsh)
+  --shadow-navbar: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-dialog: 0 8px 30px rgba(0, 0, 0, 0.15);
+  --shadow-badge: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --focus-ring: var(--focus-ring-light);
+}
+
+.dark-theme {
+  // Dark Theme Overrides
+  // Colors
+  --background: var(--grey-900);
+  --surface-default: var(--grey-950);
+  --surface-card: var(--grey-800);
+  --surface-card-focused: #2d3d52; // ADDED
+  --border-default: var(--grey-700);
+  --border-neutral: var(--grey-600);
+  --text-primary: var(--grey-100);
+  --text-muted: var(--grey-400);
+  --text-white: var(--white);
+  --text-link: var(--primary-400);
+  --error: #F87171;
+  --success: #4ADE80;
+  --warning: #FACC15;
+
+  // Shadows
+  --shadow-navbar: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-dialog: 0 8px 30px rgba(0, 0, 0, 0.3);
+  --shadow-badge: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --focus-ring: var(--focus-ring-dark);
+}
+
+// Global variables for convenience, derived from theme-aware properties
+:root {
+  --current-background: var(--background);
+  --current-surface-default: var(--surface-default);
+  --current-surface-card: var(--surface-card);
+  --current-surface-card-focused: var(--surface-card-focused); // ADDED
+  --current-border-default: var(--border-default);
+  --current-border-neutral: var(--border-neutral);
+  --current-text-primary: var(--text-primary);
+  --current-text-muted: var(--text-muted);
+  --current-text-white: var(--text-white);
+  --current-text-link: var(--text-link);
+  --current-error: var(--error);
+  --current-success: var(--success);
+  --current-warning: var(--warning);
+
+  --current-shadow-navbar: var(--shadow-navbar);
+  --current-shadow-dialog: var(--shadow-dialog);
+  --current-shadow-badge: var(--shadow-badge);
+  --current-focus-ring: var(--focus-ring);
+}

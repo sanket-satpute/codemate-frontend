@@ -1,0 +1,10 @@
+.wipe-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7); /* A semi-transparent dark overlay */
+  z-index: 99999; /* Ensure it's on top of everything */
+  pointer-events: none; /* Allow clicks to pass through when not wiping */
+}

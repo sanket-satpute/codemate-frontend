@@ -1,0 +1,22 @@
+<div class="summary-container" *ngIf="summary">
+  <div class="summary-card total">
+    <span class="value">{{ summary.totalIssues }}</span>
+    <span class="label">Total Issues</span>
+  </div>
+  <div class="summary-card critical">
+    <span class="value">{{ summary.critical }}</span>
+    <span class="label">Critical</span>
+  </div>
+  <div class="summary-card high">
+    <span class="value">{{ summary.high }}</span>
+    <span class="label">High</span>
+  </div>
+  <div class="summary-card medium">
+    <span class="value">{{ summary.medium }}</span>
+    <span class="label">Medium</span>
+  </div>
+  <div class="summary-card low">
+    <span class="value">{{ summary.low }}</span>
+    <span class="label">Low</span>
+  </div>
+</div>

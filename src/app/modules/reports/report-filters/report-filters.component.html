@@ -1,0 +1,36 @@
+<form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="filters-form">
+  <div class="form-row">
+    <div class="form-group">
+      <label for="project">Project</label>
+      <select id="project" formControlName="projectId">
+        <option value="">All Projects</option>
+        <option *ngFor="let project of projects()" [value]="project.id">{{ project.name }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="status">Status</label>
+      <select id="status" formControlName="status">
+        <option value="">All Statuses</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="IN_PROGRESS">In Progress</option>
+        <option value="FAILED">Failed</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="startDate">Start Date</label>
+      <input type="date" id="startDate" formControlName="startDate">
+    </div>
+
+    <div class="form-group">
+      <label for="endDate">End Date</label>
+      <input type="date" id="endDate" formControlName="endDate">
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <app-button type="submit" [disabled]="filterForm.invalid">Apply Filters</app-button>
+    <app-button variant="secondary" (click)="clearFilters()">Clear</app-button>
+  </div>
+</form>

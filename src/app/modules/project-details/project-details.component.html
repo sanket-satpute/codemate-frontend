@@ -1,0 +1,41 @@
+<div class="project-details-page">
+  <app-loader *ngIf="loading()"></app-loader>
+
+  <ng-container *ngIf="project() as proj">
+    <header class="project-header">
+      <h1>{{ proj.name }}</h1>
+      <div class="project-meta">
+        <span>Created: {{ proj.createdAt | date:'longDate' }}</span>
+        <span>Last Updated: {{ proj.updatedAt | date:'longDate' }}</span>
+        <span>Total Files: {{ proj.totalFiles }}</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" [routerLink]="['/projects', proj.id, 'chat']">Open Chat</button>
+      </div>
+    </header>
+
+    <app-job-progress-card
+      *ngIf="activeJobStatus()"
+      [status]="activeJobStatus()!"
+      class="job-progress-banner"
+    ></app-job-progress-card>
+
+    <section class="run-analysis-section">
+      <app-run-analysis-button [projectId]="projectId"></app-run-analysis-button>
+    </section>
+
+    <section class="files-list-section">
+      <h2>Files</h2>
+      <app-files-list [files]="files()"></app-files-list>
+    </section>
+
+    <section class="analysis-history-section">
+      <h2>Analysis History</h2>
+      <app-analysis-history
+        [jobs]="jobs()"
+        [analysisResult]="analysisResult()"
+        (viewResult)="onViewResult($event)">
+      </app-analysis-history>
+    </section>
+  </ng-container>
+</div>

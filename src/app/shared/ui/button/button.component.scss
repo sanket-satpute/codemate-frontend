@@ -1,0 +1,54 @@
+@use 'variables' as v;
+@use 'mixins' as m; // Import mixins
+
+.button-base {
+  @include m.button-primary; // Use the primary button styles from mixins as a base
+  /* Specific overrides or additional styles for this component if needed */
+}
+
+/* Example variants */
+.button-primary {
+  /* The button-base already uses m.button-primary, so this class only needs to add specific overrides if any */
+}
+
+.button-secondary {
+  // Use the specific secondary button mixin
+  @include m.button-secondary; 
+  background-color: var(--bg-secondary); /* This will override the mixin's background-color for this specific component if different */
+  color: var(--text-primary); /* This will override the mixin's color for this specific component if different */
+  box-shadow: var(--shadow-sm); /* Default secondary shadow */
+
+  &:hover {
+    background-color: var(--color-bg-secondary-focus); // More dynamic and premium hover
+    box-shadow: var(--shadow-md); /* Slightly more pronounced hover shadow */
+    transform: translateY(-3px) scale(1.03); /* Consistent lift effect */
+  }
+
+  &:active {
+    background-color: var(--color-bg-secondary); /* Keep it subtle on active */
+    transform: translateY(0) scale(0.98);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4); /* Subtle pressed effect */
+  }
+}
+
+.button-accent {
+  @include m.button-primary; // Rely on button-primary for base, then customize
+  background-color: var(--color-accent-cyan-400); // Using specific accent color
+  color: var(--color-white); // Using explicit white for inverted text
+
+  &:hover {
+    background-color: var(--color-accent-cyan-300); // Slightly darker accent for hover
+    box-shadow: var(--shadow-neon-cyan), var(--shadow-md); // Enhanced hover glow and shadow
+    transform: translateY(-3px) scale(1.03); /* Consistent lift effect */
+  }
+}
+
+.button-outline {
+  @include m.button-outline-primary; // Use the outline mixin
+}
+
+/* Disabled state is handled comprehensively by the m.button-styles mixin.
+   No need for explicit .button-disabled class if `disabled` attribute is used
+   and handled by the mixin.
+*/
+// .button-disabled is no longer needed as button-styles handles :disabled

@@ -1,0 +1,156 @@
+<div class="notifications-container">
+  <!-- Real-time Updates Banner (7. Real-time Updates) -->
+  <div *ngIf="newNotificationsAvailable" class="new-notifications-banner">
+    <p>New notifications — click to refresh</p>
+    <button (click)="refreshNotifications()">Refresh</button>
+  </div>
+
+  <!-- Page Header (1. Page Header) -->
+  <header class="page-header">
+    <div class="header-content">
+      <h1 class="title">Notifications</h1>
+      <p class="subtitle">Stay updated on scans, analysis reports, insights, and system events.</p>
+    </div>
+    <div class="header-actions">
+      <button class="action-button" (click)="markAllAsRead()">Mark All as Read</button>
+      <button class="action-button primary-button" (click)="openPreferencesDrawer()">Notification Preferences</button>
+    </div>
+  </header>
+
+  <!-- Category Filters (2. Category Filters) -->
+  <nav class="category-filters">
+    <button
+      *ngFor="let category of categories"
+      [class.active]="selectedCategory === category.value"
+      (click)="selectCategory(category.value)"
+    >
+      {{ category.label }}
+    </button>
+  </nav>
+
+  <!-- Notification Feed (3. Notification Feed) -->
+  <div class="notification-feed">
+    <div *ngIf="notifications.length > 0; else emptyState">
+      <div *ngFor="let group of groupedNotifications" class="notification-group">
+        <h3 class="group-title">{{ group.date }}</h3>
+        <div class="notification-list">
+          <div *ngFor="let notification of group.notifications" class="notification-card" (click)="openNotificationDetail(notification)">
+            <div class="card-icon">
+              <ng-container [ngSwitch]="notification.type">
+                <i *ngSwitchCase="'System'" class="fas fa-bell"></i>
+                <i *ngSwitchCase="'Code Analysis'" class="fas fa-flask"></i>
+                <i *ngSwitchCase="'Security'" class="fas fa-shield-alt"></i>
+                <i *ngSwitchCase="'AI Recommendations'" class="fas fa-brain"></i>
+                <i *ngSwitchCase="'Project Updates'" class="fas fa-box"></i>
+                <i *ngSwitchCase="'Errors'" class="fas fa-times-circle"></i>
+                <i *ngSwitchCase="'Warnings'" class="fas fa-exclamation-triangle"></i>
+                <i *ngSwitchCase="'Chat & Collaboration'" class="fas fa-comments"></i>
+                <i *ngSwitchCase="'Billing'" class="fas fa-credit-card"></i>
+                <i *ngSwitchDefault class="fas fa-info-circle"></i>
+              </ng-container>
+            </div>
+            <div class="card-content">
+              <h4 class="card-title">{{ notification.title }}</h4>
+              <p class="card-description">{{ notification.description }}</p>
+              <span class="card-timestamp">{{ notification.timestamp | date:'short' }}</span>
+              <div class="status-badges">
+                <span *ngFor="let badge of notification.statusBadges" class="badge">{{ badge }}</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="icon-button" (click)="toggleReadStatus(notification); $event.stopPropagation()">
+                <i class="fas" [class.fa-eye]="notification.read" [class.fa-eye-slash]="!notification.read"></i>
+              </button>
+              <button class="icon-button" (click)="openProject(notification); $event.stopPropagation()">
+                <i class="fas fa-folder-open"></i>
+              </button>
+              <button class="icon-button" (click)="viewReport(notification); $event.stopPropagation()">
+                <i class="fas fa-file-alt"></i>
+              </button>
+              <button class="icon-button" (click)="dismissNotification(notification); $event.stopPropagation()">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State (6. Empty State) -->
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <i class="fas fa-inbox empty-state-icon"></i>
+      <h3 class="empty-state-title">You’re all caught up</h3>
+      <p class="empty-state-subtitle">No new alerts right now.</p>
+      <button class="action-button primary-button" (click)="refreshNotifications()">Refresh</button>
+    </div>
+  </ng-template>
+
+  <!-- Notification Detail Drawer (4. Notification Detail Drawer) -->
+  <div class="notification-detail-drawer" [class.open]="isDetailDrawerOpen">
+    <div class="drawer-header">
+      <h3 class="drawer-title">Notification Details</h3>
+      <button class="close-drawer-button" (click)="closeDetailDrawer()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="drawer-content" *ngIf="selectedNotification">
+      <h4 class="full-title">{{ selectedNotification.title }}</h4>
+      <p class="full-description">{{ selectedNotification.fullDescription || selectedNotification.description }}</p>
+      <div class="detail-item" *ngIf="selectedNotification.relatedProject">
+        <strong>Project:</strong> {{ selectedNotification.relatedProject }}
+      </div>
+      <div class="detail-item" *ngIf="selectedNotification.relatedAnalysisType">
+        <strong>Analysis Type:</strong> {{ selectedNotification.relatedAnalysisType }}
+      </div>
+      <div class="drawer-actions">
+        <button class="action-button" (click)="viewReport(selectedNotification)">View Report</button>
+        <button class="action-button primary-button" (click)="rerunScan(selectedNotification)">Re-run Scan</button>
+        <button class="action-button" (click)="fixWithAI(selectedNotification)">Fix with AI</button>
+        <button class="action-button danger-button" (click)="ignoreIssue(selectedNotification)">Ignore Issue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Preferences Section (5. Notification Preferences Section) -->
+  <div class="notification-preferences-drawer" [class.open]="isPreferencesDrawerOpen">
+    <div class="drawer-header">
+      <h3 class="drawer-title">Notification Preferences</h3>
+      <button class="close-drawer-button" (click)="closePreferencesDrawer()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="drawer-content">
+      <div class="preference-section">
+        <h4>Categories Receiving Notifications</h4>
+        <div class="toggle-group">
+          <label *ngFor="let category of notificationCategories" class="toggle-item">
+            <input type="checkbox" [(ngModel)]="category.enabled">
+            <span>{{ category.label }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="preference-section">
+        <h4>Delivery Options</h4>
+        <div class="toggle-group">
+          <label *ngFor="let option of deliveryOptions" class="toggle-item">
+            <input type="checkbox" [(ngModel)]="option.enabled">
+            <span>{{ option.label }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="preference-section">
+        <h4>Other</h4>
+        <label class="toggle-item">
+          <input type="checkbox" [(ngModel)]="soundEnabled">
+          <span>Sound on/off</span>
+        </label>
+      </div>
+
+      <button class="action-button primary-button save-preferences-button" (click)="savePreferences()">Save Preferences</button>
+    </div>
+  </div>
+</div>

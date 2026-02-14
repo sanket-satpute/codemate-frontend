@@ -1,0 +1,14 @@
+<div class="metrics-cards-container">
+  <div class="metric-card">
+    <span class="metric-label">CPU Usage</span>
+    <span class="metric-value">{{ latestMetrics?.cpu | number:'1.1-1' }}%</span>
+  </div>
+  <div class="metric-card">
+    <span class="metric-label">Memory Usage</span>
+    <span class="metric-value">{{ latestMetrics?.memory | number:'1.1-1' }} MB</span>
+  </div>
+  <div class="metric-card">
+    <span class="metric-label">Response Time</span>
+    <span class="metric-value">{{ latestMetrics?.responseTime | number:'1.1-1' }} ms</span>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<div class="export-buttons-container">
+  <app-button 
+    (click)="onExportCsv()" 
+    [disabled]="disabled || exportingCsv"
+    [loading]="exportingCsv">
+    <i class="fas fa-file-csv"></i>
+    {{ exportingCsv ? 'Exporting...' : 'Export CSV' }}
+  </app-button>
+
+  <app-button 
+    (click)="onExportPdf()"
+    [disabled]="disabled || exportingPdf"
+    [loading]="exportingPdf">
+    <i class="fas fa-file-pdf"></i>
+    {{ exportingPdf ? 'Exporting...' : 'Export PDF' }}
+  </app-button>
+</div>

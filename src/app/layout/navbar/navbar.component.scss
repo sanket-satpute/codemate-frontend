@@ -1,0 +1,515 @@
+@use '../../../styles/_variables' as v;
+@use '../../../styles/_mixins' as m;
+
+// ============================================================================
+// PREMIUM NAVBAR DESIGN
+// Clean, modern, with sophisticated micro-interactions
+// ============================================================================
+
+.navbar {
+  // Layout - Normal flow, not fixed
+  position: relative;
+  width: 100%;
+  height: v.$navbar-height; // 44px
+  
+  // Premium glassmorphic background
+  background: rgba(30, 41, 59, 0.7); // grey-800 with transparency
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  
+  // Refined borders and shadows
+  border: 1px solid rgba(203, 213, 225, 0.08); // Subtle border
+  border-radius: v.$border-radius-navbar; // 18px
+  
+  // Layered shadow for depth
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  
+  // Flexbox layout
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$space-lg; // 24px
+  padding: 0 v.$space-lg; // Horizontal padding
+  
+  // Smooth transitions
+  transition: 
+    background-color v.$transition-duration-base v.$ease-in-out,
+    box-shadow v.$transition-duration-base v.$ease-in-out,
+    transform v.$transition-duration-fast v.$ease-in-out;
+  
+  // Subtle hover elevation
+  &:hover {
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 0 1px rgba(79, 70, 229, 0.1);
+  }
+}
+
+// ============================================================================
+// NAVBAR SECTIONS
+// ============================================================================
+
+.navbar-section {
+  display: flex;
+  align-items: center;
+  gap: v.$space-md; // 16px
+  
+  &.navbar-left {
+    flex: 1;
+    max-width: 500px; // Constrain search width
+  }
+  
+  &.navbar-right {
+    gap: v.$space-md;
+  }
+}
+
+// ============================================================================
+// SEARCH CONTAINER - Premium Treatment
+// ============================================================================
+
+.search-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: v.$space-sm; // 8px
+  
+  // Premium background
+  background: v.$bg-secondary-focus; // grey-700
+  border: 1px solid v.$border-neutral;
+  border-radius: v.$border-radius-input; // 12px
+  
+  padding: v.$space-sm v.$space-md; // 8px 16px
+  
+  // Smooth transitions
+  transition: all v.$transition-duration-base v.$ease-in-out;
+  
+  // Focus state - premium glow
+  &:focus-within {
+    background: v.$bg-secondary;
+    border-color: v.$primary-indigo-600;
+    box-shadow: 
+      0 0 0 3px rgba(79, 70, 229, 0.15),
+      0 4px 12px rgba(79, 70, 229, 0.2);
+    
+    .search-icon {
+      color: v.$primary-indigo-600;
+      transform: scale(1.1);
+    }
+    
+    .search-kbd {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+  }
+  
+  // Hover state
+  &:hover:not(:focus-within) {
+    border-color: rgba(79, 70, 229, 0.3);
+    background: rgba(51, 65, 85, 0.8); // Slightly lighter
+  }
+}
+
+.search-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: text;
+  color: v.$text-muted;
+  transition: all v.$transition-duration-fast v.$ease-in-out;
+}
+
+.search-icon {
+  font-size: 16px;
+  color: v.$text-muted;
+  transition: all v.$transition-duration-base v.$ease-in-out;
+  pointer-events: none;
+}
+
+.search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: v.$text-primary;
+  font-family: v.$font-family-base;
+  font-size: v.$font-size-body-sm; // 14px
+  font-weight: v.$font-weight-regular;
+  
+  &::placeholder {
+    color: v.$text-muted;
+    font-weight: v.$font-weight-regular;
+  }
+  
+  // Remove autofill styling
+  &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 100px v.$bg-secondary-focus inset;
+    -webkit-text-fill-color: v.$text-primary;
+  }
+}
+
+.search-kbd {
+  display: flex;
+  align-items: center;
+  padding: 2px v.$space-xs; // 2px 4px
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid v.$border-neutral;
+  border-radius: v.$border-radius-xs; // 4px
+  font-size: v.$font-size-body-xs; // 12px
+  font-family: v.$font-family-code;
+  color: v.$text-muted;
+  font-weight: v.$font-weight-medium;
+  line-height: 1;
+  transition: all v.$transition-duration-base v.$ease-in-out;
+  pointer-events: none;
+}
+
+// ============================================================================
+// ACTIONS GROUP
+// ============================================================================
+
+.actions-group {
+  display: flex;
+  align-items: center;
+  gap: v.$space-xs; // 4px - tight grouping
+}
+
+// ============================================================================
+// ICON BUTTONS - Refined Design
+// ============================================================================
+
+.nav-icon-btn {
+  @include m.flex-center;
+  
+  position: relative;
+  width: 36px;
+  height: 36px;
+  
+  background: transparent;
+  border: none;
+  border-radius: v.$border-radius-md; // 8px
+  
+  color: v.$text-muted;
+  font-size: 18px;
+  
+  cursor: pointer;
+  
+  transition: all v.$transition-duration-fast v.$ease-in-out;
+  
+  // Hover state - subtle and refined
+  &:hover {
+    background: rgba(79, 70, 229, 0.12);
+    color: v.$primary-indigo-300;
+    transform: translateY(-1px);
+  }
+  
+  // Active state
+  &:active {
+    transform: translateY(0) scale(0.95);
+    background: rgba(79, 70, 229, 0.2);
+  }
+  
+  // Focus state
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px v.$primary-indigo-600;
+  }
+}
+
+// ============================================================================
+// THEME TOGGLE - Premium Animation
+// ============================================================================
+
+.theme-toggle {
+  .theme-icon {
+    width: 20px;
+    height: 20px;
+    overflow: visible;
+    
+    .sun-icon,
+    .moon-icon {
+      transition: 
+        opacity v.$transition-duration-base v.$ease-out-back,
+        transform v.$transition-duration-base v.$ease-out-back;
+      transform-origin: center;
+      opacity: 0;
+      transform: scale(0.5) rotate(-90deg);
+    }
+    
+    .sun-icon.active,
+    .moon-icon.active {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+  }
+  
+  &:hover .theme-icon {
+    filter: drop-shadow(0 0 6px rgba(79, 70, 229, 0.6));
+  }
+}
+
+// ============================================================================
+// NOTIFICATION BUTTON
+// ============================================================================
+
+.notification-container {
+  position: relative;
+}
+
+.notification-btn {
+  &.has-notifications {
+    color: v.$accent-cyan-400;
+    
+    &:hover {
+      background: rgba(34, 211, 238, 0.12);
+      color: v.$accent-cyan-300;
+    }
+    
+    // Pulse animation for unread
+    animation: notificationPulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes notificationPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  
+  min-width: 18px;
+  height: 18px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background: linear-gradient(135deg, #F87171, #EF4444); // error gradient
+  color: v.$white;
+  
+  font-size: 10px;
+  font-weight: v.$font-weight-bold;
+  line-height: 1;
+  
+  border-radius: v.$border-radius-full;
+  border: 2px solid v.$bg-secondary;
+  
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 8px rgba(248, 113, 113, 0.4);
+  
+  pointer-events: none;
+  z-index: 10;
+}
+
+// ============================================================================
+// NAVBAR DIVIDER
+// ============================================================================
+
+.navbar-divider {
+  width: 1px;
+  height: 24px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    v.$border-neutral,
+    transparent
+  );
+  margin: 0 v.$space-xs; // 0 4px
+}
+
+// ============================================================================
+// PROFILE BUTTON - Premium Design
+// ============================================================================
+
+.profile-container {
+  position: relative;
+  
+  // CRITICAL: Allow dropdown to escape container
+  // Don't set overflow: hidden or clip the dropdown
+  z-index: 100; // Ensure profile section is above other navbar elements
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: v.$space-sm; // 8px
+  
+  background: rgba(79, 70, 229, 0.08);
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  border-radius: v.$border-radius-lg; // 12px
+  
+  padding: v.$space-xs v.$space-sm; // 4px 8px
+  
+  cursor: pointer;
+  
+  transition: all v.$transition-duration-base v.$ease-in-out;
+  
+  // Hover state
+  &:hover {
+    background: rgba(79, 70, 229, 0.15);
+    border-color: rgba(79, 70, 229, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+  }
+  
+  // Active state
+  &.active,
+  &:active {
+    background: rgba(79, 70, 229, 0.2);
+    transform: translateY(0);
+    
+    .profile-chevron {
+      transform: rotate(180deg);
+    }
+  }
+  
+  // Focus state
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px v.$primary-indigo-600;
+  }
+}
+
+.profile-avatar {
+  width: 28px;
+  height: 28px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background: linear-gradient(135deg, v.$primary-indigo-600, v.$accent-cyan-400);
+  border-radius: v.$border-radius-full;
+  
+  color: v.$white;
+  font-size: 14px;
+  
+  box-shadow: 
+    inset 0 1px 2px rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: v.$space-xs; // 4px
+}
+
+.profile-name {
+  color: v.$text-primary;
+  font-size: v.$font-size-body-sm; // 14px
+  font-weight: v.$font-weight-medium;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-chevron {
+  color: v.$text-muted;
+  font-size: 12px;
+  transition: transform v.$transition-duration-base v.$ease-in-out;
+}
+
+// ============================================================================
+// RESPONSIVE DESIGN
+// ============================================================================
+
+@media (max-width: 1024px) {
+  .navbar {
+    gap: v.$space-md; // 16px
+    padding: 0 v.$space-md;
+  }
+  
+  .navbar-section.navbar-left {
+    max-width: 400px;
+  }
+  
+  .profile-name {
+    max-width: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    gap: v.$space-sm; // 8px
+    padding: 0 v.$space-sm;
+    height: auto;
+    min-height: v.$navbar-height;
+  }
+  
+  .navbar-section.navbar-left {
+    flex: 1;
+    max-width: none;
+  }
+  
+  .search-container {
+    padding: v.$space-xs v.$space-sm; // 4px 8px
+  }
+  
+  .profile-info {
+    display: none; // Hide name on mobile
+  }
+  
+  .navbar-divider {
+    display: none;
+  }
+  
+  .nav-icon-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-kbd {
+    display: none; // Hide keyboard shortcut on small mobile
+  }
+  
+  .actions-group {
+    gap: 2px; // Tighter on mobile
+  }
+}
+
+// ============================================================================
+// ACCESSIBILITY
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar,
+  .nav-icon-btn,
+  .profile-btn,
+  .search-container,
+  .theme-icon .sun-icon,
+  .theme-icon .moon-icon {
+    transition: none;
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .navbar {
+    border: 2px solid v.$text-primary;
+  }
+  
+  .nav-icon-btn,
+  .profile-btn {
+    border: 1px solid v.$text-primary;
+  }
+}

@@ -1,0 +1,128 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+.security-dashboard-container {
+  padding: var(--space-xl);
+  max-width: 1200px; /* Assuming this is a fixed max width for now, until we clarify if there's a v.$max-width variable */
+  margin: 0 auto;
+
+  h2 {
+    color: var(--color-text-primary); // Using defined variable
+    margin-bottom: var(--space-xl);
+    font-size: var(--h2-font-size); /* Using v.$h2-font-size as 2xl equivalent */
+    font-weight: var(--font-weight-bold); // Using defined variable
+    text-align: center;
+  }
+
+  h3 {
+    color: var(--color-text-primary); // Using defined variable
+    margin-bottom: var(--space-md);
+    font-size: var(--h3-font-size); /* Using v.$h3-font-size as lg equivalent */
+    font-weight: var(--font-weight-semibold); // Using defined variable
+  }
+
+  .loading-state, .error-state {
+    text-align: center;
+    padding: var(--space-xl);
+    font-size: var(--font-size-base); /* Using v.$font-size-base as md equivalent */
+    color: var(--color-text-muted); // Using defined variable
+  }
+
+  .error-state {
+    color: var(--color-error); // Using defined variable
+  }
+
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+
+    .summary-card {
+      background-color: var(--color-surface-card); // Using defined variable
+      border-radius: var(--border-radius-base);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-sm); /* Assuming shadow-sm is a good default for card shadow */
+      text-align: center;
+      transition: transform 0.2s ease-in-out;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+
+      h4 {
+        color: var(--color-text-muted); // Using defined variable
+        font-size: var(--font-size-base);
+        margin-bottom: var(--space-sm);
+      }
+
+      .value {
+        font-size: var(--h4-font-size); /* Using v.$h4-font-size as xl equivalent */
+        font-weight: var(--font-weight-bold); // Using defined variable
+        color: var(--primary-color); // Using defined variable
+
+        &.total {
+          color: var(--accent-color); // Using defined variable
+        }
+      }
+
+      &.severity-high .value { color: var(--color-error); } /* Mapping to defined variables */
+      &.severity-medium .value { color: var(--color-warning); }
+      &.severity-low .value { color: var(--color-info); }
+    }
+  }
+
+  .vulnerability-list-section, .charts-section {
+    background-color: var(--color-surface-card); // Using defined variable
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-sm); /* Assuming shadow-sm is a good default */
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+
+    .no-data {
+      text-align: center;
+      color: var(--color-text-muted); // Using defined variable
+      padding: var(--space-md);
+      background-color: var(--color-bg-primary-navy-black); /* Using v.$background-color as a generic alternative */
+      border-radius: var(--border-radius-base);
+    }
+  }
+
+  .vulnerability-list {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .charts-section {
+    .chart-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-md);
+
+      .severity-pie-chart {
+        transform: rotate(-90deg); /* Start from top */
+      }
+
+      .chart-legend {
+        display: flex;
+        gap: var(--space-md);
+        .legend-item {
+          display: flex;
+          align-items: center;
+          font-size: var(--font-size-body-sm); // Using defined variable
+          color: var(--color-text-muted); // Using defined variable
+          .color-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: var(--space-xs);
+          }
+          &.high .color-box { background-color: var(--color-error); }
+          &.medium .color-box { background-color: var(--color-warning); }
+          &.low .color-box { background-color: var(--color-info); }
+        }
+      }
+    }
+  }
+}

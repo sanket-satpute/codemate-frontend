@@ -1,0 +1,23 @@
+<div class="patch-preview-container">
+  <div class="header">
+    <h2 class="title">AI Generated Fix Preview</h2>
+    <span class="confidence" [style.color]="patch.confidence > 0.7 ? 'var(--success-color)' : (patch.confidence > 0.4 ? 'var(--warning-color)' : 'var(--danger-color)')">
+      Confidence: {{ confidencePercentage() | number:'1.0-0' }}%
+    </span>
+  </div>
+
+  <div class="summary-box">
+    <h3>Summary:</h3>
+    <p>{{ patch.summary }}</p>
+  </div>
+
+  <div class="diff-viewer">
+    <h3>Code Diff:</h3>
+    <pre><code class="diff-block">{{ patch.diff }}</code></pre>
+  </div>
+
+  <div class="actions">
+    <button class="btn-secondary" (click)="onBackToIssuesClick()">Back to Issues</button>
+    <button class="btn-primary" (click)="onApplyFixClick()">Apply Fix</button>
+  </div>
+</div>

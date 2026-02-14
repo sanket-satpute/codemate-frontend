@@ -1,0 +1,19 @@
+<div class="test-generator-panel">
+  <div class="panel-header">
+    <h3 class="panel-title">Smart Test Case Generator</h3>
+  </div>
+  <div class="panel-body">
+    <div *ngIf="selectedFile; else noFileSelected">
+      <p class="selected-file-info">
+        Selected file: <strong>{{ selectedFile.filePath }}</strong>
+      </p>
+      <button class="btn btn-primary btn-block" (click)="generateTests()" [disabled]="loading()">
+        <span *ngIf="!loading()">Generate Test Cases (AI)</span>
+        <span *ngIf="loading()">Generating...</span>
+      </button>
+    </div>
+    <ng-template #noFileSelected>
+      <p class="no-file-message">Select a file from the list to generate test cases.</p>
+    </ng-template>
+  </div>
+</div>

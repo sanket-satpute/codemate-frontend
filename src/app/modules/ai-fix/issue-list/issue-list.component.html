@@ -1,0 +1,15 @@
+<div class="issue-list-container">
+  <h2 class="list-header">Available Issues for AI Fix</h2>
+  <div class="issue-cards-grid">
+    <div *ngFor="let issue of issues" class="issue-card">
+      <div class="issue-header">
+        <span class="issue-severity" [ngClass]="getSeverityClass(issue.severity)">{{ issue.severity }}</span>
+        <h3 class="issue-title">{{ issue.title }}</h3>
+      </div>
+      <p class="issue-description">{{ issue.description }}</p>
+      <div class="issue-actions">
+        <button class="btn-primary" (click)="onGenerateFixClick(issue)">Generate Fix</button>
+      </div>
+    </div>
+  </div>
+</div>

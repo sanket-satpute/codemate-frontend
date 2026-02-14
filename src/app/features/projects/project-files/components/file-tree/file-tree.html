@@ -1,0 +1,31 @@
+<ul class="file-tree">
+  <li *ngFor="let node of fileTree" [ngClass]="{ 'folder': node.type === 'folder', 'file': node.type === 'file' }">
+    <div 
+      class="node-item" 
+      (click)="toggleFolder(node)" 
+      (keydown.enter)="toggleFolder(node)" 
+      (keydown.space)="toggleFolder(node)"
+      [attr.tabindex]="0"
+      role="button"
+      [class.selected]="isSelected(node)"
+    >
+      <span class="icon">{{ node.type === 'folder' ? (isExpanded(node) ? '▼' : '►') : '📄' }}</span>
+      <span class="name">{{ node.name }}</span>
+    </div>
+    <div *ngIf="node.type === 'folder' && isExpanded(node) && node.children">
+      <app-file-tree 
+        [fileTree]="node.children" 
+        (fileSelected)="onChildFileSelected($event)">
+      </app-file-tree>
+    </div>
+    <div 
+      *ngIf="node.type === 'file'" 
+      (click)="onFileClick(node)" 
+      (keydown.enter)="onFileClick(node)" 
+      (keydown.space)="onFileClick(node)"
+      [attr.tabindex]="0"
+      role="button"
+    >
+    </div>
+  </li>
+</ul>

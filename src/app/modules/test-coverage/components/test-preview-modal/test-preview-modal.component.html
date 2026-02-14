@@ -1,0 +1,25 @@
+<div class="modal-container">
+  <header class="modal-header">
+    <h2 class="modal-title">Generated Test Case for {{ data.testCase.filePath }}</h2>
+    <button class="close-button" (click)="dialogRef.close()">
+      &times;
+    </button>
+  </header>
+  <div class="modal-content">
+    <div class="code-preview">
+      <h3 class="section-title">Test Code</h3>
+      <pre class="code-block"><code>{{ data.testCase.testCode }}</code></pre>
+    </div>
+    <div class="suggestions">
+      <h3 class="section-title">Suggestions</h3>
+      <ul>
+        <li *ngFor="let suggestion of data.testCase.suggestions">{{ suggestion }}</li>
+      </ul>
+    </div>
+  </div>
+  <footer class="modal-footer">
+    <button class="btn btn-secondary" (click)="copyCode()">Copy Code</button>
+    <button class="btn btn-primary" (click)="downloadTestFile()">Download .spec.ts</button>
+    <button class="btn" (click)="dialogRef.close()">Close</button>
+  </footer>
+</div>

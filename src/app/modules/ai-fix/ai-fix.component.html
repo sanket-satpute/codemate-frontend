@@ -1,0 +1,29 @@
+<div class="ai-fix-container">
+  <app-loader *ngIf="loading()"></app-loader>
+
+  <ng-container *ngIf="!loading()">
+    <div class="content-wrapper">
+      <ng-container *ngIf="!patch() && issues().length > 0; else showPatchOrEmpty">
+        <app-issue-list 
+          [issues]="issues()" 
+          (generateFix)="onGenerateFix($event)">
+        </app-issue-list>
+      </ng-container>
+      <ng-template #showPatchOrEmpty>
+        <ng-container *ngIf="patch(); else emptyState">
+          <app-patch-preview
+            [patch]="patch()!"
+            (applyFix)="onApplyFix($event)"
+            (backToIssues)="onBackToIssues()">
+          </app-patch-preview>
+        </ng-container>
+        <ng-template #emptyState>
+          <app-empty-state 
+            *ngIf="issues().length === 0" 
+            message="No issues found for this project that can be fixed by AI.">
+          </app-empty-state>
+        </ng-template>
+      </ng-template>
+    </div>
+  </ng-container>
+</div>

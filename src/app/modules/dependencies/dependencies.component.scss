@@ -1,0 +1,63 @@
+@use 'mixins' as m;
+
+:host {
+  display: block;
+}
+
+.page-container {
+  padding: var(--spacing-xl);
+}
+
+.page-header {
+  margin-bottom: var(--spacing-xl);
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  p {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+  }
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: var(--spacing-xl);
+  align-items: start;
+  height: calc(100vh - var(--header-height) - (2 * var(--spacing-xl)) - 80px); /* Adjust header height and footer space */
+
+  @include m.breakpoint(lg) {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+.graph-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.graph-visualizer {
+  flex-grow: 1;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.impact-section {
+  height: 100%;
+}

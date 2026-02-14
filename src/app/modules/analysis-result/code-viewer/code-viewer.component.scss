@@ -1,0 +1,91 @@
+@use '_variables' as v;
+@use '../../../../styles/_mixins' as m;
+@use '../../../../styles/_theme' as t;
+
+.code-viewer-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .viewer-header {
+    background-color: v.$bg-secondary;
+    border-bottom: 1px solid v.$border-neutral;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    color: v.$text-muted;
+    border-radius: v.$border-radius-code v.$border-radius-code 0 0; /* Using v.$border-radius-code */
+  }
+
+  .code-block {
+    flex-grow: 1;
+    background-color: v.$bg-primary-navy-black;
+    padding: 1rem;
+    margin: 0;
+    overflow-y: auto;
+    font-family: v.$font-family-monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--text-color);
+
+    code {
+      display: block; // Ensures each line div gets proper spacing
+      white-space: pre-wrap; // Preserve whitespace and wrap long lines
+
+      .line {
+        display: flex;
+        padding-left: 0.5rem; // Indent for line numbers
+        
+        &.highlighted {
+          background-color: rgba(v.$warning-color, 0.2); // Highlight for issue line
+          box-shadow: inset 3px 0 0 v.$warning-color; // Left border highlight
+        }
+      }
+
+      .line-number {
+        color: v.$text-muted;
+        margin-right: v.$space-sm; /* Changed to v.$space-sm (16px) */
+        user-select: none;
+        width: 2.5rem; // Fixed width for line numbers
+        text-align: right;
+        flex-shrink: 0; // Prevent shrinking
+      }
+
+      .line-content {
+        flex-grow: 1;
+      }
+    }
+  }
+
+  .suggestion-box {
+    background-color: v.$surface-card;
+    border-top: 1px solid v.$border-neutral;
+    padding: 1rem;
+    border-radius: 0 0 v.$border-radius-code v.$border-radius-code; /* Using v.$border-radius-code */
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    h5 {
+      margin: 0;
+      color: var(--primary-color);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    button {
+      align-self: flex-end;
+    }
+  }
+
+  .empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: v.$text-muted;
+  }
+}

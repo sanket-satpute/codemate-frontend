@@ -1,0 +1,25 @@
+@use 'variables' as v;
+@use 'mixins' as m; // Import mixins for card-base
+
+.files-list {
+  @include m.card-base; /* Use card-base mixin */
+  padding: v.$space-sm; /* Use SM spacing (16px) */
+  height: 100%;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  padding: v.$space-xxs 0; /* Use XXS spacing (8px) */
+  cursor: pointer;
+  color: var(--text-primary); /* Ensure text color is primary */
+
+  &:hover {
+    background-color: var(--bg-secondary); /* Use secondary background for hover */
+    border-radius: v.$border-radius-btn; // Apply button border radius for hover effect
+  }
+}

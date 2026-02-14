@@ -1,0 +1,643 @@
+@use 'sass:color';
+@use '../../../styles/_variables.scss' as v; // Use 'v' as alias for variables
+@use '../../../styles/_mixins.scss' as m; // Use 'm' as alias for mixins
+
+// Component-specific mixins (if necessary, otherwise use global ones)
+
+@mixin custom-checkbox($accent-color: v.$primary-indigo-600, $border-color: v.$border-neutral, $check-color: v.$white) {
+  /* Hide default checkbox */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid $border-color;
+  border-radius: v.$border-radius-xs;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  transition: all v.$transition-duration-fast v.$ease-in-out;
+  flex-shrink: 0; // Prevent shrinking in flex containers
+
+  /* Checked state */
+  &:checked {
+    background-color: $accent-color;
+    border-color: $accent-color;
+
+    /* Checkmark */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 12px;
+      border: solid $check-color;
+      border-width: 0 2px 2px 0;
+      transform: translate(-50%, -65%) rotate(45deg);
+    }
+  }
+
+  /* Focus state */
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($accent-color, 0.4);
+  }
+
+  /* Hover state */
+  &:hover {
+    border-color: $accent-color;
+  }
+}
+
+
+.notifications-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: v.$bg-primary-navy-black;
+  font-family: v.$font-family-primary;
+  color: v.$text-primary;
+  overflow: hidden;
+  padding: v.$space-xl;
+}
+
+/* Real-time Updates Banner */
+.new-notifications-banner {
+  background-color: rgba(v.$accent-cyan-400, 0.15);
+  border: 1px solid rgba(v.$accent-cyan-400, 0.4);
+  border-radius: v.$border-radius-base;
+  padding: v.$space-md v.$space-lg;
+  margin-bottom: v.$space-xl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: v.$text-primary;
+  font-size: v.$font-size-body-md;
+  box-shadow: v.$shadow-sm;
+  animation: slideDownFadeIn 0.5s ease-out forwards;
+
+  p {
+    margin: 0;
+  }
+
+  button {
+    @include m.button-primary; // Use global mixin
+    background-color: v.$accent-cyan-400;
+    color: v.$bg-primary-navy-black;
+    padding: v.$space-xs v.$space-md;
+    border-radius: v.$border-radius-sm;
+    font-weight: v.$font-weight-medium;
+
+    &:hover {
+      background-color: v.$accent-cyan-700;
+      box-shadow: v.$shadow-button-glow;
+    }
+  }
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: v.$space-lg;
+  margin-bottom: v.$space-lg;
+  border-bottom: 1px solid v.$border-neutral;
+
+  .header-content {
+    .title {
+      font-size: v.$font-size-page-title;
+      font-weight: v.$font-weight-bold;
+      color: v.$text-primary;
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: v.$font-size-body-lg;
+      color: v.$text-muted;
+      margin-top: v.$space-xs;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: v.$space-md;
+
+    .action-button {
+      @include m.button-secondary; // Use global mixin
+      padding: v.$space-sm v.$space-lg;
+      border-radius: v.$border-radius-base;
+      font-size: v.$font-size-body-md;
+      font-weight: v.$font-weight-medium;
+      cursor: pointer;
+      transition: all v.$transition-duration-fast v.$ease-in-out;
+
+      &.primary-button {
+        @include m.button-primary; // Use global mixin
+        background-color: v.$primary-indigo-600;
+        color: v.$text-primary;
+
+        &:hover {
+          background-color: v.$primary-indigo-700;
+          box-shadow: v.$shadow-button-glow;
+        }
+      }
+    }
+  }
+}
+
+/* Category Filters */
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: v.$space-sm;
+  margin-bottom: v.$space-xl;
+  padding-bottom: v.$space-sm; // for scrollbar on small screens
+  overflow-x: auto; // enable horizontal scroll for overflow
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: v.$bg-secondary;
+    border-radius: v.$border-radius-pill;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: v.$border-neutral;
+    border-radius: v.$border-radius-pill;
+    &:hover {
+      background: v.$color-grey-500-sass; /* Directly use a darker grey shade */
+    }
+  }
+
+  button {
+    background-color: v.$bg-secondary;
+    border: 1px solid v.$border-neutral;
+    border-radius: v.$border-radius-pill;
+    padding: v.$space-xs v.$space-md;
+    font-size: v.$font-size-body-sm;
+    color: v.$text-muted;
+    cursor: pointer;
+    white-space: nowrap; // Prevent text wrapping
+    transition: all v.$transition-duration-fast v.$ease-in-out;
+
+    &:hover {
+      background-color: v.$bg-secondary-focus;
+      color: v.$text-primary;
+      border-color: rgba(v.$primary-indigo-600, 0.5);
+    }
+
+    &.active {
+      background: v.$primary-indigo-600;
+      color: v.$white;
+      border-color: v.$primary-indigo-600;
+      box-shadow: 0 0 10px rgba(v.$primary-indigo-600, 0.6);
+    }
+  }
+}
+
+/* Notification Feed */
+.notification-feed {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: v.$space-md; // To allow space for scrollbar
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: v.$bg-secondary;
+    border-radius: v.$border-radius-pill;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: v.$border-neutral;
+    border-radius: v.$border-radius-pill;
+    &:hover {
+      background: v.$color-grey-500-sass; /* Directly use a darker grey shade */
+    }
+  }
+
+  .notification-group {
+    margin-bottom: v.$space-xl;
+
+    .group-title {
+      font-size: v.$font-size-section-title;
+      color: v.$text-primary;
+      margin-bottom: v.$space-lg;
+      border-bottom: 1px solid v.$border-neutral;
+      padding-bottom: v.$space-sm;
+    }
+
+    .notification-list {
+      display: flex;
+      flex-direction: column;
+      gap: v.$space-md;
+
+      .notification-card {
+        background-color: v.$bg-secondary;
+        border: 1px solid v.$border-neutral;
+        border-radius: v.$border-radius-lg;
+        padding: v.$space-lg;
+        display: flex;
+        align-items: flex-start;
+        gap: v.$space-md;
+        cursor: pointer;
+        transition: all v.$transition-duration-fast v.$ease-in-out;
+        position: relative;
+        overflow: hidden;
+
+        &:hover {
+          transform: translateY(-3px);
+          border-color: v.$accent-cyan-400;
+          box-shadow: 0 5px 15px rgba(v.$accent-cyan-400, 0.2);
+
+          .card-actions {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .card-icon {
+          flex-shrink: 0;
+          width: 40px;
+          height: 40px;
+          background-color: v.$primary-indigo-600;
+          border-radius: v.$border-radius-base;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: v.$font-size-subtitle;
+          color: v.$white;
+          box-shadow: 0 2px 8px rgba(v.$primary-indigo-600, 0.4);
+        }
+
+        .card-content {
+          flex-grow: 1;
+
+          .card-title {
+            font-size: v.$font-size-body-lg;
+            font-weight: v.$font-weight-semibold;
+            color: v.$text-primary;
+            margin: 0 0 v.$space-xs 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .card-description {
+            font-size: v.$font-size-body-sm;
+            color: v.$text-muted;
+            margin: 0 0 v.$space-sm 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
+          .card-timestamp {
+            font-size: v.$font-size-body-xs;
+            color: v.$text-muted;
+            display: block;
+            margin-top: v.$space-xs;
+          }
+
+          .status-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: v.$space-xs;
+            margin-top: v.$space-sm;
+
+            .badge {
+              background-color: rgba(v.$text-muted, 0.1);
+              color: v.$text-muted;
+              font-size: v.$font-size-body-xs;
+              padding: 4px 8px;
+              border-radius: v.$border-radius-xs;
+              text-transform: uppercase;
+              font-weight: v.$font-weight-medium;
+
+              &.New { background-color: rgba(v.$accent-cyan-400, 0.2); color: v.$accent-cyan-400; }
+              &.High.Priority { background-color: rgba(v.$error-color, 0.2); color: v.$error-color; }
+              &.Security { background-color: rgba(v.$accent-green-400, 0.2); color: v.$accent-green-400; }
+              &.AI.Generated { background-color: rgba(v.$primary-indigo-600, 0.2); color: v.$primary-indigo-600; }
+              // Add more badge styles as needed
+            }
+          }
+        }
+
+        .card-actions {
+          position: absolute;
+          right: v.$space-md;
+          top: 50%;
+          transform: translateY(-50%) translateX(20px);
+          opacity: 0;
+          display: flex;
+          flex-direction: column;
+          gap: v.$space-xs;
+          background-color: v.$bg-secondary-focus;
+          border-radius: v.$border-radius-sm;
+          padding: v.$space-xs;
+          box-shadow: v.$shadow-md;
+          transition: all v.$transition-duration-fast v.$ease-in-out;
+          z-index: 2; // Ensure actions are above other content on hover
+
+          .icon-button {
+            background: none;
+            border: none;
+            color: v.$text-muted;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: v.$border-radius-xs;
+            transition: all v.$transition-duration-fast v.$ease-in-out;
+
+            &:hover {
+              background-color: v.$border-neutral;
+              color: v.$accent-cyan-400;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Empty State */
+.empty-state {
+  background-color: v.$surface-card;
+  border-radius: v.$border-radius-lg;
+  padding: v.$space-3xl v.$space-xl;
+  text-align: center;
+  margin: v.$space-xl auto;
+  max-width: 700px;
+  box-shadow: v.$shadow-2xl;
+  border: 1px solid v.$border-neutral;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: v.$space-md;
+
+  .empty-state-icon {
+    color: v.$text-muted;
+    width: 80px;
+    height: 80px;
+    margin-bottom: v.$space-md;
+    filter: drop-shadow(0 0 10px rgba(v.$accent-cyan-400, 0.4));
+  }
+
+  .empty-state-title {
+    font-size: v.$font-size-section-title;
+    font-weight: v.$font-weight-bold;
+    color: v.$text-primary;
+    margin: 0;
+  }
+
+  .empty-state-subtitle {
+    font-size: v.$font-size-body-lg;
+    color: v.$text-muted;
+    margin-bottom: v.$space-lg;
+  }
+
+  .action-button.primary-button {
+    @include m.button-primary; // Use global mixin
+    background-color: v.$primary-indigo-600;
+    color: v.$text-primary;
+    padding: v.$space-sm v.$space-lg;
+
+    &:hover {
+      background-color: v.$primary-indigo-700;
+      box-shadow: v.$shadow-button-glow;
+    }
+  }
+}
+
+/* Empty State */
+.empty-state {
+  background-color: v.$surface-card;
+  border-radius: v.$border-radius-lg;
+  padding: v.$space-3xl v.$space-xl;
+  text-align: center;
+  margin: v.$space-xl auto;
+  max-width: 700px;
+  box-shadow: v.$shadow-2xl;
+  border: 1px solid v.$border-neutral;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: v.$space-md;
+
+  .empty-state-icon {
+    color: v.$text-muted;
+    width: 80px;
+    height: 80px;
+    margin-bottom: v.$space-md;
+    filter: drop-shadow(0 0 10px rgba(v.$accent-cyan-400, 0.4));
+  }
+
+  .empty-state-title {
+    font-size: v.$font-size-section-title;
+    font-weight: v.$font-weight-bold;
+    color: v.$text-primary;
+    margin: 0;
+  }
+
+  .empty-state-subtitle {
+    font-size: v.$font-size-body-lg;
+    color: v.$text-muted;
+    margin-bottom: v.$space-lg;
+  }
+
+  .action-button.primary-button {
+    @include m.button-primary; // Use global mixin
+    background-color: v.$primary-indigo-600;
+    color: v.$text-primary;
+    padding: v.$space-sm v.$space-lg;
+
+    &:hover {
+      background-color: v.$primary-indigo-700;
+      box-shadow: v.$shadow-button-glow;
+    }
+  }
+}
+
+/* Notification Detail Drawer & Preferences Drawer */
+.notification-detail-drawer,
+.notification-preferences-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 0;
+  max-width: 500px;
+  background-color: v.$bg-secondary;
+  box-shadow: -8px 0 20px rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
+  transition: width v.$transition-duration-base v.$ease-in-out-cubic;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 0; // Remove initial padding, add inside content
+
+  &.open {
+    width: 450px;
+    padding: v.$space-xl;
+  }
+
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: v.$space-md;
+    margin-bottom: v.$space-lg;
+    border-bottom: 1px solid v.$border-neutral;
+
+    .drawer-title {
+      font-size: v.$font-size-section-title;
+      font-weight: v.$font-weight-bold;
+      color: v.$text-primary;
+      margin: 0;
+    }
+
+    .close-drawer-button {
+      background: none;
+      border: none;
+      color: v.$text-muted;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: v.$border-radius-sm;
+      transition: all v.$transition-duration-fast v.$ease-in-out;
+
+      &:hover {
+        color: v.$accent-cyan-400;
+        background-color: v.$border-neutral;
+      }
+    }
+  }
+
+  .drawer-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-lg;
+
+    .full-title {
+      font-size: v.$font-size-subtitle;
+      font-weight: v.$font-weight-semibold;
+      color: v.$text-primary;
+      margin-bottom: v.$space-sm;
+    }
+
+    .full-description {
+      font-size: v.$font-size-body-md;
+      color: v.$text-muted;
+      line-height: 1.6;
+    }
+
+    .detail-item {
+      font-size: v.$font-size-body-md;
+      color: v.$text-muted;
+      strong {
+        color: v.$text-primary;
+        font-weight: v.$font-weight-semibold;
+      }
+    }
+
+    .drawer-actions {
+      display: flex;
+      flex-wrap: wrap; // Allow buttons to wrap
+      gap: v.$space-sm;
+      margin-top: v.$space-md;
+
+      .action-button {
+        flex: 1 1 auto; // Allow buttons to grow and shrink
+        min-width: 120px; // Minimum width for buttons
+        @include m.button-secondary; // Use global mixin
+        padding: v.$space-sm v.$space-md;
+        border-radius: v.$border-radius-base;
+
+        &.primary-button {
+          @include m.button-primary; // Use global mixin
+          background-color: v.$primary-indigo-600;
+          color: v.$text-primary;
+          &:hover {
+            background-color: v.$primary-indigo-700;
+          }
+        }
+        &.danger-button {
+          background-color: v.$error-color;
+          color: v.$white;
+          border-color: v.$error-color;
+          &:hover {
+            background-color: #D33D3D; /* Directly use a darker red for hover */
+          }
+        }
+      }
+    }
+
+    .preference-section {
+      margin-bottom: v.$space-lg;
+      padding-bottom: v.$space-md;
+      border-bottom: 1px solid v.$border-neutral;
+
+      h4 {
+        font-size: v.$font-size-body-lg;
+        color: v.$text-primary;
+        margin-bottom: v.$space-md;
+      }
+
+      .toggle-group {
+        display: flex;
+        flex-direction: column;
+        gap: v.$space-sm;
+
+        .toggle-item {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+
+          input[type="checkbox"] {
+            @include custom-checkbox(v.$primary-indigo-600, v.$border-neutral, v.$white); // Use component-specific mixin
+            margin-right: v.$space-sm;
+          }
+
+          span {
+            font-size: v.$font-size-body-md;
+            color: v.$text-muted;
+            transition: color v.$transition-duration-fast v.$ease-in-out;
+          }
+
+          &:hover span {
+            color: v.$text-primary;
+          }
+        }
+      }
+    }
+
+    .save-preferences-button {
+      margin-top: auto;
+      align-self: flex-start; // Align to start of flex container
+      @include m.button-primary; // Use global mixin
+      background-color: v.$primary-indigo-600;
+      color: v.$text-primary;
+      padding: v.$space-sm v.$space-lg;
+
+      &:hover {
+        background-color: v.$primary-indigo-700;
+        box-shadow: v.$shadow-button-glow;
+      }
+    }
+  }
+}
+
+/* Animations (from _animations.scss if available, otherwise define here) */
+@keyframes slideDownFadeIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

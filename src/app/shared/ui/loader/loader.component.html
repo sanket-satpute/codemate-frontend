@@ -1,0 +1,9 @@
+<div class="loader-container">
+  <div *ngIf="type === 'spinner'" [ngClass]="['spinner', 'spinner-' + size]"></div>
+  <div *ngIf="type === 'dots'" [ngClass]="['dots', 'dots-' + size]">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+  <p class="loader-message">{{ message }}</p>
+</div>

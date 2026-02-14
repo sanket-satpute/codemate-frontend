@@ -1,0 +1,127 @@
+@use '../../../../styles/_variables' as v;
+@use '../../../../styles/_mixins' as m; // Import mixins if needed
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: radial-gradient(circle at center, var(--grey-900) 0%, var(--grey-950) 100%); /* Consistent background */
+  padding: var(--space-lg);
+}
+
+.auth-logo {
+  width: 120px; /* Adjust size as needed */
+  margin-bottom: var(--space-md);
+}
+
+.auth-card {
+  @include m.glassmorphism($bg-opacity: 0.08, $border-opacity: 0.15, $blur-radius: 18px); /* Apply glassmorphism mixin */
+  padding: var(--space-xl);
+  border-radius: var(--border-radius-card); // Using defined variable
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  color: var(--text-color);
+  box-shadow: var(--shadow-xl); // Use enhanced shadow from variables
+  transition: all var(--duration-base) ease; /* Add transition for hover/focus */
+
+  &:hover {
+    transform: translateY(-2px); /* Subtle lift on hover */
+    box-shadow: var(--shadow-2xl), var(--shadow-neon-mixed); /* More prominent glow on hover */
+  }
+}
+
+.auth-title {
+  font-size: var(--font-size-h3); // Using defined variable
+  color: var(--primary-color);
+  margin-bottom: var(--space-lg);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.form-group {
+  text-align: left;
+
+  label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-weight: var(--font-weight-medium); // Using defined variable
+    color: var(--text-color);
+  }
+
+  input {
+    @include m.input-styles; /* Use input styles mixin */
+    // Override specific styles if needed after mixin application
+    padding: var(--space-sm); // Keep padding consistent
+    font-size: var(--font-size-base); // Keep font-size consistent
+
+    &:focus {
+      border-color: var(--primary-600); // More prominent focus color
+      outline: none;
+      box-shadow: var(--focus-ring-dark); // Using defined focus ring
+    }
+
+    &.is-invalid {
+      border-color: var(--error-color);
+      box-shadow: none; /* Remove focus shadow when invalid */
+    }
+  }
+
+  .error-message {
+    color: var(--error-color);
+    font-size: var(--font-size-body-sm); // Using defined variable;
+    margin-top: var(--space-xs);
+    display: flex; /* Added flex for icon alignment */
+    align-items: center;
+    gap: var(--spacing-0-5); /* Small gap for icon */
+
+    &::before {
+      font-family: "Font Awesome 5 Free"; /* Assuming Font Awesome is available */
+      content: "\f06a"; /* Exclamation circle icon */
+      font-weight: 900;
+      color: var(--error-color);
+    }
+  }
+}
+
+.alert {
+  padding: var(--space-sm);
+  border-radius: var(--border-radius-btn); // Using defined variable
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-base);
+  display: flex; /* Added flex for icon alignment */
+  align-items: center;
+  gap: var(--spacing-1);
+
+  &::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f06a"; /* Exclamation circle icon */
+    font-weight: 900;
+  }
+}
+
+.alert-error {
+  background-color: rgba(var(--color-error), 0.1); // Using defined variable directly
+  color: var(--error-color);
+  border: 1px solid var(--color-error);
+}
+
+.auth-footer {
+  margin-top: var(--space-lg);
+  font-size: var(--font-size-base);
+  color: var(--text-muted); /* Changed to text-muted for consistency */
+
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

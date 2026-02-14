@@ -1,0 +1,25 @@
+<div class="reports-container">
+  <header class="reports-header">
+    <h1>Project Reports</h1>
+    <p>Generate and export detailed analysis reports for your projects.</p>
+  </header>
+
+  <app-report-filters (filtersChanged)="fetchReports($event)"></app-report-filters>
+
+  <app-export-buttons 
+    [disabled]="reports().length === 0"
+    (exportCsv)="exportCsv()" 
+    (exportPdf)="exportPdf()">
+  </app-export-buttons>
+
+  <div class="reports-content">
+    <app-loader *ngIf="reportsService.loading()"></app-loader>
+
+    <app-empty-state *ngIf="!reportsService.loading() && reports().length === 0" message="No reports found for the selected criteria."></app-empty-state>
+
+    <app-report-table 
+      *ngIf="!reportsService.loading() && reports().length > 0" 
+      [reports]="reports()">
+    </app-report-table>
+  </div>
+</div>

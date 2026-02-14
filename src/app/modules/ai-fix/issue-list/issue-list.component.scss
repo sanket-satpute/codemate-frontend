@@ -1,0 +1,78 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+@use 'theme' as t; // Assuming theme is local, if not, adjust path
+
+.issue-list-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.list-header {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 2.5rem;
+  text-shadow: var(--text-shadow-light);
+}
+
+.issue-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.issue-card {
+  @include m.glass-card; // The glass-card mixin does not take parameters for color or border. It defines them internally.
+  padding: 1.5rem;
+  border-radius: var(--border-radius-base); /* Changed to var(--border-radius-base) */
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0, 0.1); /* Changed rgb(0,0,0) to 0,0,0 */
+  }
+
+  .issue-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .issue-severity {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--border-radius-pill);
+    text-transform: uppercase;
+    
+    &.severity-critical { background-color: var(--color-error); color: var(--color-white); }
+    &.severity-high { background-color: var(--color-warning); color: var(--text-color-dark); }
+    &.severity-medium { background-color: var(--color-info); color: var(--color-white); }
+    &.severity-low { background-color: var(--color-success); color: var(--color-white); }
+  }
+
+  .issue-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .issue-description {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    flex-grow: 1;
+    margin-bottom: 1rem;
+  }
+
+  .issue-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+}

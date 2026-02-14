@@ -1,0 +1,45 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.graph-container {
+  width: 100%;
+  height: 100%;
+  overflow: scroll; /* For zoomable and pan with scroll */
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-background-secondary);
+}
+
+.dependency-graph {
+  width: 100%; /* Adjust as needed for actual graph size */
+  height: 100%; /* Adjust as needed for actual graph size */
+  /* You may need to dynamically set width/height based on graph data for proper scaling */
+}
+
+.dependency-node {
+  stroke: var(--color-border);
+  stroke-width: 1.5px;
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.node-label {
+  font-size: 10px;
+  fill: var(--color-text-primary);
+  pointer-events: none; /* Allows click-through to node */
+}
+
+.dependency-edge {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1px;
+  opacity: 0.6;
+}

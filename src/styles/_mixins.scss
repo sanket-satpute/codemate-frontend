@@ -1,0 +1,473 @@
+@use './_variables' as v;
+@use 'sass:color';
+@use 'sass:map';
+
+$breakpoints: (
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+@mixin breakpoint($size) {
+  @if map.has-key($breakpoints, $size) {
+    @media (min-width: map.get($breakpoints, $size)) {
+      @content;
+    }
+  } @else {
+    @warn "Invalid breakpoint '#{$size}'. Available breakpoints are: #{map.keys($breakpoints)}.";
+  }
+}
+
+@mixin breakpoint-down($size) {
+  @if map.has-key($breakpoints, $size) {
+    @media (max-width: map.get($breakpoints, $size)) {
+      @content;
+    }
+  } @else {
+    @warn "Invalid breakpoint '#{$size}'. Available breakpoints are: #{map.keys($breakpoints)}.";
+  }
+}
+
+// Global mixin for glassmorphism effect
+@mixin glassmorphism($bg-opacity: 0.1, $border-opacity: 0.2, $blur-radius: 18px) {
+  background: rgba(v.$white, $bg-opacity);
+  backdrop-filter: blur($blur-radius);
+  -webkit-backdrop-filter: blur($blur-radius);
+  border: 1px solid rgba(v.$white, $border-opacity);
+}
+
+// Global mixin for linear gradient background clip text
+@mixin linear-gradient-text($gradient) {
+  background: $gradient;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// Onboarding specific background gradient
+@mixin onboarding-background-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+}
+
+@mixin glass-card {
+  @include glassmorphism($bg-opacity: 0.06, $border-opacity: 0.15); // Using global glassmorphism mixin
+  border-radius: v.$border-radius-lg;
+  box-shadow: v.$shadow-glass-light, v.$shadow-glass-dark;
+  transform-style: preserve-3d;
+}
+
+@mixin gradient-button {
+  background: v.$gradient-primary; // Using SASS variable
+  border: none;
+  color: v.$white;
+  padding: v.$space-sm v.$space-xl;
+  border-radius: v.$border-radius-btn;
+  cursor: pointer;
+  transition: all v.$transition-duration-base ease-in-out;
+  font-weight: v.$font-weight-medium;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(v.$white, 0.15);
+    border-radius: v.$border-radius-pill;
+    transition: width 0.4s ease-out, height 0.4s ease-out, top 0.4s ease-out, left 0.4s ease-out;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+
+  &:hover {
+    box-shadow: v.$shadow-button-glow, v.$shadow-md;
+    transform: translateY(-3px) scale(1.03);
+    &::before {
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: inset 0 1px 2px rgba(v.$black, 0.4);
+  }
+
+  &:disabled {
+    background: v.$border-neutral;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    color: v.$text-muted;
+    &::before {
+      width: 0;
+      height: 0;
+    }
+  }
+}
+
+@mixin create-project-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(45deg, v.$primary-indigo-600, v.$accent-cyan-400); // Indigo + Cyan glow
+  color: v.$white;
+  border: none;
+  border-radius: v.$border-radius-md; // 14-18px
+  padding: v.$space-md v.$space-xl; // 16-24px
+  font-size: v.$font-size-body-lg;
+  font-weight: v.$font-weight-semibold;
+  cursor: pointer;
+  box-shadow: v.$shadow-lg; // Soft shadows
+  transition: all v.$transition-duration-base ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02); // Subtle scale on hover
+    box-shadow: v.$shadow-xl, 0 0 20px rgba(79, 70, 229, 0.7), 0 0 30px rgba(34, 211, 238, 0.5); // Neon glow hover effects
+  }
+
+  i {
+    margin-right: v.$space-sm;
+  }
+}
+
+// Primary Button Mixin
+@mixin button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: v.$space-sm v.$space-xl;
+  font-size: v.$font-size-body-md;
+  font-weight: v.$font-weight-medium;
+  line-height: 1.5;
+  border-radius: v.$border-radius-btn;
+  cursor: pointer;
+  transition: all v.$transition-duration-base v.$ease-in-out;
+  text-decoration: none;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+
+  background-color: v.$primary-indigo-600;
+  color: v.$white;
+  border: none;
+  box-shadow: v.$shadow-md;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(v.$accent-cyan-400, 0.3) 0%, transparent 70%);
+    transition: transform v.$transition-duration-slow v.$ease-in-out, opacity v.$transition-duration-slow v.$ease-in-out;
+    transform: scale(0);
+    opacity: 0;
+    z-index: 0;
+  }
+
+  &:hover {
+    background-color: v.$primary-indigo-700;
+    box-shadow: v.$shadow-button-glow, v.$shadow-md;
+    transform: translateY(-3px) scale(1.03);
+    &::before {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: inset 0 1px 2px rgba(v.$black, 0.4);
+  }
+
+  &:focus {
+    box-shadow: v.$shadow-neon-indigo;
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    background-color: v.$border-neutral;
+    color: v.$text-muted;
+    &::before {
+      transform: scale(0);
+      opacity: 0;
+    }
+  }
+}
+
+// Secondary Button Mixin
+@mixin button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: v.$space-sm v.$space-xl;
+  font-size: v.$font-size-body-md;
+  font-weight: v.$font-weight-medium;
+  line-height: 1.5;
+  border-radius: v.$border-radius-btn;
+  cursor: pointer;
+  transition: all v.$transition-duration-base v.$ease-in-out;
+  text-decoration: none;
+  white-space: nowrap;
+
+  background-color: transparent;
+  color: v.$primary-indigo-600;
+  border: 1px solid v.$primary-indigo-600;
+  box-shadow: none;
+
+  &:hover {
+    background-color: rgba(v.$primary-indigo-600, 0.1);
+    color: v.$primary-indigo-300;
+    border-color: v.$primary-indigo-300;
+    box-shadow: 0 0 8px rgba(v.$primary-indigo-600, 0.4);
+  }
+
+  &:active {
+    background-color: rgba(v.$primary-indigo-600, 0.2);
+    transform: translateY(0) scale(0.98);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(v.$primary-indigo-600, 0.5);
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: transparent;
+    color: v.$text-muted;
+    border-color: v.$border-neutral;
+  }
+}
+
+// Custom Checkbox Mixin
+@mixin custom-checkbox($accent-color: v.$primary-indigo-600, $border-color: v.$border-neutral, $check-color: v.$white) {
+  /* Hide default checkbox */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid $border-color;
+  border-radius: v.$border-radius-xs;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  transition: all v.$transition-duration-fast v.$ease-in-out;
+  flex-shrink: 0; // Prevent shrinking in flex containers
+
+  /* Checked state */
+  &:checked {
+    background-color: $accent-color;
+    border-color: $accent-color;
+
+    /* Checkmark */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 12px;
+      border: solid $check-color;
+      border-width: 0 2px 2px 0;
+      transform: translate(-50%, -65%) rotate(45deg);
+    }
+  }
+
+  /* Focus state */
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($accent-color, 0.4);
+  }
+
+  /* Hover state */
+  &:hover {
+    border-color: $accent-color;
+  }
+}
+
+// Custom Radio Mixin
+@mixin custom-radio($accent-color: v.$primary-indigo-600, $border-color: v.$border-neutral, $check-color: v.$white) {
+  /* Hide default radio button */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid $border-color;
+  border-radius: 50%; // Make it round
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  transition: all v.$transition-duration-fast v.$ease-in-out;
+  flex-shrink: 0;
+
+  /* Checked state */
+  &:checked {
+    background-color: $accent-color;
+    border-color: $accent-color;
+
+    /* Inner circle */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      background-color: $check-color;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  /* Focus state */
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($accent-color, 0.4);
+  }
+
+  /* Hover state */
+  &:hover {
+    border-color: $accent-color;
+  }
+}
+
+
+@mixin button-outline-primary {
+  background-color: transparent;
+  border: 1px solid v.$primary-indigo-600;
+  color: v.$primary-indigo-600;
+  position: relative;
+  overflow: hidden;
+  padding: v.$space-sm v.$space-xl;
+  border-radius: v.$border-radius-btn;
+  transition: all v.$transition-duration-base ease-in-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(v.$primary-indigo-600, 0.15);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform v.$transition-duration-base ease-in-out;
+    z-index: 0;
+  }
+
+  &:hover {
+    color: v.$white;
+    &::before {
+      transform: scaleX(1);
+    }
+    box-shadow: v.$shadow-neon-indigo, v.$shadow-md;
+    transform: translateY(-3px) scale(1.03);
+  }
+  &:active {
+    background-color: rgba(v.$primary-indigo-600, 0.25);
+    box-shadow: inset 0 1px 2px rgba(v.$black, 0.4);
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+@mixin input-styles {
+  display: block;
+  width: 100%;
+  padding: v.$space-sm v.$space-md;
+  font-size: v.$font-size-body-md;
+  line-height: 1.5;
+  color: v.$text-primary;
+  background-color: v.$bg-secondary;
+  background-clip: padding-box;
+  border: 1px solid v.$border-neutral;
+  border-radius: v.$border-radius-base;
+  transition: border-color v.$transition-duration-base ease-in-out, box-shadow v.$transition-duration-base ease-in-out;
+
+  &:focus {
+    color: v.$text-primary;
+    background-color: v.$bg-secondary-focus;
+    border-color: v.$accent-cyan-400;
+    outline: 0;
+    box-shadow: v.$shadow-neon-cyan;
+  }
+
+  &::placeholder {
+    color: v.$text-muted;
+    opacity: 0.8;
+  }
+
+  &:disabled,
+  &[readonly] {
+    background-color: v.$bg-secondary;
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+@mixin responsive-container {
+  width: 100%;
+  max-width: v.$max-content-width;
+  margin: 0 auto;
+  padding: 0 v.$space-lg;
+
+  @include breakpoint(md) {
+    padding: 0 v.$space-md;
+  }
+}
+
+@mixin scrollbar-style {
+  ::-webkit-scrollbar {
+    width: v.$space-sm;
+    height: v.$space-sm;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: v.$bg-secondary;
+    border-radius: v.$border-radius-pill;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: v.$border-neutral;
+    border: 2px solid v.$bg-secondary;
+    border-radius: v.$border-radius-pill;
+
+    &:hover {
+      background: v.$primary-indigo-600;
+    }
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin transition-ease($property, $duration: v.$transition-duration-base, $easing: v.$ease-in-out) {
+  transition: $property $duration $easing;
+}
+
+@mixin card-base {
+  background-color: v.$surface-card;
+  border-radius: v.$border-radius-lg;
+  box-shadow: v.$shadow-base;
+  padding: v.$space-md;
+  border: 1px solid v.$border-neutral;
+}

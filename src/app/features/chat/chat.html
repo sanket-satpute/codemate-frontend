@@ -1,0 +1,24 @@
+<div class="chat-container">
+  <div class="chat-messages" #chatMessages>
+    <div *ngFor="let message of messages" class="chat-message" [ngClass]="{'user-message': message.isUser, 'ai-message': !message.isUser}">
+      <div class="message-content">
+        <div *ngIf="message.isCode" class="code-block">
+          <pre><code [highlight]="message.content"></code></pre>
+        </div>
+        <div *ngIf="!message.isCode && !message.isList">
+          {{ message.content }}
+        </div>
+        <ul *ngIf="message.isList" class="bullet-list">
+          <li *ngFor="let item of message.content.split('\n')">{{ item }}</li>
+        </ul>
+      </div>
+    </div>
+    <div *ngIf="aiTyping" class="chat-message ai-message typing-indicator">
+      <div class="message-content">AI is typing...</div>
+    </div>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Type your message...">
+    <button (click)="sendMessage()">Send</button>
+  </div>
+</div>

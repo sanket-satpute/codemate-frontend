@@ -1,0 +1,111 @@
+<!-- Premium Onboarding Container -->
+<div class="onboarding-premium-container">
+  <!-- Animated Background Elements -->
+  <div class="background-animations">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+    <div class="floating-shape shape-4"></div>
+    <div class="floating-shape shape-5"></div>
+  </div>
+
+  <!-- Progress Header -->
+  <header class="onboarding-header">
+    <div class="brand-section">
+      <div class="brand-logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
+          <path d="M8 12L16 8L24 12V20L16 24L8 20V12Z" fill="white"/>
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#6366f1"/>
+              <stop offset="100%" style="stop-color:#8b5cf6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="brand-name">CodeScope</span>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="(currentStep() / onboardingSteps.length) * 100"></div>
+      </div>
+      <div class="step-counter">
+        <span class="current">{{ currentStep() }}</span>
+        <span class="separator">/</span>
+        <span class="total">{{ onboardingSteps.length }}</span>
+      </div>
+    </div>
+
+    <div class="skip-section">
+      <button (click)="skipOnboarding()" class="skip-button">
+        <span>Skip</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="onboarding-main">
+    <div class="content-wrapper">
+      <!-- Step Content with Smooth Transitions -->
+      <div class="step-content" [class.fade-in]="true">
+        <router-outlet (activate)="onActivate($event)"></router-outlet>
+      </div>
+
+      <!-- Premium Navigation -->
+      <nav class="navigation-section">
+        <div class="nav-buttons">
+          <button
+            class="nav-button nav-prev"
+            [disabled]="currentStep() === 1"
+            (click)="prevStep()"
+            [class.disabled]="currentStep() === 1">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            <span>Previous</span>
+          </button>
+
+          <div class="step-indicators">
+            @for (step of onboardingSteps; track step.step) {
+              <button
+                class="step-indicator"
+                [class.active]="step.step === currentStep()"
+                [class.completed]="step.step < currentStep()"
+                (click)="goToStep(step.step)"
+                [attr.aria-label]="'Go to step ' + step.step">
+                <span class="indicator-number">{{ step.step }}</span>
+                <div class="indicator-tooltip">{{ step.title }}</div>
+              </button>
+            }
+          </div>
+
+          <button
+            *ngIf="currentStep() < onboardingSteps.length"
+            class="nav-button nav-next primary"
+            (click)="nextStep()">
+            <span>Next</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+
+          <button
+            *ngIf="currentStep() === onboardingSteps.length"
+            class="nav-button nav-finish primary"
+            (click)="completeOnboarding()">
+            <span>Get Started</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13"/>
+              <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </main>
+</div>

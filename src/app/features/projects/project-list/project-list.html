@@ -1,0 +1,43 @@
+<div class="project-list-container">
+  <h1 class="project-list-title">My Projects</h1>
+
+  <div class="search-bar">
+    <input
+      type="text"
+      placeholder="Search projects..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearchChange($event)"
+      class="search-input"
+    />
+    <button class="create-project-button" routerLink="/upload">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+      New Project
+    </button>
+  </div>
+
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading projects...</p>
+  </div>
+
+  <div *ngIf="errorMessage()" class="error-state">
+    <p>{{ errorMessage() }}</p>
+    <button class="retry-button" (click)="fetchProjects()">Retry</button>
+  </div>
+
+  <div *ngIf="!isLoading() && !errorMessage() && filteredProjects().length > 0" class="projects-grid">
+    <app-project-card
+      *ngFor="let project of filteredProjects()"
+      [project]="project"
+    ></app-project-card>
+  </div>
+
+  <app-empty-state
+    *ngIf="!isLoading() && !errorMessage() && filteredProjects().length === 0"
+    icon="📂"
+    title="No Projects Found"
+    message="It looks like you haven't uploaded any projects yet. Start by creating a new one!"
+    buttonText="Upload New Project"
+    (buttonClick)="navigateToUpload()"
+  ></app-empty-state>
+</div>

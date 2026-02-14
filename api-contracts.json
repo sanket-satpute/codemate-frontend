@@ -1,0 +1,84 @@
+{
+  "apiContracts": [
+    {
+      "endpoint": "POST /api/auth/login",
+      "requestShape": "LoginRequest",
+      "responseShape": "LoginResponse"
+    },
+    {
+      "endpoint": "POST /api/analyze",
+      "requestShape": "AnalyzeCodeRequest",
+      "responseShape": "JobStatusResponse"
+    },
+    {
+      "endpoint": "POST /api/analyze/files",
+      "requestShape": "AnalyzeFilesRequest",
+      "responseShape": "JobStatusResponse"
+    },
+    {
+      "endpoint": "POST /api/correct",
+      "requestShape": "CorrectCodeRequest",
+      "responseShape": "CorrectCodeResponse"
+    },
+    {
+      "endpoint": "GET /api/job/{jobId}",
+      "requestShape": null,
+      "responseShape": "Job"
+    },
+    {
+      "endpoint": "GET /api/result/{jobId}",
+      "requestShape": null,
+      "responseShape": "AnalysisResult"
+    },
+    {
+      "endpoint": "POST /api/projects",
+      "requestShape": "CreateProjectRequest",
+      "responseShape": "Project"
+    },
+    {
+      "endpoint": "GET /api/projects",
+      "requestShape": null,
+      "responseShape": "Project[]"
+    },
+    {
+      "endpoint": "GET /api/projects/{id}",
+      "requestShape": null,
+      "responseShape": "Project"
+    },
+    {
+      "endpoint": "DELETE /api/projects/{id}",
+      "requestShape": null,
+      "responseShape": "Project"
+    },
+    {
+      "endpoint": "POST /api/upload/project",
+      "requestShape": "UploadProjectRequest",
+      "responseShape": "JobStatusResponse"
+    },
+    {
+      "endpoint": "POST /api/upload/file",
+      "requestShape": "UploadFileRequest",
+      "responseShape": "JobStatusResponse"
+    },
+    {
+      "endpoint": "GET /api/dashboard",
+      "requestShape": null,
+      "responseShape": "Dashboard"
+    },
+    {
+      "endpoint": "GET /api/reports/project/{projectId}",
+      "requestShape": null,
+      "responseShape": "Report[]"
+    },
+    {
+      "endpoint": "GET /api/reports/{reportId}/download",
+      "requestShape": null,
+      "responseShape": "any"
+    },
+    {
+      "endpoint": "GET /api/chat/{projectId}/{fileId}",
+      "requestShape": null,
+      "responseShape": "ChatMessage[]"
+    }
+  ]
+}
