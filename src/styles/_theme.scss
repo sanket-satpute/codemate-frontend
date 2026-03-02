@@ -1,72 +1,159 @@
-@use 'variables' as v;
-@use 'sass:color';
+// ============================================================================
+// THEME SYSTEM — Light (default) & Dark (.dark-theme) semantic tokens
+// ============================================================================
+// All theme-aware colors are defined here as CSS custom properties.
+// Components should ONLY use these tokens (via SASS aliases in _variables.scss)
+// or directly as var(--token-name) — NEVER hardcoded rgba() values.
+// ============================================================================
 
+// ============================================================================
+// LIGHT THEME (Default)
+// ============================================================================
 :root {
-  // Light Theme Defaults (overrides for dark mode are applied in .dark-theme)
-  // Colors
+  // --- Core Surfaces ---
   --background: var(--grey-50);
   --surface-default: var(--white);
   --surface-card: var(--white);
-  --surface-card-focused: var(--grey-100); // ADDED
-  --border-default: var(--grey-200);
-  --border-neutral: var(--grey-300);
+  --surface-card-focused: var(--grey-100);
+  --surface-elevated: var(--white); // Dropdowns, popovers, modals
+  --surface-overlay: rgba(255, 255, 255, 0.92); // Backdrop overlays
+  --surface-glass: rgba(255, 255, 255, 0.75); // Glassmorphic panels
+  --surface-sunken: var(--grey-100); // Inset/recessed areas
+  --surface-code: #F8FAFC; // Code block backgrounds
+  --input-bg: var(--white); // Form input backgrounds
+
+  // --- Hover / Active surfaces ---
+  --surface-hover: rgba(0, 0, 0, 0.04); // Generic hover bg
+  --surface-active: rgba(0, 0, 0, 0.08); // Generic active/pressed bg
+
+  // --- Primary accent surfaces ---
+  --primary-subtle: rgba(79, 70, 229, 0.05);
+  --primary-hover: rgba(79, 70, 229, 0.08);
+  --primary-active: rgba(79, 70, 229, 0.12);
+
+  // --- Cyan/accent surfaces ---
+  --accent-subtle: rgba(34, 211, 238, 0.05);
+  --accent-hover: rgba(34, 211, 238, 0.08);
+
+  // --- Destructive/danger surfaces ---
+  --destructive-subtle: rgba(239, 68, 68, 0.05);
+  --destructive-hover: rgba(239, 68, 68, 0.1);
+  --destructive-text: #DC2626;
+
+  // --- Text ---
   --text-primary: var(--grey-900);
   --text-muted: var(--grey-600);
   --text-white: var(--white);
   --text-link: var(--primary-600);
+
+  // --- Borders ---
+  --border-default: var(--grey-200);
+  --border-neutral: var(--grey-300);
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-hover: rgba(79, 70, 229, 0.3);
+
+  // --- Status colors ---
   --error: #EF4444;
   --success: #22C55E;
   --warning: #F59E0B;
 
-  // Shadows (adjust for light mode if needed, e.g., less harsh)
+  // --- Badges ---
+  --badge-bg: rgba(79, 70, 229, 0.1);
+  --badge-border: rgba(79, 70, 229, 0.2);
+  --badge-text: var(--primary-600);
+
+  // --- Scrollbar ---
+  --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.25);
+  --scrollbar-track: rgba(0, 0, 0, 0.03);
+
+  // --- Shadows (lighter for light mode) ---
   --shadow-navbar: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-dialog: 0 8px 30px rgba(0, 0, 0, 0.15);
   --shadow-badge: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --focus-ring: var(--focus-ring-light);
+  --shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-inset: inset 0 1px 0 rgba(0, 0, 0, 0.04);
+  --focus-ring: 0 0 0 2px var(--primary-600);
+
+  // --- Glass effects ---
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shine: rgba(255, 255, 255, 0.9);
 }
 
+// ============================================================================
+// DARK THEME (.dark-theme on <body>)
+// ============================================================================
 .dark-theme {
-  // Dark Theme Overrides
-  // Colors
+  // --- Core Surfaces ---
   --background: var(--grey-900);
   --surface-default: var(--grey-950);
   --surface-card: var(--grey-800);
-  --surface-card-focused: #2d3d52; // ADDED
-  --border-default: var(--grey-700);
-  --border-neutral: var(--grey-600);
+  --surface-card-focused: #2d3d52;
+  --surface-elevated: var(--grey-800);
+  --surface-overlay: rgba(15, 23, 42, 0.92);
+  --surface-glass: rgba(30, 41, 59, 0.7);
+  --surface-sunken: rgba(15, 23, 42, 0.5);
+  --surface-code: #0F172A;
+  --input-bg: var(--grey-700);
+
+  // --- Hover / Active surfaces ---
+  --surface-hover: rgba(255, 255, 255, 0.06);
+  --surface-active: rgba(255, 255, 255, 0.1);
+
+  // --- Primary accent surfaces ---
+  --primary-subtle: rgba(79, 70, 229, 0.08);
+  --primary-hover: rgba(79, 70, 229, 0.12);
+  --primary-active: rgba(79, 70, 229, 0.2);
+
+  // --- Cyan/accent surfaces ---
+  --accent-subtle: rgba(34, 211, 238, 0.06);
+  --accent-hover: rgba(34, 211, 238, 0.12);
+
+  // --- Destructive/danger surfaces ---
+  --destructive-subtle: rgba(239, 68, 68, 0.08);
+  --destructive-hover: rgba(239, 68, 68, 0.15);
+  --destructive-text: #FCA5A5;
+
+  // --- Text ---
   --text-primary: var(--grey-100);
   --text-muted: var(--grey-400);
   --text-white: var(--white);
   --text-link: var(--primary-400);
+
+  // --- Borders ---
+  --border-default: var(--grey-600);
+  --border-neutral: var(--grey-700);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(79, 70, 229, 0.4);
+
+  // --- Status colors ---
   --error: #F87171;
   --success: #4ADE80;
   --warning: #FACC15;
 
-  // Shadows
-  --shadow-navbar: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-dialog: 0 8px 30px rgba(0, 0, 0, 0.3);
+  // --- Badges ---
+  --badge-bg: rgba(79, 70, 229, 0.15);
+  --badge-border: rgba(79, 70, 229, 0.3);
+  --badge-text: var(--primary-300);
+
+  // --- Scrollbar ---
+  --scrollbar-thumb: rgba(255, 255, 255, 0.12);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.22);
+  --scrollbar-track: rgba(255, 255, 255, 0.03);
+
+  // --- Shadows (heavier for dark mode) ---
+  --shadow-navbar: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-dialog: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.05);
   --shadow-badge: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --focus-ring: var(--focus-ring-dark);
-}
+  --shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(79, 70, 229, 0.1);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --focus-ring: 0 0 0 2px var(--primary-400);
 
-// Global variables for convenience, derived from theme-aware properties
-:root {
-  --current-background: var(--background);
-  --current-surface-default: var(--surface-default);
-  --current-surface-card: var(--surface-card);
-  --current-surface-card-focused: var(--surface-card-focused); // ADDED
-  --current-border-default: var(--border-default);
-  --current-border-neutral: var(--border-neutral);
-  --current-text-primary: var(--text-primary);
-  --current-text-muted: var(--text-muted);
-  --current-text-white: var(--text-white);
-  --current-text-link: var(--text-link);
-  --current-error: var(--error);
-  --current-success: var(--success);
-  --current-warning: var(--warning);
-
-  --current-shadow-navbar: var(--shadow-navbar);
-  --current-shadow-dialog: var(--shadow-dialog);
-  --current-shadow-badge: var(--shadow-badge);
-  --current-focus-ring: var(--focus-ring);
+  // --- Glass effects ---
+  --glass-border: rgba(203, 213, 225, 0.08);
+  --glass-shine: rgba(255, 255, 255, 0.03);
 }

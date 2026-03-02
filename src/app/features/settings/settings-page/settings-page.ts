@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 
-// Define Interfaces for data structures
 interface SidebarItem {
   id: string;
   label: string;
@@ -11,12 +9,12 @@ interface SidebarItem {
 }
 
 interface Profile {
-  photoUrl: string;
   name: string;
   username: string;
   email: string;
   phone: string;
   role: string;
+  initials: string;
 }
 
 interface Device {
@@ -33,11 +31,6 @@ interface LoginHistory {
   timestamp: Date;
 }
 
-interface ThemeOption {
-  label: string;
-  value: string;
-}
-
 interface DeveloperSettings {
   lineNumbers: boolean;
   minimap: boolean;
@@ -50,50 +43,32 @@ interface Project {
   name: string;
 }
 
-interface NotificationCategoryPreference {
+interface NotificationCategoryPref {
   label: string;
   enabled: boolean;
 }
 
-interface DeliveryMethodPreference {
+interface DeliveryMethodPref {
   label: string;
   enabled: boolean;
-}
-
-interface FrequencyOption {
-  label: string;
-  value: string;
-}
-
-interface NotificationPreferences {
-  categories: NotificationCategoryPreference[];
-  deliveryMethods: DeliveryMethodPreference[];
-  frequencies: FrequencyOption[];
-  selectedFrequency: string;
 }
 
 interface PaymentMethod {
   last4: string;
   type: string;
+  icon: string;
 }
 
 interface Invoice {
   id: string;
   date: Date;
   amount: number;
-  pdfUrl: string;
-}
-
-interface Billing {
-  currentPlan: string;
-  renewalCycle: string;
-  paymentMethods: PaymentMethod[];
-  invoices: Invoice[];
 }
 
 interface Integration {
   id: string;
   name: string;
+  icon: string;
   connected: boolean;
   permissions: string;
   lastSynced?: Date;
@@ -111,26 +86,32 @@ interface Member {
   id: string;
   name: string;
   role: string;
+  initials: string;
 }
 
 interface Workspace {
   members: Member[];
   projectLimit: number;
-  storageUsed: number; // Changed from string to number (e.g., in MB)
-  storageLimit: number; // Changed from string to number (e.g., in MB)
+  storageUsedMB: number;
+  storageLimitMB: number;
 }
-
 
 @Component({
   selector: 'app-settings-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './settings-page.html',
   styleUrl: './settings-page.scss',
-  providers: [DatePipe, CurrencyPipe]
 })
 export class SettingsPage implements OnInit {
-  activeSection: string = 'profile';
+  activeSection = 'profile';
+  toastMessage = '';
+  toastVisible = false;
+  showDeleteModal = false;
+  deleteModalTitle = '';
+  deleteModalMessage = '';
+  deleteModalAction: (() => void) | null = null;
+  copiedKeyId = '';
 
   sidebarItems: SidebarItem[] = [
     { id: 'profile', label: 'Profile', icon: 'fas fa-user-circle' },
@@ -140,21 +121,20 @@ export class SettingsPage implements OnInit {
     { id: 'billing', label: 'Billing', icon: 'fas fa-credit-card' },
     { id: 'integrations', label: 'Integrations', icon: 'fas fa-puzzle-piece' },
     { id: 'api-keys', label: 'API Keys', icon: 'fas fa-key' },
-    { id: 'workspace-settings', label: 'Workspace Settings', icon: 'fas fa-users-cog' },
+    { id: 'workspace', label: 'Workspace', icon: 'fas fa-users-cog' },
     { id: 'danger-zone', label: 'Danger Zone', icon: 'fas fa-exclamation-triangle' },
   ];
 
-  // Mock Data
   profile: Profile = {
-    photoUrl: 'https://via.placeholder.com/150',
     name: 'John Doe',
     username: 'johndoe',
     email: 'john.doe@example.com',
     phone: '+1 (555) 123-4567',
     role: 'Admin',
+    initials: 'JD',
   };
 
-  twoFaEnabled: boolean = true;
+  twoFaEnabled = true;
   loggedInDevices: Device[] = [
     { browser: 'Chrome', os: 'Windows 11', ip: '192.168.1.1', loginTime: new Date(Date.now() - 3600000) },
     { browser: 'Firefox', os: 'macOS', ip: '10.0.0.5', loginTime: new Date(Date.now() - 86400000) },
@@ -165,75 +145,59 @@ export class SettingsPage implements OnInit {
     { browser: 'Edge', os: 'Windows 10', ip: '172.16.0.10', timestamp: new Date(Date.now() - 2 * 86400000) },
   ];
 
-  themes: ThemeOption[] = [
-    { label: 'Dark', value: 'dark' },
-    { label: 'Light', value: 'light' },
-    { label: 'System', value: 'system' },
-  ];
-  selectedTheme: string = 'dark';
-  devSettings: DeveloperSettings = {
-    lineNumbers: true,
-    minimap: false,
-    autosave: true,
-    tabSize: 2,
-  };
-  selectedLanguage: string = 'en';
-  selectedRegion: string = 'us';
-  defaultDashboardProject: string = 'project-1';
+  selectedTheme = 'dark';
+  devSettings: DeveloperSettings = { lineNumbers: true, minimap: false, autosave: true, tabSize: 2 };
+  selectedLanguage = 'en';
+  selectedRegion = 'us';
+  defaultDashboardProject = 'project-1';
   availableProjects: Project[] = [
     { id: 'project-1', name: 'CodeScope AI Backend' },
     { id: 'project-2', name: 'CodeScope AI Frontend' },
     { id: 'project-3', name: 'Mobile App' },
   ];
-  cardDensity: string = 'comfortable';
+  cardDensity = 'comfortable';
 
-  notificationPreferences: NotificationPreferences = {
-    categories: [
-      { label: 'Code Analysis', enabled: true },
-      { label: 'Security Alerts', enabled: true },
-      { label: 'AI Recommendations', enabled: true },
-      { label: 'Build/Deploy Updates', enabled: false },
-      { label: 'Chat Mentions', enabled: true },
-      { label: 'Billing Alerts', enabled: false },
-    ],
-    deliveryMethods: [
-      { label: 'In-app', enabled: true },
-      { label: 'Email', enabled: false },
-      { label: 'Push', enabled: true },
-    ],
-    frequencies: [
-      { label: 'Instant', value: 'instant' },
-      { label: 'Daily summary', value: 'daily' },
-      { label: 'Weekly summary', value: 'weekly' },
-    ],
-    selectedFrequency: 'instant',
-  };
+  notifCategories: NotificationCategoryPref[] = [
+    { label: 'Code Analysis', enabled: true },
+    { label: 'Security Alerts', enabled: true },
+    { label: 'AI Recommendations', enabled: true },
+    { label: 'Build/Deploy Updates', enabled: false },
+    { label: 'Chat Mentions', enabled: true },
+    { label: 'Billing Alerts', enabled: false },
+  ];
+  deliveryMethods: DeliveryMethodPref[] = [
+    { label: 'In-app', enabled: true },
+    { label: 'Email', enabled: false },
+    { label: 'Push Notifications', enabled: true },
+  ];
+  selectedFrequency = 'instant';
 
-  billing: Billing = {
+  billing = {
     currentPlan: 'Pro Developer',
-    renewalCycle: 'monthly (next on 2025-12-31)',
+    price: 49.99,
+    renewalDate: 'Dec 31, 2025',
     paymentMethods: [
-      { last4: '1234', type: 'Visa' },
-      { last4: '5678', type: 'Mastercard' },
+      { last4: '1234', type: 'Visa', icon: 'fab fa-cc-visa' } as PaymentMethod,
+      { last4: '5678', type: 'Mastercard', icon: 'fab fa-cc-mastercard' } as PaymentMethod,
     ],
     invoices: [
-      { id: '2025-11-01', date: new Date(2025, 10, 1), amount: 49.99, pdfUrl: '#' },
-      { id: '2025-10-01', date: new Date(2025, 9, 1), amount: 49.99, pdfUrl: '#' },
+      { id: 'INV-2025-11', date: new Date(2025, 10, 1), amount: 49.99 } as Invoice,
+      { id: 'INV-2025-10', date: new Date(2025, 9, 1), amount: 49.99 } as Invoice,
     ],
   };
 
   integrations: Integration[] = [
-    { id: 'github', name: 'GitHub', connected: true, permissions: 'Read/Write repos', lastSynced: new Date(Date.now() - 3600000) },
-    { id: 'gitlab', name: 'GitLab', connected: false, permissions: 'None' },
-    { id: 'bitbucket', name: 'Bitbucket', connected: false, permissions: 'None' },
-    { id: 'slack', name: 'Slack', connected: true, permissions: 'Send notifications' },
-    { id: 'discord', name: 'Discord', connected: false, permissions: 'None' },
-    { id: 'jira', name: 'Jira', connected: true, permissions: 'Create issues' },
-    { id: 'vscode', name: 'VS Code Extension', connected: true, permissions: 'Full access' },
-    { id: 'webhooks', name: 'Webhooks', connected: false, permissions: 'None' },
+    { id: 'github', name: 'GitHub', icon: 'fab fa-github', connected: true, permissions: 'Read/Write repos', lastSynced: new Date(Date.now() - 3600000) },
+    { id: 'gitlab', name: 'GitLab', icon: 'fab fa-gitlab', connected: false, permissions: 'None' },
+    { id: 'bitbucket', name: 'Bitbucket', icon: 'fab fa-bitbucket', connected: false, permissions: 'None' },
+    { id: 'slack', name: 'Slack', icon: 'fab fa-slack', connected: true, permissions: 'Send notifications' },
+    { id: 'discord', name: 'Discord', icon: 'fab fa-discord', connected: false, permissions: 'None' },
+    { id: 'jira', name: 'Jira', icon: 'fab fa-jira', connected: true, permissions: 'Create issues' },
+    { id: 'vscode', name: 'VS Code', icon: 'fas fa-code', connected: true, permissions: 'Full access' },
+    { id: 'webhooks', name: 'Webhooks', icon: 'fas fa-link', connected: false, permissions: 'None' },
   ];
 
-  newApiKeyName: string = '';
+  newApiKeyName = '';
   apiKeys: ApiKey[] = [
     { id: 'key-1', partialKey: 'cm_live_abc...xyz', fullKey: 'cm_live_demo_key_1234567890abcdef', lastUsed: new Date(Date.now() - 7200000), expiryDate: new Date(2026, 0, 1) },
     { id: 'key-2', partialKey: 'cm_test_def...uvw', fullKey: 'cm_test_demo_key_0987654321fedcba', lastUsed: new Date(Date.now() - 172800000), expiryDate: new Date(2027, 5, 15) },
@@ -241,129 +205,131 @@ export class SettingsPage implements OnInit {
 
   workspace: Workspace = {
     members: [
-      { id: 'mem-1', name: 'John Doe', role: 'Admin' },
-      { id: 'mem-2', name: 'Jane Smith', role: 'Developer' },
-      { id: 'mem-3', name: 'Peter Jones', role: 'Guest' },
+      { id: 'mem-1', name: 'John Doe', role: 'Admin', initials: 'JD' },
+      { id: 'mem-2', name: 'Jane Smith', role: 'Developer', initials: 'JS' },
+      { id: 'mem-3', name: 'Peter Jones', role: 'Guest', initials: 'PJ' },
     ],
     projectLimit: 10,
-    storageUsed: 5 * 1024, // 5GB in MB
-    storageLimit: 10 * 1024, // 10GB in MB
+    storageUsedMB: 5 * 1024,
+    storageLimitMB: 10 * 1024,
   };
 
   ngOnInit() {
-    // Initialize active section based on route or default
-    this.activeSection = this.sidebarItems[0].id; // Default to 'profile'
+    this.activeSection = 'profile';
   }
 
-  selectSidebarItem(itemId: string) {
-    this.activeSection = itemId;
-    // Potentially navigate using router if not already handled by routerLink
+  selectSection(id: string) { this.activeSection = id; }
+
+  showToast(msg: string) {
+    this.toastMessage = msg;
+    this.toastVisible = true;
+    setTimeout(() => { this.toastVisible = false; }, 3000);
   }
+
+  saveProfile() { this.showToast('Profile saved successfully'); }
+  changePassword() { this.showToast('Password changed successfully'); }
 
   toggle2fa() {
     this.twoFaEnabled = !this.twoFaEnabled;
-    console.log('2FA Toggled:', this.twoFaEnabled);
+    this.showToast(`2FA ${this.twoFaEnabled ? 'enabled' : 'disabled'}`);
   }
 
-  toggleIntegration(integration: Integration) {
-    integration.connected = !integration.connected;
-    console.log('Integration Toggled:', integration.name, integration.connected);
+  toggleIntegration(i: Integration) {
+    i.connected = !i.connected;
+    this.showToast(`${i.name} ${i.connected ? 'connected' : 'disconnected'}`);
   }
 
   createApiKey() {
-    if (this.newApiKeyName) {
-      const newKey: ApiKey = {
-        id: `key-${this.apiKeys.length + 1}`,
-        partialKey: `sk_new_${this.newApiKeyName.substring(0, 3)}...${Math.random().toString(36).substring(2, 5)}`,
-        fullKey: `sk_new_full_${this.newApiKeyName}_${Date.now()}_${Math.random().toString(36).substring(2)}`,
+    if (this.newApiKeyName.trim()) {
+      const key: ApiKey = {
+        id: `key-${Date.now()}`,
+        partialKey: `cm_${this.newApiKeyName.substring(0, 4)}...${Math.random().toString(36).substring(2, 5)}`,
+        fullKey: `cm_${this.newApiKeyName}_${Date.now()}_${Math.random().toString(36).substring(2)}`,
         lastUsed: new Date(),
-        expiryDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Expires in 1 year
+        expiryDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
       };
-      this.apiKeys.push(newKey);
+      this.apiKeys.push(key);
       this.newApiKeyName = '';
-      console.log('New API Key created:', newKey);
+      this.showToast('API key created');
     }
   }
 
-  copyApiKey(fullKey: string) {
-    navigator.clipboard.writeText(fullKey).then(() => {
-      alert('API Key copied to clipboard!');
-    }).catch(err => {
-      console.error('Failed to copy API Key:', err);
+  copyApiKey(key: ApiKey) {
+    navigator.clipboard.writeText(key.fullKey).then(() => {
+      this.copiedKeyId = key.id;
+      this.showToast('API key copied to clipboard');
+      setTimeout(() => { this.copiedKeyId = ''; }, 2000);
     });
   }
 
-  revokeApiKey(keyId: string) {
-    if (confirm('Are you sure you want to revoke this API Key? This action cannot be undone.')) {
-      this.apiKeys = this.apiKeys.filter(key => key.id !== keyId);
-      console.log('API Key revoked:', keyId);
-    }
+  revokeApiKey(id: string) {
+    this.openDeleteModal('Revoke API Key', 'This key will be permanently revoked and cannot be recovered.', () => {
+      this.apiKeys = this.apiKeys.filter(k => k.id !== id);
+      this.showToast('API key revoked');
+    });
   }
 
-  confirmDeleteAccount() {
-    if (confirm('WARNING: Permanently delete your account? This action is irreversible.')) {
-      console.log('Account deletion confirmed.');
-      // Implement actual account deletion logic
-    }
+  openDeleteModal(title: string, message: string, action: () => void) {
+    this.deleteModalTitle = title;
+    this.deleteModalMessage = message;
+    this.deleteModalAction = action;
+    this.showDeleteModal = true;
   }
 
-  confirmDeleteWorkspace() {
-    if (confirm('WARNING: Permanently delete this workspace? All projects and data will be lost. This action is irreversible.')) {
-      console.log('Workspace deletion confirmed.');
-      // Implement actual workspace deletion logic
-    }
+  confirmDelete() {
+    if (this.deleteModalAction) this.deleteModalAction();
+    this.showDeleteModal = false;
   }
 
-  confirmTransferOwnership() {
-    if (confirm('WARNING: Transfer ownership of this workspace? This changes administrative control.')) {
-      console.log('Ownership transfer confirmed.');
-      // Implement actual ownership transfer logic
-    }
+  cancelDelete() { this.showDeleteModal = false; }
+
+  deleteAccount() {
+    this.openDeleteModal('Delete Account', 'This will permanently delete your account and all data. This cannot be undone.', () => {
+      this.showToast('Account deletion requested');
+    });
   }
 
-  confirmResetSettings() {
-    if (confirm('Are you sure you want to reset all your settings to default?')) {
-      console.log('Settings reset confirmed.');
-      // Implement actual settings reset logic
-      this.resetSettingsToDefault();
-    }
+  deleteWorkspace() {
+    this.openDeleteModal('Delete Workspace', 'All projects and data in this workspace will be permanently lost.', () => {
+      this.showToast('Workspace deletion requested');
+    });
   }
 
-  private resetSettingsToDefault() {
-    // Reset all settings to their initial mock values
-    this.selectedTheme = 'dark';
-    this.devSettings = {
-      lineNumbers: true,
-      minimap: false,
-      autosave: true,
-      tabSize: 2,
-    };
-    this.selectedLanguage = 'en';
-    this.selectedRegion = 'us';
-    this.defaultDashboardProject = 'project-1';
-    this.cardDensity = 'comfortable';
+  transferOwnership() {
+    this.openDeleteModal('Transfer Ownership', 'Administrative control of this workspace will be transferred.', () => {
+      this.showToast('Ownership transfer initiated');
+    });
+  }
 
-    this.notificationPreferences = {
-      categories: [
-        { label: 'Code Analysis', enabled: true },
-        { label: 'Security Alerts', enabled: true },
-        { label: 'AI Recommendations', enabled: true },
-        { label: 'Build/Deploy Updates', enabled: false },
-        { label: 'Chat Mentions', enabled: true },
-        { label: 'Billing Alerts', enabled: false },
-      ],
-      deliveryMethods: [
-        { label: 'In-app', enabled: true },
-        { label: 'Email', enabled: false },
-        { label: 'Push', enabled: true },
-      ],
-      frequencies: [
-        { label: 'Instant', value: 'instant' },
-        { label: 'Daily summary', value: 'daily' },
-        { label: 'Weekly summary', value: 'weekly' },
-      ],
-      selectedFrequency: 'instant',
-    };
-    // ... reset other data as needed
+  resetAllSettings() {
+    this.openDeleteModal('Reset All Settings', 'All your settings will revert to their default values.', () => {
+      this.selectedTheme = 'dark';
+      this.devSettings = { lineNumbers: true, minimap: false, autosave: true, tabSize: 2 };
+      this.showToast('Settings reset to defaults');
+    });
+  }
+
+  formatStorage(mb: number): string {
+    if (mb >= 1024) return `${(mb / 1024).toFixed(1)} GB`;
+    return `${mb} MB`;
+  }
+
+  storagePercent(): number {
+    return Math.round((this.workspace.storageUsedMB / this.workspace.storageLimitMB) * 100);
+  }
+
+  getRelativeTime(date: Date): string {
+    const diff = Date.now() - date.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days}d ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  formatDate(date: Date): string {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 }

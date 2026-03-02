@@ -68,7 +68,7 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.fileId = params.get('fileId'); // Get fileId from route
         if (this.projectId && this.fileId) {
           // Fetch history and then listen for WebSocket messages
-          return this.chatService.getChatHistory(this.projectId, this.fileId).pipe( // Pass fileId
+          return this.chatService.getChatHistory(this.projectId, this.fileId).pipe(
             tap(history => {
               this.messages = history;
               this.scrollToBottom();
@@ -165,18 +165,18 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     // Send via ChatService
     this.chatService.sendMessage(request).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (response) => {
-            // Backend might send back the actual message via WebSocket,
-            // so we rely on ChatService's subscription to update `messages`.
-            // The `response` from sendMessage is just an optimistic acknowledgment for now.
-            console.log('Message sent successfully (optimistic update):', response);
-        },
-        error: (err) => {
-            console.error('Error sending message:', err);
-            // Optionally, remove the optimistic message or show an error toast
-            this.messages = this.messages.filter(m => m.id !== userMessageForUI.id);
-            // Re-add actual message from history fetched after error or rely on UI reload
-        }
+      next: (response) => {
+        // Backend might send back the actual message via WebSocket,
+        // so we rely on ChatService's subscription to update `messages`.
+        // The `response` from sendMessage is just an optimistic acknowledgment for now.
+        console.log('Message sent successfully (optimistic update):', response);
+      },
+      error: (err) => {
+        console.error('Error sending message:', err);
+        // Optionally, remove the optimistic message or show an error toast
+        this.messages = this.messages.filter(m => m.id !== userMessageForUI.id);
+        // Re-add actual message from history fetched after error or rely on UI reload
+      }
     });
 
     this.currentMessage = ''; // Clear input

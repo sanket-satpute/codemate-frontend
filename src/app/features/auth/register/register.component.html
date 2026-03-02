@@ -1,68 +1,135 @@
 <div class="auth-container">
-  <div class="auth-card shadow-md">
-    <img src="assets/logo.svg" alt="CodeScope Logo" class="auth-logo" />
-    <h2 class="auth-title">Register for CodeScope</h2>
-    <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input
-          id="name"
-          type="text"
-          formControlName="name"
-          placeholder="Enter your name"
-          [class.is-invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
-        />
-        <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched" class="error-message">
-          <span *ngIf="registerForm.get('name')?.errors?.['required']">Name is required.</span>
-          <span *ngIf="registerForm.get('name')?.errors?.['minlength']">Name must be at least 3 characters.</span>
+  <!-- Left side with hero content -->
+  <div class="auth-hero-section">
+    <div class="auth-hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Join CodeScope</h1>
+        <p class="hero-subtitle">Start reviewing your code with AI-powered intelligence</p>
+        <div class="hero-features">
+          <div class="feature-item">
+            <i class="fas fa-rocket" aria-hidden="true"></i>
+            <span>Instant Setup</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-code" aria-hidden="true"></i>
+            <span>Smart Analysis</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-users" aria-hidden="true"></i>
+            <span>Team Collaboration</span>
+          </div>
         </div>
       </div>
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="Enter your email"
-          [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-        />
-        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-message">
-          <span *ngIf="registerForm.get('email')?.errors?.['required']">Email is required.</span>
-          <span *ngIf="registerForm.get('email')?.errors?.['email']">Please enter a valid email.</span>
+      <div class="hero-illustration">
+        <div class="illustration-placeholder">
+          <i class="fas fa-user-plus" aria-hidden="true"></i>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          placeholder="Enter your password"
-          [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-        />
-        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error-message">
-          <span *ngIf="registerForm.get('password')?.errors?.['required']">Password is required.</span>
-          <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters.</span>
+  <!-- Right side with register form -->
+  <div class="auth-form-section">
+    <div class="auth-form-container">
+      <div class="form-header">
+        <div class="logo-wrapper">
+          <img src="assets/logo.svg" alt="CodeScope Logo" class="auth-logo"
+            (error)="$event.target.style.display='none'" />
+          <!-- Fallback icon if logo fails to load -->
+          <i class="fas fa-code logo-fallback" aria-hidden="true"></i>
         </div>
+        <h1 class="form-title">Create your account</h1>
+        <p class="form-subtitle">Get started with CodeScope in seconds</p>
       </div>
 
-      <div *ngIf="errorMessage()" class="alert alert-error">
-        {{ errorMessage() }}
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
+        <!-- Full Name Field -->
+        <div class="form-group">
+          <label for="name" class="form-label">Full name</label>
+          <div class="input-wrapper">
+            <i class="fas fa-user input-icon" aria-hidden="true"></i>
+            <input id="name" type="text" formControlName="name" placeholder="Your full name" autocomplete="name"
+              class="form-input" [class.error]="f['name']?.invalid && f['name']?.touched"
+              [attr.aria-describedby]="f['name']?.invalid && f['name']?.touched ? 'name-error' : null"
+              [attr.aria-invalid]="f['name']?.invalid && f['name']?.touched" />
+          </div>
+          <div *ngIf="f['name']?.invalid && f['name']?.touched" id="name-error" class="error-message" role="alert">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+            <span *ngIf="f['name']?.errors?.['required']">Name is required</span>
+            <span *ngIf="f['name']?.errors?.['minlength']">Name must be at least 3 characters</span>
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email" class="form-label">Email address</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
+            <input id="email" type="email" formControlName="email" placeholder="your@email.com" autocomplete="email"
+              class="form-input" [class.error]="f['email']?.invalid && f['email']?.touched"
+              [attr.aria-describedby]="f['email']?.invalid && f['email']?.touched ? 'email-error' : null"
+              [attr.aria-invalid]="f['email']?.invalid && f['email']?.touched" />
+          </div>
+          <div *ngIf="f['email']?.invalid && f['email']?.touched" id="email-error" class="error-message" role="alert">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+            <span *ngIf="f['email']?.errors?.['required']">Email is required</span>
+            <span *ngIf="f['email']?.errors?.['email']">Please enter a valid email address</span>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock input-icon" aria-hidden="true"></i>
+            <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+              placeholder="••••••••" autocomplete="new-password" class="form-input"
+              [class.error]="f['password']?.invalid && f['password']?.touched"
+              [attr.aria-describedby]="f['password']?.invalid && f['password']?.touched ? 'password-error' : null"
+              [attr.aria-invalid]="f['password']?.invalid && f['password']?.touched" />
+            <!-- Password Visibility Toggle -->
+            <button type="button" class="password-toggle" (click)="togglePasswordVisibility()"
+              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'" tabindex="0">
+              <i [class]="showPassword() ? 'fas fa-eye-slash' : 'fas fa-eye'" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div *ngIf="f['password']?.invalid && f['password']?.touched" id="password-error" class="error-message"
+            role="alert">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+            <span *ngIf="f['password']?.errors?.['required']">Password is required</span>
+            <span *ngIf="f['password']?.errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
+        </div>
+
+        <!-- Server Error Message -->
+        <div *ngIf="errorMessage()" class="alert alert-error" role="alert" aria-live="polite">
+          <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+          <span>{{ errorMessage() }}</span>
+        </div>
+
+        <!-- Create Account Button -->
+        <app-button label="Create Account" type="submit" variant="primary" [fullWidth]="true" [loading]="isLoading()"
+          [disabled]="registerForm.invalid || isLoading()"></app-button>
+
+        <div class="form-divider">
+          <span>or continue with</span>
+        </div>
+
+        <!-- Social Login -->
+        <div class="social-login">
+          <app-button variant="outline" icon="fab fa-github" label="GitHub" [fullWidth]="true" [disabled]="true"
+            ariaLabel="GitHub login (coming soon)" class="social-btn"></app-button>
+          <app-button variant="outline" icon="fab fa-google" label="Google" [fullWidth]="true" [disabled]="true"
+            ariaLabel="Google login (coming soon)" class="social-btn"></app-button>
+        </div>
+        <p class="social-hint">Social login coming soon</p>
+      </form>
+
+      <div class="auth-footer">
+        <p>Already have an account?
+          <a routerLink="/auth/login" class="auth-link" tabindex="0">Sign in</a>
+        </p>
       </div>
-
-      <app-button
-        label="Register"
-        variant="primary"
-        [fullWidth]="true"
-        [disabled]="registerForm.invalid || isLoading()"
-        [icon]="isLoading() ? 'fas fa-spinner fa-spin' : null"
-      ></app-button>
-    </form>
-
-    <p class="auth-footer">
-      Already have an account? <a routerLink="/auth/login">Login here</a>
-    </p>
+    </div>
   </div>
 </div>

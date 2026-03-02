@@ -7,8 +7,8 @@
 }
 
 .timeline-graph-container {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-default);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
@@ -20,7 +20,7 @@
 .graph-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--text-primary);
   margin-top: 0;
   margin-bottom: var(--spacing-lg);
 }
@@ -39,13 +39,13 @@
 }
 
 .axis-line {
-  stroke: var(--color-border);
+  stroke: var(--border-default);
   stroke-width: 1px;
 }
 
 .axis-label {
   font-size: 10px;
-  fill: var(--color-text-secondary);
+  fill: var(--text-muted);
 }
 
 .x-axis-label {
@@ -59,15 +59,15 @@
 }
 
 .cpu-line {
-  stroke: var(--color-danger);
+  stroke: var(--error);
 }
 
 .memory-line {
-  stroke: var(--color-warning);
+  stroke: var(--warning);
 }
 
 .response-time-line {
-  stroke: var(--color-primary);
+  stroke: var(--primary-600);
 }
 
 .empty-state {
@@ -75,6 +75,6 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  color: var(--color-text-secondary);
+  color: var(--text-muted);
   font-style: italic;
 }

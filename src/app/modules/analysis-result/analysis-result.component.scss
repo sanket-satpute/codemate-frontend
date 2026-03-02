@@ -6,8 +6,8 @@
 :host {
   display: block;
   padding: var(--space-xl);
-  background-color: var(--color-bg-primary);
-  color: var(--color-text-primary);
+  background-color: var(--background);
+  color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -32,13 +32,13 @@
   gap: var(--space-lg);
   margin-bottom: var(--space-xl);
   padding: var(--space-md);
-  border-bottom: 1px solid var(--color-border-neutral);
+  border-bottom: 1px solid var(--border-neutral);
 
   .header-content {
     .page-title {
       font-size: var(--font-size-display-title);
       font-weight: var(--font-weight-heavy);
-      color: var(--color-text-primary);
+      color: var(--text-primary);
       margin-bottom: var(--space-xs);
 
       @include m.breakpoint-down(md) {
@@ -46,13 +46,13 @@
       }
 
       .project-name-highlight {
-        color: var(--color-primary-indigo-600);
+        color: var(--primary-600);
       }
     }
 
     .job-id-display {
       font-size: var(--font-size-body-md);
-      color: var(--color-text-muted);
+      color: var(--text-muted);
       margin-bottom: var(--space-sm);
     }
 
@@ -62,7 +62,7 @@
       font-size: var(--font-size-body-md);
 
       .analysis-date {
-        color: var(--color-text-muted);
+        color: var(--text-muted);
       }
 
     .overall-status {
@@ -103,14 +103,14 @@
   .header-actions {
     .back-to-project-btn {
       @include m.button-primary;
-      background-color: var(--color-bg-secondary);
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border-neutral);
+      background-color: var(--surface-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-neutral);
       padding: var(--space-sm) var(--space-lg);
       text-decoration: none;
 
       &:hover {
-        background-color: var(--color-bg-secondary-hover);
+        background-color: var(--grey-600);
         box-shadow: var(--shadow-sm);
       }
     }
@@ -180,10 +180,10 @@
       align-items: center;
       justify-content: center;
       min-height: 250px;
-      background: linear-gradient(135deg, rgba(var(--color-bg-primary-navy-black), 0.05) 0%, rgba(var(--color-bg-secondary), 0.05) 100%);
+      background: linear-gradient(135deg, rgba(var(--grey-800), 0.05) 0%, rgba(var(--surface-card), 0.05) 100%);
       border-radius: var(--border-radius-card);
-      border: 1px solid rgba(var(--color-border-neutral), 0.4);
-      color: var(--color-text-muted);
+      border: 1px solid rgba(var(--border-neutral), 0.4);
+      color: var(--text-muted);
       text-align: center;
       padding: v.$space-l;
       position: relative;
@@ -207,7 +207,7 @@
             transition: stroke-dashoffset 0.5s ease-out, stroke 0.3s ease;
             filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
             &:hover {
-              filter: drop-shadow(0 0 10px var(--color-accent-cyan-400));
+              filter: drop-shadow(0 0 10px var(--accent-400));
               cursor: pointer;
             }
           }
@@ -215,7 +215,7 @@
             font-family: v.$font-family-secondary;
             font-size: 1.25rem; /* Adjusted for better legibility */
             font-weight: v.$font-weight-bold;
-            fill: var(--color-text-primary);
+            fill: var(--text-primary);
             text-shadow: 0 0 8px rgba(var(--accent-color-rgb-channels), 0.6);
             transition: fill 0.3s ease;
           }
@@ -234,7 +234,7 @@
           align-items: center;
           gap: v.$space-xs;
           font-size: var(--font-size-body-sm);
-          color: var(--color-text-primary);
+          color: var(--text-primary);
 
           .legend-color {
             display: block;
@@ -250,11 +250,11 @@
         font-size: var(--font-size-body-md);
         margin-bottom: v.$space-xs;
         font-style: italic;
-        color: var(--color-text-primary);
+        color: var(--text-primary);
       }
       .sub-message {
         font-size: var(--font-size-body-sm);
-        color: var(--color-text-muted);
+        color: var(--text-muted);
         opacity: 0.8;
       }
     }

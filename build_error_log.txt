@@ -1,0 +1,34 @@
+
+> codescope-frontend@0.0.0 build
+> ng build
+
+[33mΓ¥»[39m Building...
+[32mΓ£ö[39m Building...
+Application bundle generation failed. [8.923 seconds] - 2026-02-23T16:37:46.826Z
+
+X [ERROR] TS2339: Property 'onSearchFocus' does not exist on type 'NavbarComponent'. [plugin angular-compiler]
+
+    src/app/layout/navbar/navbar.component.html:19:17:
+      19 Γöé         (focus)="onSearchFocus()"
+         Γò╡                  ~~~~~~~~~~~~~
+
+  Error occurs in the template of component NavbarComponent.
+
+    src/app/layout/navbar/navbar.component.ts:15:15:
+      15 Γöé   templateUrl: './navbar.component.html',
+         Γò╡                ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'onSearchBlur' does not exist on type 'NavbarComponent'. [plugin angular-compiler]
+
+    src/app/layout/navbar/navbar.component.html:20:16:
+      20 Γöé         (blur)="onSearchBlur()"
+         Γò╡                 ~~~~~~~~~~~~
+
+  Error occurs in the template of component NavbarComponent.
+
+    src/app/layout/navbar/navbar.component.ts:15:15:
+      15 Γöé   templateUrl: './navbar.component.html',
+         Γò╡                ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+

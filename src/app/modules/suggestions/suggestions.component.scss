@@ -14,12 +14,12 @@
   h1 {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--color-text-primary);
+    color: var(--text-primary);
     margin-bottom: var(--spacing-sm);
   }
   p {
     font-size: 1rem;
-    color: var(--color-text-secondary);
+    color: var(--text-muted);
   }
 }
 
@@ -55,8 +55,8 @@
 }
 
 app-suggestion-card.selected {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
 }
 
 .refactor-preview {

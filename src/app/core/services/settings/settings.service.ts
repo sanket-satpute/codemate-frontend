@@ -5,12 +5,12 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { BaseService } from '../base.service';
 import { User, UserProfile, PasswordChangeDTO } from '../../models/auth.model';
-
+import { ApiEndpoints } from '../../constants/api-endpoints';
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService extends BaseService {
-  private readonly apiUrl = `${environment.apiUrl}/users`;
+  private readonly apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
 
   currentUser = signal<User | null>(null);
@@ -24,7 +24,7 @@ export class SettingsService extends BaseService {
 
   getCurrentUser(): Observable<User> {
     this.loading.set(true);
-    return this.http.get<User>(`${this.apiUrl}/me`, { headers: this.getHeaders() })
+    return this.http.get<User>(`${this.apiUrl}${ApiEndpoints.USERS.ME}`)
       .pipe(
         tap(user => {
           this.currentUser.set(user);
@@ -40,7 +40,7 @@ export class SettingsService extends BaseService {
 
   updateProfile(profile: UserProfile): Observable<User> {
     this.saving.set(true);
-    return this.http.put<User>(`${this.apiUrl}/me`, profile, { headers: this.getHeaders() })
+    return this.http.put<User>(`${this.apiUrl}${ApiEndpoints.USERS.ME}`, profile)
       .pipe(
         tap(user => {
           this.currentUser.set(user);
@@ -56,7 +56,7 @@ export class SettingsService extends BaseService {
 
   changePassword(data: PasswordChangeDTO): Observable<unknown> {
     this.saving.set(true);
-    return this.http.post(`${this.apiUrl}/change-password`, data, { headers: this.getHeaders() })
+    return this.http.post(`${this.apiUrl}${ApiEndpoints.USERS.CHANGE_PASSWORD}`, data)
       .pipe(
         tap(() => {
           this.saving.set(false);

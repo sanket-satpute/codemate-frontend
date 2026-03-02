@@ -42,13 +42,13 @@
   .summary-box {
     h3 {
       font-size: 1.2rem;
-      color: var(--color-text-primary);
+      color: var(--text-primary);
       margin-top: 0;
       margin-bottom: 0.75rem;
     }
     p {
       font-size: 1rem;
-      color: var(--color-text-muted);
+      color: var(--text-muted);
       line-height: 1.6;
     }
   }
@@ -56,13 +56,13 @@
   .diff-viewer {
     h3 {
       font-size: 1.2rem;
-      color: var(--color-text-primary);
+      color: var(--text-primary);
       margin-top: 0;
       margin-bottom: 0.75rem;
     }
     pre {
-      background-color: var(--color-bg-primary-navy-black); /* Using var(--color-bg-primary-navy-black) */
-      color: var(--color-text-primary); /* Using var(--color-text-primary) */
+      background-color: var(--grey-800); /* Using var(--grey-800) */
+      color: var(--text-primary); /* Using var(--text-primary) */
       padding: 1rem;
       border-radius: var(--border-radius-base); /* Using var(--border-radius-base) */
       overflow-x: auto;

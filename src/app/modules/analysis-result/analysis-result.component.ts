@@ -136,10 +136,10 @@ export class AnalysisResultComponent implements OnInit {
     let currentDashOffset = 0;
 
     const severities: { label: string; value: number; color: string; }[] = [
-      { label: 'Critical', value: summary.critical, color: 'var(--color-error)' },
-      { label: 'High', value: summary.high, color: 'var(--color-warning)' },
-      { label: 'Medium', value: summary.medium, color: 'var(--color-primary-indigo-600)' }, // Using primary indigo for medium
-      { label: 'Low', value: summary.low, color: 'var(--color-accent-cyan-400)' }, // Using accent cyan for low
+      { label: 'Critical', value: summary.critical, color: 'var(--error)' },
+      { label: 'High', value: summary.high, color: 'var(--warning)' },
+      { label: 'Medium', value: summary.medium, color: 'var(--primary-600)' }, // Using primary indigo for medium
+      { label: 'Low', value: summary.low, color: 'var(--accent-400)' }, // Using accent cyan for low
     ];
 
     severities.forEach(s => {

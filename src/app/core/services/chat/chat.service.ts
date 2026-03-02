@@ -6,12 +6,12 @@ import { environment } from '../../../../environments/environment';
 import { BaseService } from '../base.service';
 import { ChatMessage, SendMessageRequest } from '../../models/chat.model';
 import { WebSocketService } from '../websocket/websocket.service'; // Import WebSocketService
-
+import { ApiEndpoints } from '../../constants/api-endpoints';
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService extends BaseService {
-  private readonly apiUrl = `${environment.apiUrl}/chat`;
+  private readonly apiUrl = environment.apiUrl;
   private chatHistorySubjects = new Map<string, BehaviorSubject<ChatMessage[]>>();
   private http = inject(HttpClient);
   private wsService = inject(WebSocketService); // Inject WebSocketService
@@ -32,7 +32,7 @@ export class ChatService extends BaseService {
    * @returns An observable of the chat messages.
    */
   getChatHistory(projectId: string, fileId: string): Observable<ChatMessage[]> {
-    return this.http.get<ChatMessage[]>(`${this.apiUrl}/${projectId}/${fileId}`, { headers: this.getHeaders() })
+    return this.http.get<ChatMessage[]>(`${this.apiUrl}${ApiEndpoints.CHAT.HISTORY(projectId)}/${fileId}`)
       .pipe(
         catchError(this.handleError)
       );
@@ -44,7 +44,7 @@ export class ChatService extends BaseService {
    * @returns An observable of the sent chat message (or the server's acknowledgment).
    */
   sendMessage(request: SendMessageRequest): Observable<ChatMessage> {
-    const destination = `/app/chat/${request.projectId}/${request.fileId}`; // Assuming fileId is part of SendMessageRequest
+    const destination = `/app${ApiEndpoints.CHAT.SEND(request.projectId)}/${request.fileId}`; // Assuming fileId is part of SendMessageRequest
     const messagePayload: ChatMessage = {
       id: `temp-${Date.now()}`, // Temporary ID, backend should assign real ID
       projectId: request.projectId,
@@ -53,7 +53,7 @@ export class ChatService extends BaseService {
       message: request.message,
       timestamp: new Date().toISOString()
     };
-    this.wsService.sendMessage({ topic: destination, payload: messagePayload }); // Wrap in object with topic
+    this.wsService.sendMessage(destination, messagePayload); // Wrap in object with topic
 
     // Return an observable of the message that was sent (or a mock acknowledgment)
     // The actual message might come back via WebSocket later with a real ID

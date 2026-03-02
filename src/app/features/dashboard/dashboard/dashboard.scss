@@ -5,8 +5,8 @@
 :host {
   display: block;
   padding: var(--space-xl);
-  background-color: var(--color-bg-primary); /* Use theme variable */
-  color: var(--color-text-primary); /* Use theme variable */
+  background-color: var(--background); /* Use theme variable */
+  color: var(--text-primary); /* Use theme variable */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -34,7 +34,7 @@
     .welcome-title {
       font-size: var(--font-size-display-title);
       font-weight: var(--font-weight-heavy);
-      color: var(--color-primary-indigo-600); /* Use primary color */
+      color: var(--primary-600); /* Use primary color */
       margin-bottom: var(--space-xs);
 
       @include m.breakpoint-down(md) {
@@ -44,7 +44,7 @@
 
     .welcome-message {
       font-size: var(--font-size-body-lg);
-      color: var(--color-text-muted);
+      color: var(--text-muted);
 
       @include m.breakpoint-down(md) {
         font-size: var(--font-size-body-md);
@@ -59,16 +59,16 @@
 
     .theme-toggle {
       @include m.button-primary; // Apply general button styles
-      background-color: var(--color-bg-secondary);
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border-neutral);
+      background-color: var(--surface-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-neutral);
       padding: var(--space-sm);
       border-radius: var(--border-radius-pill); /* Use pill for circle */
       width: 40px;
       height: 40px;
 
       &:hover {
-        background-color: var(--color-bg-secondary-hover);
+        background-color: var(--grey-600);
         box-shadow: var(--shadow-sm);
       }
     }
@@ -76,7 +76,7 @@
     .user-profile {
       width: 40px;
       height: 40px;
-      background-color: var(--color-primary-indigo-600);
+      background-color: var(--primary-600);
       border-radius: var(--border-radius-circle);
       display: flex;
       align-items: center;
@@ -106,7 +106,7 @@
     align-items: center;
     gap: var(--space-lg);
     padding: var(--space-xl);
-    border: 1px solid var(--color-border-neutral); /* Ensure border is visible */
+    border: 1px solid var(--border-neutral); /* Ensure border is visible */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
@@ -116,7 +116,7 @@
 
     .stat-icon {
       font-size: 2.5rem;
-      color: var(--color-accent-cyan-400); /* Accent color for icons */
+      color: var(--accent-400); /* Accent color for icons */
     }
 
     .stat-info {
@@ -126,12 +126,12 @@
       .stat-value {
         font-size: var(--font-size-page-title);
         font-weight: var(--font-weight-heavy);
-        color: var(--color-text-primary);
+        color: var(--text-primary);
       }
 
       .stat-label {
         font-size: var(--font-size-body-md);
-        color: var(--color-text-muted);
+        color: var(--text-muted);
       }
     }
   }
@@ -154,7 +154,7 @@
     .card-title {
       font-size: var(--font-size-section-title);
       font-weight: var(--font-weight-bold);
-      color: var(--color-text-primary);
+      color: var(--text-primary);
       margin-bottom: var(--space-xl);
     }
   }
@@ -175,18 +175,18 @@
         justify-content: space-between;
         align-items: center;
         padding: var(--space-md);
-        background-color: var(--color-bg-secondary);
+        background-color: var(--surface-card);
         border-radius: var(--border-radius-base);
-        border: 1px solid var(--color-border-neutral);
+        border: 1px solid var(--border-neutral);
         transition: background-color 0.2s ease;
 
         &:hover {
-          background-color: var(--color-bg-secondary-hover);
+          background-color: var(--grey-600);
         }
 
         .project-name {
           font-weight: var(--font-weight-medium);
-          color: var(--color-text-primary);
+          color: var(--text-primary);
         }
 
         .project-status {
@@ -194,16 +194,16 @@
           padding: var(--space-xs) var(--space-sm);
           border-radius: var(--border-radius-pill);
           &.status-success {
-            background-color: rgba(var(--color-status-success-rgb), 0.2);
-            color: var(--color-status-success);
+            background-color: rgba(34, 197, 94, 0.2);
+            color: var(--success);
           }
           &.status-warning {
-            background-color: rgba(var(--color-status-warning-rgb), 0.2);
-            color: var(--color-status-warning);
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
           }
           &.status-error {
-            background-color: rgba(var(--color-status-error-rgb), 0.2);
-            color: var(--color-status-error);
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--error);
           }
         }
 
@@ -218,13 +218,13 @@
 
   .code-insights-card {
     .chart-placeholder {
-      background-color: var(--color-bg-secondary);
+      background-color: var(--surface-card);
       height: 300px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: var(--border-radius-base);
-      color: var(--color-text-muted);
+      color: var(--text-muted);
       font-style: italic;
     }
   }
@@ -240,18 +240,18 @@
         width: 100%;
 
         &.btn-primary {
-          background-color: var(--color-primary-indigo-600);
+          background-color: var(--primary-600);
           color: var(--color-white);
           &:hover {
             background-color: var(--color-primary-indigo-700);
           }
         }
         &.btn-secondary {
-          background-color: var(--color-bg-tertiary);
-          color: var(--color-text-primary);
-          border: 1px solid var(--color-border-neutral);
+          background-color: var(--grey-400);
+          color: var(--text-primary);
+          border: 1px solid var(--border-neutral);
           &:hover {
-            background-color: var(--color-bg-tertiary-hover);
+            background-color: var(--grey-500);
           }
         }
         &.btn-tertiary {
@@ -276,16 +276,16 @@
       gap: var(--space-md);
 
       li {
-        background-color: var(--color-bg-secondary);
+        background-color: var(--surface-card);
         padding: var(--space-md);
         border-radius: var(--border-radius-base);
-        border: 1px solid var(--color-border-neutral);
+        border: 1px solid var(--border-neutral);
         font-size: var(--font-size-body-md);
-        color: var(--color-text-primary);
+        color: var(--text-primary);
 
         .activity-timestamp {
           font-weight: var(--font-weight-medium);
-          color: var(--color-text-muted);
+          color: var(--text-muted);
           margin-right: var(--space-xs);
         }
       }

@@ -1,71 +1,71 @@
 <aside [class.collapsed]="!isExpanded" class="sidebar">
+  <!-- Sidebar Header -->
   <div class="sidebar-header">
-    <img src="assets/logo.svg" alt="CodeMate AI Logo" class="logo">
-    <button class="toggle-btn" (click)="toggleSidebar()">
+    <img src="assets/logo.svg" alt="CodeMate AI" class="logo" (error)="onLogoError($event)">
+    <span class="logo-text-fallback">CM</span>
+    <button class="toggle-btn" (click)="toggleSidebar()"
+      [attr.aria-label]="isExpanded ? 'Collapse sidebar' : 'Expand sidebar'" [attr.aria-expanded]="isExpanded">
       <i class="fas fa-chevron-left"></i>
     </button>
-  </div> <!-- This closes the sidebar-header div -->
+  </div>
 
+  <!-- Navigation Sections -->
   <nav class="sidebar-nav">
-    <ul>
-      <ng-container *ngFor="let option of sidebarOptions">
-        <ng-template [ngIf]="!option.subOptions">
-          <li>
-            <a
-              *ngIf="option.name !== 'Logout'"
-              [routerLink]="option.route"
-              routerLinkActive="active"
-              (click)="selectOption(option.name)"
-              [class.active]="selectedOption === option.name"
-              [title]="!isExpanded ? option.tooltip : ''"
-              [class.has-tooltip]="!isExpanded"
-            >
-              <i [class]="option.icon"></i>
-              <span *ngIf="isExpanded">{{ option.name }}</span>
-            </a>
-            <a
-              *ngIf="option.name === 'Logout'"
-              (click)="selectOption(option.name)"
-              [class.active]="selectedOption === option.name"
-              [title]="!isExpanded ? option.tooltip : ''"
-              [class.has-tooltip]="!isExpanded"
-            >
-              <i [class]="option.icon"></i>
-              <span *ngIf="isExpanded">{{ option.name }}</span>
-            </a>
-          </li>
-        </ng-template>
-        <ng-template [ngIf]="option.subOptions">
-          <li class="has-submenu" [class.expanded]="expandedMenus[option.name]">
-            <a
-              class="submenu-toggle"
-              (click)="toggleSubmenu(option.name); $event.preventDefault()"
-              [class.active]="selectedOption === option.name"
-              [title]="!isExpanded ? option.tooltip : ''"
-              [class.has-tooltip]="!isExpanded"
-            >
-              <i [class]="option.icon"></i>
-              <span *ngIf="isExpanded">{{ option.name }}</span>
-              <i *ngIf="isExpanded" class="fas fa-chevron-down submenu-icon" [class.rotated]="expandedMenus[option.name]"></i>
-            </a>
-            <ul *ngIf="expandedMenus[option.name] || (!isExpanded && option.subOptions)" class="submenu">
-              <li *ngFor="let subOption of option.subOptions">
-                <a
-                  [routerLink]="subOption.route"
-                  routerLinkActive="active"
-                  (click)="selectOption(subOption.name)"
-                  [class.active]="selectedOption === subOption.name"
-                  [title]="!isExpanded ? subOption.tooltip : ''"
-                  [class.has-tooltip]="!isExpanded"
-                >
-                  <i [class]="subOption.icon"></i>
-                  <span *ngIf="isExpanded">{{ subOption.name }}</span>
+    <div class="nav-sections">
+      <ng-container *ngFor="let section of sidebarSections">
+        <!-- Section Label -->
+        <div class="section-label" *ngIf="isExpanded">
+          <span>{{ section.label }}</span>
+        </div>
+        <div class="section-divider" *ngIf="!isExpanded"></div>
+
+        <ul>
+          <ng-container *ngFor="let option of section.items">
+            <!-- Regular nav item (no sub-options) -->
+            <ng-template [ngIf]="!option.subOptions">
+              <li>
+                <a [routerLink]="option.route" routerLinkActive="active" class="nav-link">
+                  <i [class]="option.icon"></i>
+                  <span *ngIf="isExpanded" class="nav-label">{{ option.name }}</span>
+                  <span *ngIf="!isExpanded" class="collapsed-tooltip">{{ option.tooltip }}</span>
                 </a>
               </li>
-            </ul>
-          </li>
-        </ng-template>
+            </ng-template>
+
+            <!-- Submenu item -->
+            <ng-template [ngIf]="option.subOptions">
+              <li class="has-submenu" [class.expanded]="expandedMenus[option.name]">
+                <a class="submenu-toggle nav-link" (click)="toggleSubmenu(option.name); $event.preventDefault()">
+                  <i [class]="option.icon"></i>
+                  <span *ngIf="isExpanded" class="nav-label">{{ option.name }}</span>
+                  <i *ngIf="isExpanded" class="fas fa-chevron-down submenu-icon"
+                    [class.rotated]="expandedMenus[option.name]"></i>
+                  <span *ngIf="!isExpanded" class="collapsed-tooltip">{{ option.tooltip }}</span>
+                </a>
+                <ul class="submenu" [class.submenu-open]="expandedMenus[option.name]">
+                  <li *ngFor="let subOption of option.subOptions">
+                    <a [routerLink]="subOption.route" routerLinkActive="active" class="nav-link">
+                      <i [class]="subOption.icon"></i>
+                      <span *ngIf="isExpanded" class="nav-label">{{ subOption.name }}</span>
+                      <span *ngIf="!isExpanded" class="collapsed-tooltip">{{ subOption.tooltip }}</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ng-template>
+          </ng-container>
+        </ul>
       </ng-container>
-    </ul>
-</nav>
+    </div>
+
+    <!-- Logout — pinned to bottom -->
+    <div class="sidebar-footer">
+      <div class="section-divider"></div>
+      <a class="nav-link logout-link" (click)="onLogoutClick()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span *ngIf="isExpanded" class="nav-label">Logout</span>
+        <span *ngIf="!isExpanded" class="collapsed-tooltip">Logout</span>
+      </a>
+    </div>
+  </nav>
 </aside>

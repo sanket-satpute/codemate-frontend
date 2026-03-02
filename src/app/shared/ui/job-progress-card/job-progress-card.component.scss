@@ -13,16 +13,16 @@
   transition: all 0.3s ease-in-out;
 
   &.status-completed {
-    border-left: 5px solid var(--color-success);
+    border-left: 5px solid var(--success);
   }
   &.status-failed, &.status-cancelled {
-    border-left: 5px solid var(--color-error);
+    border-left: 5px solid var(--error);
   }
   &.status-in_progress {
     border-left: 5px solid var(--primary-color);
   }
   &.status-pending {
-    border-left: 5px solid var(--color-warning);
+    border-left: 5px solid var(--warning);
   }
 
   mat-card-header {
@@ -53,7 +53,7 @@
 
   .last-updated {
     font-size: 0.8rem;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     margin-top: 1rem;
     text-align: right;
   }

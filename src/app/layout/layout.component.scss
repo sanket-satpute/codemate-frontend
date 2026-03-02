@@ -1,133 +1,88 @@
 @use '../../styles/variables' as v;
 
 // ============================================================================
-// PREMIUM LAYOUT ARCHITECTURE
-// Modern, clean spacing with visual hierarchy and sophisticated animations
-// Sidebar properly integrated with content flow
+// PREMIUM LAYOUT ARCHITECTURE — Theme-aware
 // ============================================================================
 
 .app-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   background-color: v.$bg-primary-navy-black;
   color: v.$text-primary;
-  
-  // Reduced outer padding for more content space
-  padding: v.$space-md; // 16px - cleaner edge spacing
-  gap: v.$space-md; // 16px - tighter, more cohesive layout
-  
+
+  padding: v.$space-md;
+  gap: v.$space-md;
+
   // Smooth theme transitions
-  transition: background-color v.$transition-duration-slow v.$ease-in-out;
-  
-  // Prevent horizontal overflow
-  overflow-x: hidden;
+  transition:
+    background-color v.$transition-duration-slow v.$ease-in-out,
+    color v.$transition-duration-slow v.$ease-in-out;
+
+  overflow: hidden;
 }
 
 // ============================================================================
-// MAIN CONTENT AREA - Properly adjusted for sidebar
+// MAIN CONTENT AREA
 // ============================================================================
 .main-content {
   display: flex;
   flex-direction: column;
-  flex: 1; // Take remaining space after sidebar
-  min-width: 0; // Prevent flex item from overflowing
-  
-  // Refined spacing between navbar, content, and footer
-  gap: v.$space-md; // 16px - consistent rhythm
-  
-  // Smooth transitions for sidebar toggle
+  flex: 1;
+  min-width: 0;
+
+  gap: v.$space-md;
+
   transition: all v.$transition-duration-slow v.$ease-out-back;
-  
-  // Let flexbox handle the width automatically
+
   width: auto;
-  
-  // Sidebar collapsed state - content expands more
-  &.sidebar-collapsed {
-    // Flexbox will automatically adjust, no manual calculation needed
-  }
+
+  // Must be visible so navbar dropdowns aren't clipped
+  overflow: visible;
 }
 
 // ============================================================================
-// ROUTER CONTENT - THE PREMIUM CANVAS
+// ROUTER CONTENT — THE PREMIUM CANVAS
 // ============================================================================
 .router-content {
   flex-grow: 1;
   position: relative;
-  
-  // Generous but balanced internal padding
-  // padding: v.$space-2xl; // 48px - premium content breathing room
-  
-  // Surface styling with subtle depth
+
+  // Theme-aware surface
   background: v.$bg-secondary;
-  border-radius: v.$border-radius-content; // 18px
-  
-  // Premium layered shadows for depth
-  box-shadow: 
-    v.$shadow-lg,
-    inset 0 1px 0 rgba(255, 255, 255, 0.03), // Subtle top highlight
-    inset 0 0 0 1px rgba(79, 70, 229, 0.08); // Subtle indigo border glow
-  
-  // Refined border for definition
+  border-radius: v.$border-radius-content;
+
+  // Theme-aware shadows
+  box-shadow: v.$shadow-card;
   border: 1px solid v.$border-neutral;
-  
-  // Sophisticated page transition
-  animation: premiumFadeIn 0.6s v.$ease-out-back forwards;
-  
-  // Auto scrolling for content overflow
+
+  // Auto scrolling
   overflow-x: hidden;
   overflow-y: auto;
-  
-  // Smooth scrolling experience
   scroll-behavior: smooth;
-  
-  // Custom scrollbar styling (webkit browsers)
+
+  // Smooth theme transition
+  transition:
+    background-color v.$transition-duration-slow v.$ease-in-out,
+    border-color v.$transition-duration-slow v.$ease-in-out,
+    box-shadow v.$transition-duration-slow v.$ease-in-out;
+
+  // Theme-aware scrollbar
   &::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   &::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.3);
+    background: v.$scrollbar-track;
     border-radius: v.$border-radius-sm;
   }
-  
+
   &::-webkit-scrollbar-thumb {
-    background: v.$border-neutral;
+    background: v.$scrollbar-thumb;
     border-radius: v.$border-radius-sm;
-    
+
     &:hover {
-      background: v.$text-muted;
+      background: v.$scrollbar-thumb-hover;
     }
-  }
-  
-  // Subtle hover elevation
-  transition: box-shadow v.$transition-duration-base v.$ease-in-out;
-  
-  &:hover {
-    box-shadow: 
-      v.$shadow-xl,
-      inset 0 1px 0 rgba(255, 255, 255, 0.05),
-      inset 0 0 0 1px rgba(79, 70, 229, 0.12);
-  }
-}
-
-// ============================================================================
-// PREMIUM ANIMATIONS
-// ============================================================================
-
-// Sophisticated fade-in with subtle scale and blur
-@keyframes premiumFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(12px) scale(0.98);
-    filter: blur(4px);
-  }
-  60% {
-    filter: blur(0px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0px);
   }
 }
 
@@ -135,70 +90,52 @@
 // RESPONSIVE ADJUSTMENTS
 // ============================================================================
 
-// Tablet and below
 @media (max-width: 1024px) {
   .app-container {
-    padding: v.$space-sm; // 8px
+    padding: v.$space-sm;
     gap: v.$space-sm;
   }
-  
+
   .main-content {
     gap: v.$space-sm;
   }
-  
+
   .router-content {
-    padding: v.$space-xl; // 32px - reduced on smaller screens
-    border-radius: v.$border-radius-lg; // 12px - slightly less dramatic
+    border-radius: v.$border-radius-lg;
   }
 }
 
-// Mobile
 @media (max-width: 768px) {
   .app-container {
-    padding: v.$space-xs; // 4px
+    padding: v.$space-xs;
     gap: v.$space-xs;
-    flex-direction: column; // Stack vertically on mobile
+    flex-direction: column;
   }
-  
+
   .main-content {
     gap: v.$space-xs;
     width: 100%;
   }
-  
+
   .router-content {
-    padding: v.$space-lg; // 24px - comfortable mobile padding
-    border-radius: v.$border-radius-md; // 8px - subtle on mobile
+    border-radius: v.$border-radius-md;
   }
 }
 
 // ============================================================================
-// ACCESSIBILITY ENHANCEMENTS
+// ACCESSIBILITY
 // ============================================================================
 
-// Respect user's motion preferences
 @media (prefers-reduced-motion: reduce) {
+
   .app-container,
   .main-content,
   .router-content {
     transition: none;
     animation: none;
   }
-  
-  .router-content {
-    animation: simpleFadeIn 0.3s ease-out forwards;
-  }
-  
-  @keyframes simpleFadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
 }
 
-// High contrast mode support
 @media (prefers-contrast: high) {
   .router-content {
     border: 2px solid v.$text-primary;
@@ -215,11 +152,11 @@
     gap: 0;
     display: block;
   }
-  
+
   .main-content {
     width: 100%;
   }
-  
+
   .router-content {
     padding: 0;
     border: none;

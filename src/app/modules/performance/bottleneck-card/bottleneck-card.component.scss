@@ -6,9 +6,9 @@
 }
 
 .bottleneck-card {
-  background-color: var(--color-surface);
+  background-color: var(--surface-card);
   border-radius: var(--border-radius-lg);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border-default);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
 }
@@ -23,7 +23,7 @@
 .bottleneck-type {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -36,13 +36,13 @@
   color: #fff;
 
   &.severity-low {
-    background-color: var(--color-success);
+    background-color: var(--success);
   }
   &.severity-medium {
-    background-color: var(--color-warning);
+    background-color: var(--warning);
   }
   &.severity-high {
-    background-color: var(--color-danger);
+    background-color: var(--error);
   }
   &.severity-critical {
     background-color: var(--color-critical);
@@ -50,7 +50,7 @@
 }
 
 .bottleneck-description {
-  color: var(--color-text-secondary);
+  color: var(--text-muted);
   font-size: 0.9rem;
   line-height: 1.5;
   margin-bottom: var(--spacing-md);
@@ -65,7 +65,7 @@
 
 .bottleneck-suggestion {
   font-size: 0.9rem;
-  color: var(--color-text-primary);
+  color: var(--text-primary);
 
   strong {
     font-weight: 600;

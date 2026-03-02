@@ -1,49 +1,78 @@
-<div class="help-center-container">
-  <!-- Header Section -->
-  <header class="header-section">
-    <h1 class="page-title">Help Center</h1>
-    <p class="subtitle">Find answers, explore tutorials, and get help quickly.</p>
-    <div class="search-bar">
+<div class="help-container">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-badge"><i class="fas fa-life-ring"></i> HELP CENTER</div>
+    <h1>How can we help you?</h1>
+    <p class="hero-sub">Find answers, explore tutorials, and get help quickly.</p>
+    <div class="search-wrap">
       <i class="fas fa-search search-icon"></i>
-      <input type="text" placeholder="Search help articles or common issues...">
+      <input type="text" placeholder="Search help articles or topics..." [(ngModel)]="searchTerm" (input)="onSearch()">
+      <button class="search-clear" *ngIf="searchTerm" (click)="clearSearch()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
   </header>
 
-  <!-- Main Categories Grid -->
-  <section class="categories-grid">
-    <div *ngFor="let category of categories" class="category-card">
-      <div class="card-icon">
-        <i [class]="category.icon"></i>
-      </div>
-      <h3 class="card-title">{{ category.title }}</h3>
-      <p class="card-description">{{ category.description }}</p>
-    </div>
-  </section>
-
-  <!-- Popular Articles Section -->
-  <section class="popular-articles-section">
-    <h2 class="section-title">Popular Articles</h2>
-    <ul class="article-list">
-      <li *ngFor="let article of popularArticles" class="article-item">
-        <div class="article-content">
-          <h4 class="article-title">{{ article.title }}</h4>
-          <p class="article-description">{{ article.description }}</p>
+  <!-- Categories -->
+  <section class="categories-section">
+    <h2 class="section-label"><i class="fas fa-th-large"></i> Browse by Topic</h2>
+    <div class="cat-grid">
+      <div *ngFor="let c of filteredCategories" class="cat-card">
+        <div class="cat-icon" [style.background]="c.color + '12'" [style.color]="c.color">
+          <i [class]="c.icon"></i>
         </div>
-        <i class="fas fa-arrow-right arrow-icon"></i>
-      </li>
-    </ul>
+        <div class="cat-body">
+          <h3>{{ c.title }}</h3>
+          <p>{{ c.description }}</p>
+        </div>
+        <span class="cat-count">{{ c.articleCount }} articles</span>
+      </div>
+    </div>
+    <p class="empty-state" *ngIf="filteredCategories.length === 0">
+      <i class="fas fa-search"></i> No topics match "{{ searchTerm }}"
+    </p>
   </section>
 
-  <!-- Contact & Support Section -->
-  <section class="contact-support-section">
+  <!-- Popular Articles -->
+  <section class="articles-section">
+    <h2 class="section-label"><i class="fas fa-fire"></i> Popular Articles</h2>
+    <div class="articles-list">
+      <div *ngFor="let a of filteredArticles" class="article-row">
+        <div class="article-icon" [style.color]="a.categoryColor">
+          <i [class]="a.icon"></i>
+        </div>
+        <div class="article-body">
+          <h4>{{ a.title }}</h4>
+          <p>{{ a.description }}</p>
+        </div>
+        <div class="article-meta">
+          <span class="article-badge" [style.background]="a.categoryColor + '18'" [style.color]="a.categoryColor">{{
+            a.category }}</span>
+          <span class="article-time"><i class="far fa-clock"></i> {{ a.readTime }}</span>
+        </div>
+        <i class="fas fa-chevron-right article-arrow"></i>
+      </div>
+    </div>
+    <p class="empty-state" *ngIf="filteredArticles.length === 0">
+      <i class="fas fa-search"></i> No articles match "{{ searchTerm }}"
+    </p>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="contact-section">
     <div class="contact-card">
-      <h2 class="section-title">Need More Help?</h2>
-      <p class="subtitle">If you still have questions, reach out to us.</p>
-      <div class="contact-buttons">
-        <button class="primary-button">Contact Support</button>
-        <button class="secondary-button">Report a Bug</button>
-        <button class="secondary-button">Request a Feature</button>
+      <div class="contact-icon"><i class="fas fa-headset"></i></div>
+      <div class="contact-body">
+        <h2>Still need help?</h2>
+        <p>Our support team is here to assist you.</p>
+      </div>
+      <div class="contact-actions">
+        <button class="btn btn-primary"><i class="fas fa-envelope"></i> Contact Support</button>
+        <button class="btn btn-secondary"><i class="fas fa-bug"></i> Report a Bug</button>
+        <button class="btn btn-secondary"><i class="fas fa-lightbulb"></i> Request Feature</button>
       </div>
     </div>
   </section>
+
 </div>

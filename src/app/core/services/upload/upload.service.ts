@@ -5,16 +5,15 @@ import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { BaseService } from '../base.service';
 import { UploadFileResponse } from '../../models/upload.model';
-
+import { ApiEndpoints } from '../../constants/api-endpoints';
 @Injectable({
   providedIn: 'root'
 })
 export class UploadService extends BaseService {
-  private readonly apiUrl = `${environment.apiUrl}/upload`;
+  private readonly apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
 
   constructor() {
-    super();
     super();
   }
 
@@ -28,7 +27,7 @@ export class UploadService extends BaseService {
     const formData = new FormData();
     formData.append('file', file, file.name);
 
-    const req = new HttpRequest('POST', `${this.apiUrl}/${projectId}`, formData, {
+    const req = new HttpRequest('POST', `${this.apiUrl}${ApiEndpoints.UPLOAD.FILE}/${projectId}`, formData, {
       reportProgress: true,
       headers: this.getHeaders().delete('Content-Type') // Let browser set Content-Type for FormData
     });

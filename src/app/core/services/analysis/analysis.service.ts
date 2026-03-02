@@ -10,7 +10,7 @@ import { AnalysisRequest, AnalysisResult } from '../../models/analysis.model';
   providedIn: 'root'
 })
 export class AnalysisService extends BaseService {
-  private readonly apiUrl = `${environment.apiUrl}/analysis`;
+  private readonly baseUrl = `${environment.apiUrl}/projects`;
   private http = inject(HttpClient);
 
   constructor() {
@@ -19,37 +19,38 @@ export class AnalysisService extends BaseService {
 
   /**
    * Requests a new code analysis for a project.
-   * @param request The analysis request details.
-   * @returns An observable of the initiated analysis result.
+   * Backend: POST /api/projects/{projectId}/analysis/start
    */
   requestAnalysis(request: AnalysisRequest): Observable<AnalysisResult> {
-    return this.http.post<AnalysisResult>(this.apiUrl, request, { headers: this.getHeaders() })
-      .pipe(
-        catchError(this.handleError)
-      );
+    return this.http.post<AnalysisResult>(
+      `${this.baseUrl}/${request.projectId}/analysis/start`,
+      request
+    ).pipe(
+      catchError(this.handleError)
+    );
   }
 
   /**
-   * Retrieves the analysis results for a specific project.
-   * @param projectId The ID of the project.
-   * @returns An observable array of analysis results.
+   * Retrieves the analysis results (jobs) for a specific project.
+   * Backend: GET /api/projects/{projectId}/analysis/jobs
    */
   getAnalysisResults(projectId: string): Observable<AnalysisResult[]> {
-    return this.http.get<AnalysisResult[]>(`${this.apiUrl}/project/${projectId}`, { headers: this.getHeaders() })
-      .pipe(
-        catchError(this.handleError)
-      );
+    return this.http.get<AnalysisResult[]>(
+      `${this.baseUrl}/${projectId}/analysis/jobs`
+    ).pipe(
+      catchError(this.handleError)
+    );
   }
 
   /**
-   * Retrieves a specific analysis result by its ID.
-   * @param analysisId The ID of the analysis result.
-   * @returns An observable of the analysis result.
+   * Retrieves a specific analysis result by its job ID within a project.
+   * Backend: GET /api/projects/{projectId}/analysis/jobs/{jobId}
    */
-  getAnalysisResultById(analysisId: string): Observable<AnalysisResult> {
-    return this.http.get<AnalysisResult>(`${this.apiUrl}/${analysisId}`, { headers: this.getHeaders() })
-      .pipe(
-        catchError(this.handleError)
-      );
+  getAnalysisResultById(projectId: string, jobId: string): Observable<AnalysisResult> {
+    return this.http.get<AnalysisResult>(
+      `${this.baseUrl}/${projectId}/analysis/jobs/${jobId}`
+    ).pipe(
+      catchError(this.handleError)
+    );
   }
 }

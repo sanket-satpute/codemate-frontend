@@ -9,7 +9,7 @@
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    color: var(--color-text-primary);
+    color: var(--text-primary);
   }
 
   .filter-pills {
@@ -21,7 +21,7 @@
   .pill {
     background-color: transparent;
     border: 1px solid var(--border-neutral);
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius-pill);
     cursor: pointer;
@@ -35,10 +35,10 @@
 
     &.active {
       color: var(--color-white);
-      &.pill-critical { background-color: var(--color-error); border-color: var(--color-error); }
-      &.pill-high { background-color: var(--color-warning); border-color: var(--color-warning); }
-      &.pill-medium { background-color: var(--color-info); border-color: var(--color-info); }
-      &.pill-low { background-color: var(--color-success); border-color: var(--color-success); }
+      &.pill-critical { background-color: var(--error); border-color: var(--error); }
+      &.pill-high { background-color: var(--warning); border-color: var(--warning); }
+      &.pill-medium { background-color: var(--accent-600); border-color: var(--accent-600); }
+      &.pill-low { background-color: var(--success); border-color: var(--success); }
     }
   }
 }

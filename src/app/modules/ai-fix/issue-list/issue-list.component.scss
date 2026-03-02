@@ -50,22 +50,22 @@
     border-radius: var(--border-radius-pill);
     text-transform: uppercase;
     
-    &.severity-critical { background-color: var(--color-error); color: var(--color-white); }
-    &.severity-high { background-color: var(--color-warning); color: var(--text-color-dark); }
-    &.severity-medium { background-color: var(--color-info); color: var(--color-white); }
-    &.severity-low { background-color: var(--color-success); color: var(--color-white); }
+    &.severity-critical { background-color: var(--error); color: var(--color-white); }
+    &.severity-high { background-color: var(--warning); color: var(--text-color-dark); }
+    &.severity-medium { background-color: var(--accent-600); color: var(--color-white); }
+    &.severity-low { background-color: var(--success); color: var(--color-white); }
   }
 
   .issue-title {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--color-text-primary);
+    color: var(--text-primary);
   }
 
   .issue-description {
     font-size: 0.9rem;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     flex-grow: 1;
     margin-bottom: 1rem;
   }

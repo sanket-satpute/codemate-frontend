@@ -6,7 +6,7 @@
 }
 
 .modal-container {
-  background-color: var(--color-surface);
+  background-color: var(--surface-card);
   border-radius: var(--border-radius-lg);
   max-width: 80vw;
   width: 900px;
@@ -20,14 +20,14 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--border-default);
 }
 
 .modal-title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--text-primary);
 }
 
 .close-button {
@@ -35,7 +35,7 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: var(--color-text-secondary);
+  color: var(--text-muted);
 }
 
 .modal-content {
@@ -51,12 +51,12 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: var(--spacing-md);
-  color: var(--color-text-primary);
+  color: var(--text-primary);
 }
 
 .code-block {
-  background-color: var(--color-code-bg);
-  color: var(--color-code-text);
+  background-color: var(--grey-900);
+  color: var(--grey-100);
   padding: var(--spacing-md);
   border-radius: var(--border-radius-sm);
   max-height: 500px;
@@ -66,7 +66,7 @@
 .suggestions ul {
   list-style-type: disc;
   padding-left: var(--spacing-lg);
-  color: var(--color-text-secondary);
+  color: var(--text-muted);
 }
 
 .modal-footer {
@@ -74,5 +74,5 @@
   justify-content: flex-end;
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--border-default);
 }

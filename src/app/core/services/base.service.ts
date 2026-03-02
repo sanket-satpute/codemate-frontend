@@ -1,4 +1,4 @@
-import { HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { throwError } from 'rxjs';
 
@@ -11,14 +11,13 @@ export abstract class BaseService {
    */
   protected handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
+      // A client-side or network error occurred.
       console.error('An error occurred:', error.error.message);
     } else {
       // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
       console.error(
         `Backend returned code ${error.status}, ` +
-        `body was: ${error.error}`
+        `body was: ${JSON.stringify(error.error)}`
       );
     }
     // Return an observable with a user-facing error message.
@@ -26,14 +25,15 @@ export abstract class BaseService {
   }
 
   /**
-   * Creates the authorization headers.
-   * @returns The HttpHeaders with the Authorization token.
+   * Retrieves authorization headers containing the JWT token.
+   * @returns HttpHeaders with Authorization set if token exists, otherwise empty headers.
    */
   protected getHeaders(): HttpHeaders {
-    const token = sessionStorage.getItem('token'); // Or from a more secure storage
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
+    let headers = new HttpHeaders();
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FixApplyService } from './fix-apply.service';
+import { ToastService } from '../../core/services/toast';
 import { Issue } from './models/issue.model';
 import { PatchResult } from './models/patch-result.model';
 import { IssueListComponent } from './issue-list/issue-list.component';
@@ -32,8 +33,9 @@ export class AiFixComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private fixApplyService: FixApplyService
-  ) {}
+    private fixApplyService: FixApplyService,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId')!;
@@ -73,12 +75,12 @@ export class AiFixComponent implements OnInit {
     this.loading.set(true);
     this.fixApplyService.applyFix(patchResult, this.projectId).subscribe({
       next: () => {
-        alert('Fix applied successfully!'); // TODO: Replace with ToastService
+        this.toastService.showSuccess('Fix applied successfully!');
         this.resetState();
       },
       error: (err) => {
         console.error('Failed to apply fix', err);
-        alert('Failed to apply fix.'); // TODO: Replace with ToastService
+        this.toastService.showError('Failed to apply fix.');
         this.loading.set(false);
       }
     });

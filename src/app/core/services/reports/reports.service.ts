@@ -3,12 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, tap } from 'rxjs';
 import { ReportSummary, ReportRequest } from '../../models/report.model';
 import { environment } from '../../../../environments/environment';
-
+import { ApiEndpoints } from '../../constants/api-endpoints';
 @Injectable({
   providedIn: 'root'
 })
 export class ReportsService {
-  private apiUrl = `${environment.apiUrl}/reports`;
+  private apiUrl = environment.apiUrl;
 
   reports = signal<ReportSummary[]>([]);
   loading = signal(false);
@@ -19,7 +19,7 @@ export class ReportsService {
   getReports(filters: ReportRequest): Observable<ReportSummary[]> {
     this.loading.set(true);
     this.error.set(null);
-    return this.http.get<ReportSummary[]>(this.apiUrl, { params: { ...filters } }).pipe(
+    return this.http.get<ReportSummary[]>(`${this.apiUrl}${ApiEndpoints.REPORTS.BASE}`, { params: { ...filters } }).pipe(
       tap(reports => this.reports.set(reports)),
       catchError(err => {
         this.error.set('Failed to fetch reports.');
@@ -30,10 +30,10 @@ export class ReportsService {
   }
 
   exportCsv(filters: ReportRequest): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/export/csv`, { params: { ...filters }, responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}${ApiEndpoints.EXPORT.BY_JOB('csv')}`, { params: { ...filters }, responseType: 'blob' });
   }
 
   exportPdf(filters: ReportRequest): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/export/pdf`, { params: { ...filters }, responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}${ApiEndpoints.EXPORT.BY_JOB('pdf')}`, { params: { ...filters }, responseType: 'blob' });
   }
 }

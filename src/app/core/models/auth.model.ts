@@ -1,23 +1,26 @@
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  roles: string[]; // Assuming roles are strings, e.g., ['ROLE_USER', 'ROLE_ADMIN']
+  role: string;
+  roles?: string[];
 }
 
 export interface AuthResponse {
   token: string;
+  user: UserDTO;
+}
+
+export interface UserDTO {
+  id: string;
+  name: string;
   email: string;
+  role: string;
 }
 
 export interface LoginRequest {
   email: string;
   password: string;
-}
-
-export interface LoginResponse {
-  user: User;
-  accessToken: string;
 }
 
 export interface RegisterRequest {
@@ -26,14 +29,10 @@ export interface RegisterRequest {
   password?: string;
 }
 
-export interface RegisterResponse {
-  message: string;
-}
-
 export interface UserProfile {
   name: string;
   email: string;
-  profilePictureUrl?: string; // Optional field for profile picture URL
+  profilePictureUrl?: string;
 }
 
 export interface PasswordChangeDTO {

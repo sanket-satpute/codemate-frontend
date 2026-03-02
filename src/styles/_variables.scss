@@ -14,27 +14,69 @@ $accent-cyan-700: var(--accent-700);
 
 // 2.2 Supporting Colors
 $success-color: var(--success);
-$accent-green-400: var(--success); // Mapped to general success
-$accent-yellow-400: var(--warning); // Mapped to general warning
+$accent-green-400: var(--success);
+$accent-yellow-400: var(--warning);
 $warning-color: var(--warning);
 $error-color: var(--error);
-$info-color: var(--accent-600); // Mapped to accent color
+$info-color: var(--accent-600);
 
-// 2.3 Greyscale / Background System (Dark Mode First, Light Mode is an override via _theme.scss)
-$bg-primary-navy-black: var(--grey-900);
-$bg-secondary: var(--grey-800);
-$bg-secondary-focus: var(--grey-700); // Using new grey scale
+// 2.3 Theme-Aware Surfaces (switch automatically with dark/light toggle)
+$bg-primary-navy-black: var(--background);
+$bg-secondary: var(--surface-card);
+$bg-secondary-focus: var(--surface-card-focused);
 $surface-card: var(--surface-card);
+$surface-elevated: var(--surface-elevated);
+$surface-overlay: var(--surface-overlay);
+$surface-glass: var(--surface-glass);
+$surface-sunken: var(--surface-sunken);
+$surface-code: var(--surface-code);
+$input-bg: var(--input-bg);
+
+// 2.4 Theme-Aware Hover/Active Surfaces
+$surface-hover: var(--surface-hover);
+$surface-active: var(--surface-active);
+$primary-subtle: var(--primary-subtle);
+$primary-hover: var(--primary-hover);
+$primary-active: var(--primary-active);
+$accent-subtle: var(--accent-subtle);
+$accent-hover: var(--accent-hover);
+$destructive-subtle: var(--destructive-subtle);
+$destructive-hover: var(--destructive-hover);
+$destructive-text: var(--destructive-text);
+
+// 2.5 Theme-Aware Text & Borders
 $border-neutral: var(--border-neutral);
+$border-subtle: var(--border-subtle);
+$border-hover: var(--border-hover);
 $text-muted: var(--text-muted);
 $text-primary: var(--text-primary);
 $white: var(--white);
-$black: var(--grey-950); // Darkest grey as black equivalent
+$black: var(--grey-950);
 $icon-gray: var(--grey-300);
 $text-secondary: var(--grey-500);
 $dark-blue-gray: var(--grey-800);
-$color-grey-500-sass: #64748B; // Direct SASS color for calculations
-$color-grey-800-sass: #1E293B; // Direct SASS color for calculations
+$color-grey-500-sass: #64748B;
+$color-grey-800-sass: #1E293B;
+
+// 2.6 Theme-Aware Badges
+$badge-bg: var(--badge-bg);
+$badge-border: var(--badge-border);
+$badge-text: var(--badge-text);
+
+// 2.7 Theme-Aware Scrollbar
+$scrollbar-thumb: var(--scrollbar-thumb);
+$scrollbar-thumb-hover: var(--scrollbar-thumb-hover);
+$scrollbar-track: var(--scrollbar-track);
+
+// 2.8 Theme-Aware Shadows
+$shadow-panel: var(--shadow-panel);
+$shadow-card: var(--shadow-card);
+$shadow-card-hover: var(--shadow-card-hover);
+$shadow-inset: var(--shadow-inset);
+
+// 2.9 Theme-Aware Glass Effects
+$glass-border: var(--glass-border);
+$glass-shine: var(--glass-shine);
 
 // 3. Typography System
 // 3.1 Primary Font - Inter
@@ -197,7 +239,10 @@ $ease-in-out: var(--easing-ease-out);
 $ease-out-back: var(--easing-overshoot); // Re-mapping to overshoot from design tokens
 $ease-in-out-cubic: var(--easing-ease-out);
 
-// CSS Custom Properties (Global, derived from SASS Variables) - Removed this block as it's redundant with new token strategy
+// ============================================================================
+// CSS Custom Properties (Global Design Tokens)
+// Single source of truth — theme overrides are in _theme.scss
+// ============================================================================
 :root {
   // Colors
   --primary-50: #EEEDFD;
@@ -238,23 +283,14 @@ $ease-in-out-cubic: var(--easing-ease-out);
 
   --white: #FFFFFF;
 
-  // Theme-aware colors (default to dark mode, override in light-theme class)
-  --background: var(--grey-900);
-  --surface-default: var(--grey-950);
-  --surface-card: var(--grey-800);
-  --border-default: var(--grey-700);
-  --border-neutral: var(--grey-600);
-  --text-primary: var(--grey-100);
-  --text-muted: var(--grey-400);
-  --text-white: var(--white);
-  --text-link: var(--primary-400);
-  --error: #F87171;
-  --success: #4ADE80;
-  --warning: #FACC15;
+  // NOTE: Theme-aware colors are set by _theme.scss (light = default, .dark-theme = override)
+  // Do NOT set --background, --surface-*, --text-*, --error, --success, --warning here
 
   // Typography
   --font-family-ui: 'Inter', sans-serif;
   --font-family-code: 'JetBrains Mono', monospace;
+  --font-family-primary: var(--font-family-ui);
+  --font-family-base: var(--font-family-ui);
 
   --font-size-h1: 4.5rem;
   --font-weight-h1: 800;
@@ -292,6 +328,8 @@ $ease-in-out-cubic: var(--easing-ease-out);
   --letter-spacing-body-lg: 0;
 
   --font-size-body: 1rem;
+  --font-size-body-md: 1rem; // Alias for backward compatibility
+  --font-size-base: 1rem; // Alias for backward compatibility
   --font-weight-body: 400;
   --line-height-body: 1.6;
   --letter-spacing-body: 0;
@@ -302,10 +340,20 @@ $ease-in-out-cubic: var(--easing-ease-out);
   --letter-spacing-body-sm: 0;
 
   --font-size-caption: 0.75rem;
+  --font-size-body-xs: 0.75rem; // Alias
   --font-weight-black: 900;
   --font-weight-caption: 400;
+  --font-weight-medium: 500;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
   --line-height-caption: 1.4;
   --letter-spacing-caption: 0.02em;
+
+  // Layout
+  --footer-height: 48px;
+  --sidebar-width: 280px;
+  --navbar-height: 44px;
 
   // Spacing
   --spacing-px: 1px;
@@ -335,6 +383,15 @@ $ease-in-out-cubic: var(--easing-ease-out);
   --spacing-56: 224px;
   --spacing-64: 256px;
 
+  // Spacing aliases (used by sidebar/dashboard with --space-* names)
+  --space-xs: var(--spacing-1);
+  --space-sm: var(--spacing-2);
+  --space-md: var(--spacing-4);
+  --space-lg: var(--spacing-6);
+  --space-xl: var(--spacing-8);
+  --space-2xl: var(--spacing-12);
+  --space-3xl: var(--spacing-16);
+
   // Border Radii
   --border-radius-none: 0px;
   --border-radius-sm: 4px;
@@ -343,6 +400,12 @@ $ease-in-out-cubic: var(--easing-ease-out);
   --border-radius-xl: 18px;
   --border-radius-2xl: 24px;
   --border-radius-full: 9999px;
+
+  // Border Radii aliases (used by components)
+  --border-radius-base: var(--border-radius-lg);
+  --border-radius-card: var(--border-radius-xl);
+  --border-radius-btn: var(--border-radius-lg);
+  --border-radius-input: var(--border-radius-lg);
 
   // Shadows
   --shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.05);
@@ -358,14 +421,27 @@ $ease-in-out-cubic: var(--easing-ease-out);
   --focus-ring-light: 0 0 0 2px var(--primary-600);
   --focus-ring-dark: 0 0 0 2px var(--primary-400);
 
+  // Shadow effects (neon glow aliases used by sidebar/dashboard)
+  --shadow-neon-indigo: 0 0 15px var(--primary-600), 0 0 30px rgba(79, 70, 229, 0.5);
+  --shadow-neon-cyan: 0 0 15px var(--accent-600), 0 0 30px rgba(34, 211, 238, 0.5);
+  --shadow-neon-mixed: 0 0 15px rgba(79, 70, 229, 0.5), 0 0 30px rgba(34, 211, 238, 0.5);
+
   // Gradients
   --gradient-primary-indigo-cyan: linear-gradient(90deg, var(--primary-600), var(--accent-600));
+  --gradient-sidebar-border: linear-gradient(135deg, var(--primary-600), var(--accent-600), var(--primary-600));
 
   // Motion
   --duration-fast: 100ms;
   --duration-base: 160ms;
   --duration-slow: 240ms;
   --easing-ease-out: cubic-bezier(0.25, 0.8, 0.25, 1);
-  --easing-overshoot: cubic-bezier(.2,.9,.3,1);
+  --easing-overshoot: cubic-bezier(.2, .9, .3, 1);
   --easing-fade-translate: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  // Motion aliases (used by sidebar/dashboard with different names)
+  --transition-duration-fast: var(--duration-fast);
+  --transition-duration-base: var(--duration-base);
+  --transition-duration-slow: var(--duration-slow);
+  --ease-in-out: var(--easing-ease-out);
+  --ease-in-out-cubic: var(--easing-ease-out);
 }

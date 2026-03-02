@@ -6,9 +6,9 @@
 }
 
 .summary-card {
-  background-color: var(--color-surface);
+  background-color: var(--surface-card);
   border-radius: var(--border-radius-lg);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border-default);
   padding: var(--spacing-xl);
   display: flex;
   align-items: center;
@@ -28,13 +28,13 @@
 
 .meter-background {
   fill: none;
-  stroke: var(--color-border-light);
+  stroke: var(--border-neutral);
   stroke-width: 10;
 }
 
 .meter-foreground {
   fill: none;
-  stroke: var(--color-primary);
+  stroke: var(--primary-600);
   stroke-width: 10;
   stroke-linecap: round;
   transition: stroke-dasharray 0.5s ease-in-out;
@@ -47,7 +47,7 @@
   transform: translate(-50%, -50%);
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: var(--text-primary);
 }
 
 .summary-stats {
@@ -65,19 +65,19 @@
 
 .stat-label {
   font-size: 0.9rem;
-  color: var(--color-text-secondary);
+  color: var(--text-muted);
 }
 
 .stat-value {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--text-primary);
 
   &.covered {
-    color: var(--color-success);
+    color: var(--success);
   }
 
   &.uncovered {
-    color: var(--color-danger);
+    color: var(--error);
   }
 }

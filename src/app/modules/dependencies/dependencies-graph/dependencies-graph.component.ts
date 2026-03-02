@@ -39,9 +39,9 @@ export class DependenciesGraphComponent implements OnChanges {
 
   getNodeColor(riskScore: number): string {
     if (riskScore >= 80) return 'var(--color-critical)';
-    if (riskScore >= 60) return 'var(--color-danger)';
-    if (riskScore >= 40) return 'var(--color-warning)';
-    return 'var(--color-success)';
+    if (riskScore >= 60) return 'var(--error)';
+    if (riskScore >= 40) return 'var(--warning)';
+    return 'var(--success)';
   }
 
   getNodeById(id: string): GraphNodeDisplay | undefined {

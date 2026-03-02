@@ -10,33 +10,33 @@
 
 /* Global styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   font-family: var(--font-family-base, #{v.$font-family-primary});
   font-size: var(--font-size-body-md, 14px);
   color: var(--text-primary, #{v.$text-primary});
   background-color: var(--background-color, #{v.$bg-primary-navy-black});
   line-height: 1.5;
-  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Smooth theme transition */
 }
 
 body {
   overflow-x: hidden; // Prevent horizontal scrolling
 }
 
-/* Smooth transition for all elements affected by theme change */
-* {
-  transition: color 0.3s ease, background-color 0.3s ease;
-}
+/* Theme transitions are handled by individual components for better performance */
 
 // The :root now defaults to light theme variables defined in _theme.scss
 // The dark theme is applied when the 'dark-theme' class is added to the body element.
 
-code, pre {
+code,
+pre {
   font-family: var(--font-family-code, #{v.$font-family-secondary});
 }

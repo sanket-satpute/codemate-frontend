@@ -64,14 +64,7 @@ export class DashboardComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    const userId = this.authService.currentUser()?.id;
-    if (!userId) {
-      this.error.set('User not authenticated. Please log in.');
-      this.loading.set(false);
-      return;
-    }
-
-    this.dashboardService.getDashboardData(userId.toString()).subscribe({
+    this.dashboardService.getDashboardData().subscribe({
       next: (data: Dashboard) => {
         this.dashboardData.set(data);
         this.loading.set(false);

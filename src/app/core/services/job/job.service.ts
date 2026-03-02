@@ -1,12 +1,12 @@
 import { Injectable, inject, signal, WritableSignal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, timer, throwError, Subject, merge, of } from 'rxjs'; // Removed 'defer' and 'race'
-import { switchMap, takeUntil, catchError, retry, tap, shareReplay, distinctUntilChanged, timeout } from 'rxjs/operators'; // Removed 'filter' and 'take'
+import { switchMap, takeUntil, catchError, retry, tap, shareReplay, distinctUntilChanged, timeout, map } from 'rxjs/operators'; // Removed 'filter' and 'take'
 import { environment } from '../../../../environments/environment';
 import { JobStatus } from '../../../core/models/job.model';
 import { WebSocketService } from '../../../core/services/websocket/websocket.service';
 import { ToastService } from '../../../core/services/toast';
-
+import { ApiEndpoints } from '../../../core/constants/api-endpoints';
 const POLLING_INTERVAL_MS = 2000;
 const WEBSOCKET_FALLBACK_THRESHOLD_MS = 4000;
 const MAX_RETRIES = 5;
@@ -30,11 +30,11 @@ export class JobService {
   }
 
   getJobOnce(jobId: string): Observable<JobStatus> {
-    return this.http.get<JobStatus>(`${this.apiUrl}/job/${jobId}`).pipe(
+    return this.http.get<JobStatus>(`${this.apiUrl}${ApiEndpoints.JOBS.STATUS(jobId)}`).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error(`Failed to fetch job status for ${jobId}:`, error);
         if (error.status >= 400 && error.status < 500) {
-            this.toastService.showError('Error', `Job ${jobId} not found or access denied.`);
+          this.toastService.showError('Error', `Job ${jobId} not found or access denied.`);
         }
         return throwError(() => error);
       })
@@ -82,6 +82,7 @@ export class JobService {
     const jobSignal = this.getJobStatusSignal(jobId);
 
     const ws$ = this.wsService.onTopic(`/topic/job/${jobId}`).pipe(
+      map((msg: unknown) => msg as JobStatus),
       tap((status: JobStatus) => {
         console.log(`WebSocket event for job ${jobId}:`, status);
         jobSignal.set(status);
@@ -95,36 +96,36 @@ export class JobService {
     const http$ = this.pollJobStatusHttp(jobId, intervalMs, stopPolling$);
 
     const initialStatus$ = this.getJobOnce(jobId).pipe(
-        tap(status => jobSignal.set(status))
+      tap(status => jobSignal.set(status))
     );
 
     const combined$ = initialStatus$.pipe(
-        switchMap(initialStatus => {
-            if (initialStatus.state === 'COMPLETED' || initialStatus.state === 'FAILED' || initialStatus.state === 'CANCELLED') {
-                return of(initialStatus);
-            }
+      switchMap(initialStatus => {
+        if (initialStatus.state === 'COMPLETED' || initialStatus.state === 'FAILED' || initialStatus.state === 'CANCELLED') {
+          return of(initialStatus);
+        }
 
-            if (!this.wsService.isConnected()) {
-                return http$;
-            }
+        if (!this.wsService.isConnected()) {
+          return http$;
+        }
 
-            const wsWithTimeout$ = ws$.pipe(
-                timeout(WEBSOCKET_FALLBACK_THRESHOLD_MS),
-                catchError(() => {
-                    console.warn(`WebSocket timed out for job ${jobId}. Falling back to HTTP polling.`);
-                    return http$;
-                })
-            );
+        const wsWithTimeout$ = ws$.pipe(
+          timeout(WEBSOCKET_FALLBACK_THRESHOLD_MS),
+          catchError(() => {
+            console.warn(`WebSocket timed out for job ${jobId}. Falling back to HTTP polling.`);
+            return http$;
+          })
+        );
 
-            return merge(wsWithTimeout$, http$).pipe(
-                distinctUntilChanged((prev, curr) => prev.state === curr.state && prev.progress === curr.progress)
-            );
-        })
+        return merge(wsWithTimeout$, http$).pipe(
+          distinctUntilChanged((prev: JobStatus, curr: JobStatus) => prev.state === curr.state && prev.progress === curr.progress)
+        );
+      })
     );
 
     return combined$.pipe(
-        shareReplay({ bufferSize: 1, refCount: true }),
-        takeUntil(stopPolling$)
+      shareReplay({ bufferSize: 1, refCount: true }),
+      takeUntil(stopPolling$)
     );
   }
 }

@@ -1,506 +1,387 @@
-/* Global Variables and Mixins - Assuming these are defined in a global styles file like styles/_variables.scss or imported */
+// ──────────────────────────────────────────────────────
+// AI Tools Page — Dark Glassmorphic Theme
+// ──────────────────────────────────────────────────────
 
-@use 'sass:color';
-@use '../../../styles/global.scss' as global;
-@use '../../../styles/_variables.scss' as variables;
-@use '../../../styles/_mixins.scss' as mixins;
-@use '../../../styles/_animations.scss' as animations;
-
-// Directly use variables with their namespace
-$color-primary: variables.$primary-indigo-600;
-$color-accent: variables.$accent-cyan-400;
-$bg-main: variables.$bg-primary-navy-black;
-$bg-panel: variables.$bg-secondary;
-$text-light: variables.$text-primary;
-$text-medium: variables.$text-muted;
-$text-dark: variables.$text-secondary; // Using text-secondary as a darker text shade
-$border-light: variables.$border-neutral;
-$border-dark: variables.$dark-blue-gray; // Using dark-blue-gray as a darker border shade
-
-// Custom variables needed for this component's specific use cases
-$bg-secondary-focus: variables.$bg-secondary-focus; // Ensure this is explicitly available
-
+// ─── Container ───
 .ai-tools-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background-color: $bg-main;
+  height: 100%;
+  min-height: 100vh;
+  background: #0b0f19;
   font-family: 'Inter', sans-serif;
-  color: $text-light;
+  color: #e2e8f0;
   overflow: hidden;
-  padding: 0;
 }
 
-/* (A) Header Section */
-    .ai-tools-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: variables.$space-lg variables.$space-xl; /* Large spacing */
-      background-color: $bg-main; /* Main background, blends into page */
-      border-bottom: 1px solid $border-dark; /* Subtle separator */
-      position: sticky;
-      top: 0;
-      z-index: 100;
+// ─── Header ───
+.ai-tools-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(15, 23, 42, 0.6);
 
   .header-content {
-      h1 {
-        font-size: variables.$font-size-page-title;
-        font-weight: variables.$font-weight-bold;
-        color: $text-light;
-        margin: 0;
-        line-height: 1.2;
-      }
-
-      p {
-        font-size: variables.$font-size-body-lg;
-        color: $text-medium;
-        margin-top: variables.$space-sm;
-        line-height: 1.4;
-      }
-  }
-
-    .header-actions {
+    .header-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
       display: flex;
-      gap: variables.$space-md;
       align-items: center;
+      gap: 12px;
 
-      .icon-button {
-        width: 40px;
-        height: 40px;
-        border-radius: variables.$border-radius-base;
-        background-color: $bg-panel;
-        border: 1px solid $border-light;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: all variables.$transition-duration-fast ease-in-out;
-        color: $text-medium;
-
-      &:hover {
-        border-color: $color-accent;
-        color: $color-accent;
-        box-shadow: 0 0 12px rgba($color-accent, 0.4);
+      i {
+        font-size: 1.5rem;
+        color: #818cf8;
       }
     }
 
-      .primary-button {
-        background-color: $color-primary;
-        color: $text-light;
-        padding: 10px 20px;
-        border-radius: variables.$border-radius-base;
-        font-size: variables.$font-size-body-md;
-        font-weight: variables.$font-weight-medium;
-        border: none;
-        cursor: pointer;
-        transition: all variables.$transition-duration-fast ease-in-out;
+    .header-subtitle {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin: 6px 0 0 0;
+    }
+  }
 
-      &.small {
-        padding: variables.$space-sm variables.$space-md;
-        font-size: variables.$font-size-body-sm;
-        border-radius: variables.$border-radius-sm;
-      }
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    .icon-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: rgba(255, 255, 255, 0.5);
 
       &:hover {
-        background-color: variables.$primary-indigo-700;
-        box-shadow: 0 0 10px rgba($color-accent, 0.3);
+        border-color: #818cf8;
+        color: #818cf8;
+        background: rgba(129, 140, 248, 0.1);
       }
+    }
 
-      &.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    .header-btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &.outline {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #e2e8f0;
+
+        &:hover {
+          border-color: #818cf8;
+          color: #818cf8;
+          background: rgba(129, 140, 248, 0.08);
+        }
       }
     }
   }
 }
 
+// ─── Main Layout ───
 .main-layout {
   display: flex;
   flex-grow: 1;
-  padding: 0 variables.$space-xl variables.$space-xl variables.$space-xl; /* Match header horizontal padding, add bottom padding */
-  gap: variables.$space-xl; /* Large spacing */
-  overflow: hidden; /* For internal scrollable areas */
+  padding: 0 32px 32px 32px;
+  gap: 24px;
+  overflow: hidden;
 }
 
-/* (B) Left Sidebar – Categories */
+// ─── Categories Sidebar ───
 .categories-sidebar {
   flex-shrink: 0;
-  width: variables.$sidebar-width; /* Fixed width */
-  background-color: $bg-panel;
-  border-radius: variables.$border-radius-lg;
-  padding: variables.$space-lg 0;
-  overflow-y: auto; /* Scrollable categories */
-  box-shadow: variables.$shadow-lg;
+  width: 240px;
+  padding: 20px 0;
+  overflow-y: auto;
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  .sidebar-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.3);
+    padding: 0 20px;
+    margin: 0 0 12px 0;
+  }
 
   .category-list {
     list-style: none;
     padding: 0;
     margin: 0;
-
-    .category-item {
-      .category-link {
-        display: block;
-        padding: 12px variables.$space-lg;
-        color: $text-medium;
-        text-decoration: none;
-        font-size: variables.$font-size-body-md;
-        font-weight: variables.$font-weight-medium;
-        transition: all variables.$transition-duration-fast ease-in-out;
-        border-left: 3px solid transparent; /* For selected state */
-
-        &:hover {
-          color: $color-accent;
-          background-color: $bg-secondary-focus; // FIXED: color.adjust -> $bg-secondary-focus
-          box-shadow: inset 0 0 8px rgba($color-accent, 0.2);
-        }
-      }
-
-      &.selected .category-link {
-        color: $text-light;
-        background-color: $color-primary;
-        border-left-color: $color-accent;
-        font-weight: variables.$font-weight-semibold;
-        box-shadow: 0 0 10px rgba($color-accent, 0.3);
-      }
-    }
-  }
-}
-
-/* (C) Main Tools Grid (Center Section) */
-.tools-grid-container {
-  flex-grow: 1;
-  overflow-y: auto; /* Scrollable tools grid */
-  padding-right: 16px; /* For scrollbar */
-
-  .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
-    gap: variables.$space-lg; /* Clean spacing */
-    padding-bottom: variables.$space-lg; /* Spacing before empty state or end of scroll */
-
-    @media (max-width: 1200px) {
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* 2 columns on tablet */
-    }
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr; /* 1 column on mobile */
-    }
   }
 
-  .tool-card {
-    background-color: $bg-panel;
-    border-radius: variables.$border-radius-lg;
-    padding: variables.$space-lg;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    box-shadow: variables.$shadow-md;
-    transition: all variables.$transition-duration-base ease-in-out;
-    border: 1px solid $border-dark;
-    position: relative; /* For glow effect */
-
-    &:hover {
-      transform: translateY(-5px) scale(1.02);
-      border-color: $color-accent;
-      box-shadow: 0 8px 25px rgba($color-accent, 0.4), inset 0 0 8px rgba($color-accent, 0.2);
-    }
-
-    .card-icon {
-      width: 48px;
-      height: 48px;
-      background-color: $color-primary;
-      border-radius: variables.$border-radius-base;
+  .category-item {
+    .category-link {
       display: flex;
-      justify-content: center;
       align-items: center;
-      margin-bottom: variables.$space-md;
-      box-shadow: 0 4px 10px rgba($color-primary, 0.3);
+      gap: 12px;
+      padding: 11px 20px;
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+      cursor: pointer;
 
-      svg {
-        color: $text-light;
-        width: 28px;
-        height: 28px;
-      }
-    }
-
-    .card-title {
-      font-size: 22px;
-      font-weight: variables.$font-weight-semibold;
-      color: $text-light;
-      margin: 0 0 variables.$space-sm 0;
-    }
-
-    .card-description {
-      font-size: variables.$font-size-body-sm;
-      color: $text-medium;
-      line-height: 1.5;
-      flex-grow: 1; /* Pushes actions to bottom */
-      margin-bottom: variables.$space-lg;
-    }
-
-    .card-actions {
-      display: flex;
-      gap: 12px; // No direct variable for 12px, keep as is or define if common
-      width: 100%;
-      justify-content: flex-end; /* Align buttons to the right */
-
-      .run-button {
-        background-color: $color-primary;
-        color: $text-light;
-        padding: 10px 20px; // Keep as is, or define $padding-button-md if common
-        border-radius: variables.$border-radius-sm;
-        font-size: variables.$font-size-body-sm;
-        font-weight: variables.$font-weight-medium;
-        border: none;
-        cursor: pointer;
-        transition: all variables.$transition-duration-fast ease-in-out;
-        flex-grow: 1; /* Fill available space */
-
-        &:hover {
-          background-color: variables.$primary-indigo-700;
-          box-shadow: 0 0 8px rgba($color-accent, 0.4);
-        }
+      .cat-icon {
+        font-size: 0.9rem;
+        width: 20px;
+        text-align: center;
+        transition: color 0.2s ease;
       }
 
-      .settings-dropdown {
-        position: relative;
-
-        .settings-button {
-          width: 40px;
-          height: 40px;
-          border-radius: variables.$border-radius-sm;
-          background-color: $border-light;
-          border: 1px solid $border-dark;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
-          transition: all variables.$transition-duration-fast ease-in-out;
-          color: $text-medium;
-
-          &:hover {
-            border-color: $color-accent;
-            color: $color-accent;
-            box-shadow: 0 0 8px rgba($color-accent, 0.3);
-          }
-        }
-        /* Dropdown content styling would go here */
+      .cat-name {
+        flex: 1;
       }
-    }
-  }
 
-  /* (E) Empty State */
-  .empty-state {
-    background-color: $bg-panel;
-    border-radius: variables.$border-radius-lg;
-    padding: variables.$space-3xl variables.$space-xl;
-    text-align: center;
-    margin: variables.$space-xl auto; /* Center card with large margin */
-    max-width: 600px;
-    box-shadow: variables.$shadow-2xl;
-    border: 1px solid $border-light;
-
-    .empty-state-title {
-      font-size: 28px; // No direct variable for 28px, keeping literal for now
-      font-weight: variables.$font-weight-bold;
-      color: $text-light;
-      margin: 0 0 variables.$space-md 0;
-    }
-
-    .empty-state-subtitle {
-      font-size: variables.$font-size-body-lg;
-      color: $text-medium;
-      margin-bottom: variables.$space-xl;
-    }
-
-    .primary-button.large {
-      padding: 14px 28px; // Keep as is, or define $padding-button-lg if common
-      font-size: variables.$font-size-body-lg;
-      border-radius: variables.$border-radius-base;
-      background-color: $color-accent; /* Use accent for primary empty state action */
-      color: $bg-main; /* Dark text on bright button */
-      font-weight: variables.$font-weight-semibold;
+      .cat-count {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2px 8px;
+        border-radius: 10px;
+        min-width: 20px;
+        text-align: center;
+      }
 
       &:hover {
-        background-color: variables.$accent-cyan-700;
-        box-shadow: 0 0 15px rgba($color-accent, 0.7);
+        color: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.04);
+      }
+    }
+
+    &.selected .category-link {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+      border-left-color: var(--accent, #818cf8);
+
+      .cat-count {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.1);
       }
     }
   }
 }
 
-/* (D) Right-Side Sliding Panel (Execution Panel) */
-.execution-panel {
-  flex-shrink: 0;
-  width: 0; /* Hidden by default */
-  max-width: 450px; /* Max width for the panel */ // Keep as is, or define $panel-max-width if common
-  background-color: $bg-panel;
-  border-radius: variables.$border-radius-lg;
-  box-shadow: variables.$shadow-lg;
-  overflow: hidden; /* Hide content when collapsed */
-  transition: width variables.$transition-duration-base ease-out; /* Smooth sliding animation */
-  position: relative;
-  z-index: 90;
-  display: flex;
-  flex-direction: column;
+// ─── Tools Grid Container ───
+.tools-grid-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px 8px 20px 0;
 
-  &.open {
-    width: 35%; /* Example open width */ // Keep as is, or define $panel-open-width if common
-    padding: variables.$space-lg;
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 4px;
   }
 
-  .panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: variables.$space-md;
-    padding-bottom: variables.$space-md;
-    border-bottom: 1px solid $border-light;
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-    .panel-title {
-      font-size: variables.$font-size-section-title;
-      font-weight: variables.$font-weight-bold;
-      color: $text-light;
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+  }
+}
+
+// ─── Category Banner ───
+.category-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+
+  .banner-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+  }
+
+  .banner-text {
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #ffffff;
       margin: 0;
     }
 
-    .close-panel-button {
-      background: none;
-      border: none;
-      color: $text-medium;
-      cursor: pointer;
-      width: 32px;
-      height: 32px;
-      border-radius: variables.$border-radius-sm;
-      transition: all variables.$transition-duration-fast ease-in-out;
-
-      &:hover {
-        color: $color-accent;
-        background-color: $border-dark;
-      }
+    .tool-count-label {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.4);
     }
   }
+}
 
-  .panel-description {
-    font-size: variables.$font-size-body-sm;
-    color: $text-medium;
-    margin-bottom: variables.$space-lg;
+// ─── Tools Grid ───
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Tool Card ───
+.tool-card {
+  background: rgba(15, 23, 42, 0.75);
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.25s ease;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   }
 
-  .panel-content {
-    flex-grow: 1;
-    overflow-y: auto;
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     display: flex;
-    flex-direction: column;
-    gap: variables.$space-lg;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+  }
 
-    .input-section {
-      h4 {
-        font-size: variables.$font-size-body-md;
-        color: $text-light;
-        margin-bottom: 12px; // Keep as is, or define $space-s-md if common
-      }
-      input[type="text"] {
-        width: 100%;
-        padding: 10px 15px; // Keep as is, or define $padding-input if common
-        border-radius: variables.$border-radius-sm;
-        border: 1px solid $border-light;
-        background-color: $border-dark;
-        color: $text-light;
-        font-family: variables.$font-family-primary;
-        font-size: variables.$font-size-body-sm;
-        margin-bottom: 12px; // Keep as is
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+  }
 
-        &:focus {
-          outline: none;
-          border-color: $color-accent;
-          box-shadow: 0 0 5px rgba($color-accent, 0.3);
-        }
-      }
-      .primary-button.small {
-        background-color: $border-light;
-        color: $text-light;
-        &:hover {
-          background-color: $bg-secondary-focus; /* Using defined variable */
-        }
-      }
-    }
+  .card-description {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.55;
+    flex-grow: 1;
+    margin-bottom: 18px;
+  }
 
-    .run-tool-button {
-      width: 100%;
-      padding: 14px 28px; // Keep as is
-      font-size: variables.$font-size-body-lg;
-      border-radius: variables.$border-radius-base;
-      background-color: $color-primary;
-      color: $text-light;
-      font-weight: variables.$font-weight-semibold;
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .run-button {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      color: #ffffff;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      i {
+        font-size: 0.65rem;
+      }
 
       &:hover {
-        background-color: variables.$primary-indigo-700;
-        box-shadow: 0 0 15px rgba($color-accent, 0.6);
+        filter: brightness(1.15);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       }
     }
 
-    .results-section {
-      margin-top: variables.$space-lg;
-      h4 {
-        font-size: variables.$font-size-body-md;
-        color: $text-light;
-        margin-bottom: 12px; // Keep as is
-      }
-      .result-tabs {
-        display: flex;
-        margin-bottom: variables.$space-md;
-        border-bottom: 1px solid $border-dark;
-        button {
-          background: none;
-          border: none;
-          padding: variables.$space-sm variables.$space-md;
-          color: $text-medium;
-          font-size: variables.$font-size-body-sm;
-          cursor: pointer;
-          transition: all variables.$transition-duration-fast ease-in-out;
-          border-bottom: 2px solid transparent;
+    .settings-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: rgba(255, 255, 255, 0.35);
 
-          &:hover {
-            color: $color-accent;
-          }
-          &.active {
-            color: $text-light;
-            border-bottom-color: $color-accent;
-            font-weight: 500;
-          }
-        }
-      }
-      .output-area {
-        background-color: $border-dark;
-        border-radius: variables.$border-radius-sm;
-        padding: variables.$space-md;
-        min-height: 150px; // Keep as is, or define $output-area-min-height if common
-        font-family: variables.$font-family-code;
-        font-size: variables.$font-size-body-sm; // Using SM for code, might need a specific code font size
-        color: $text-light;
-        overflow: auto;
-        white-space: pre-wrap;
-        word-break: break-word;
-        border: 1px solid $border-light;
-      }
-      .apply-fixes-button {
-        width: 100%;
-        margin-top: variables.$space-md;
-        padding: 14px 28px; // Keep as is
-        font-size: variables.$font-size-body-lg;
-        border-radius: variables.$border-radius-base;
-        background-color: $color-accent;
-        color: $bg-main;
-        font-weight: variables.$font-weight-semibold;
-
-        &:hover {
-          background-color: variables.$accent-cyan-700;
-          box-shadow: 0 0 15px rgba($color-accent, 0.7);
-        }
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.08);
       }
     }
+  }
+}
+
+// ─── Empty State ───
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.4);
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.3;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 8px 0;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
   }
 }

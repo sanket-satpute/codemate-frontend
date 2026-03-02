@@ -14,10 +14,10 @@
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--border-color);
 
-    &.critical { color: var(--color-error); }
-    &.high { color: var(--color-warning); }
-    &.medium { color: var(--color-info); }
-    &.low { color: var(--color-success); }
+    &.critical { color: var(--error); }
+    &.high { color: var(--warning); }
+    &.medium { color: var(--accent-600); }
+    &.low { color: var(--success); }
   }
 
   .findings-list {
@@ -48,13 +48,13 @@
 
     .finding-location {
       font-size: 0.85rem;
-      color: var(--color-text-muted);
+      color: var(--text-muted);
     }
   }
 
   .empty-state {
     text-align: center;
     padding: 3rem;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
   }
 }

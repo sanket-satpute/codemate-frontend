@@ -48,3 +48,94 @@
 }
 
 // Add other generic animation mixins here as common patterns emerge
+
+// ---- Additional Shared Keyframes ----
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+// ---- Reusable Animation Mixins ----
+
+@mixin animate-fade-in($duration: 0.3s, $delay: 0s) {
+  animation: fadeIn $duration ease-out $delay both;
+}
+
+@mixin animate-fade-in-up($duration: 0.4s, $delay: 0s) {
+  animation: fadeInUp $duration ease-out $delay both;
+}
+
+@mixin animate-pulse($duration: 2s) {
+  animation: pulse $duration cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@mixin animate-spin($duration: 1s) {
+  animation: spin $duration linear infinite;
+}
+
+@mixin skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    rgba(v.$text-muted, 0.1) 25%,
+    rgba(v.$text-muted, 0.2) 50%,
+    rgba(v.$text-muted, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: v.$border-radius-sm;
+}
+
+// ---- Shared Empty State ----
+@mixin empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: v.$space-xl;
+  text-align: center;
+  color: v.$text-muted;
+
+  i, .icon {
+    font-size: 3rem;
+    margin-bottom: v.$space-md;
+    opacity: 0.5;
+  }
+
+  h3, .title {
+    font-size: v.$font-size-body-lg;
+    font-weight: v.$font-weight-semibold;
+    margin-bottom: v.$space-sm;
+    color: v.$text-secondary;
+  }
+
+  p, .description {
+    font-size: v.$font-size-body-md;
+    max-width: 400px;
+  }
+}

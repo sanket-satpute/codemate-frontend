@@ -189,7 +189,7 @@ export class CodeQualityComponent implements OnInit {
         { date: 'Oct 1', value: 85 }, { date: 'Oct 15', value: 87 }, { date: 'Nov 1', value: 86 },
         { date: 'Nov 15', value: 89 }, { date: 'Dec 1', value: 91 }
       ],
-      color: 'var(--color-primary-indigo-600)'
+      color: 'var(--primary-600)'
     },
     {
       title: 'Bug Density Over Time',
@@ -197,7 +197,7 @@ export class CodeQualityComponent implements OnInit {
         { date: 'Oct 1', value: 1.2 }, { date: 'Oct 15', value: 1.1 }, { date: 'Nov 1', value: 1.0 },
         { date: 'Nov 15', value: 0.9 }, { date: 'Dec 1', value: 0.8 }
       ],
-      color: 'var(--color-error)'
+      color: 'var(--error)'
     },
     {
       title: 'Code Smells Over Time',
@@ -205,7 +205,7 @@ export class CodeQualityComponent implements OnInit {
         { date: 'Oct 1', value: 120 }, { date: 'Oct 15', value: 110 }, { date: 'Nov 1', value: 105 },
         { date: 'Nov 15', value: 100 }, { date: 'Dec 1', value: 95 }
       ],
-      color: 'var(--color-warning)'
+      color: 'var(--warning)'
     },
     {
       title: 'Technical Debt Trend',
@@ -213,7 +213,7 @@ export class CodeQualityComponent implements OnInit {
         { date: 'Oct 1', value: 30 }, { date: 'Oct 15', value: 28 }, { date: 'Nov 1', value: 25 },
         { date: 'Nov 15', value: 23 }, { date: 'Dec 1', value: 22 }
       ],
-      color: 'var(--color-accent-cyan-400)'
+      color: 'var(--accent-400)'
     }
   ];
 
@@ -281,16 +281,16 @@ export class CodeQualityComponent implements OnInit {
   ];
 
   moduleBreakdown: ModuleMetric[] = [
-    { module: 'Frontend (Angular)', issues: 150, color: 'var(--color-primary-indigo-600)' },
-    { module: 'Backend (Spring Boot)', issues: 90, color: 'var(--color-accent-cyan-400)' },
+    { module: 'Frontend (Angular)', issues: 150, color: 'var(--primary-600)' },
+    { module: 'Backend (Spring Boot)', issues: 90, color: 'var(--accent-400)' },
     { module: 'Database (PostgreSQL)', issues: 5, color: '#336791' }
   ];
 
   complexityByComponent: ComplexityMetric[] = [
-    { component: 'AuthService', complexity: 25, color: 'var(--color-error)' },
-    { component: 'DashboardComponent', complexity: 18, color: 'var(--color-warning)' },
-    { component: 'ProjectListComponent', complexity: 10, color: 'var(--color-success)' },
-    { component: 'ReportGenerator', complexity: 30, color: 'var(--color-critical)' },
+    { component: 'AuthService', complexity: 25, color: 'var(--error)' },
+    { component: 'DashboardComponent', complexity: 18, color: 'var(--warning)' },
+    { component: 'ProjectListComponent', complexity: 10, color: 'var(--success)' },
+    { component: 'ReportGenerator', complexity: 30, color: 'var(--error)' },
   ];
 
   // 6. Security Quality Indicators

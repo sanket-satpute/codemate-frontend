@@ -32,12 +32,8 @@
         <div class="search-bar">
           <div class="search-input-wrapper">
             <i class="fas fa-search"></i>
-            <input
-              type="text"
-              [(ngModel)]="searchTerm"
-              (ngModelChange)="applyFilters()"
-              placeholder="Search projects, tags, languages..."
-              class="search-input">
+            <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()"
+              placeholder="Search projects, tags, languages..." class="search-input">
             <button *ngIf="searchTerm" (click)="clearSearch()" class="clear-search">
               <i class="fas fa-times"></i>
             </button>
@@ -45,24 +41,15 @@
         </div>
 
         <div class="filter-chips">
-          <button
-            class="filter-chip"
-            [class.active]="selectedFilter === 'all'"
-            (click)="setFilter('all')">
+          <button class="filter-chip" [class.active]="selectedFilter === 'all'" (click)="setFilter('all')">
             All
             <span class="chip-count">{{ totalProjects }}</span>
           </button>
-          <button
-            class="filter-chip"
-            [class.active]="selectedFilter === 'active'"
-            (click)="setFilter('active')">
+          <button class="filter-chip" [class.active]="selectedFilter === 'active'" (click)="setFilter('active')">
             Active
             <span class="chip-count">{{ activeProjects }}</span>
           </button>
-          <button
-            class="filter-chip"
-            [class.active]="selectedFilter === 'archived'"
-            (click)="setFilter('archived')">
+          <button class="filter-chip" [class.active]="selectedFilter === 'archived'" (click)="setFilter('archived')">
             Archived
             <span class="chip-count">{{ archivedProjects }}</span>
           </button>
@@ -81,16 +68,10 @@
         </div>
 
         <div class="view-toggle">
-          <button
-            class="view-btn"
-            [class.active]="viewMode === 'grid'"
-            (click)="setViewMode('grid')">
+          <button class="view-btn" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
             <i class="fas fa-th-large"></i>
           </button>
-          <button
-            class="view-btn"
-            [class.active]="viewMode === 'list'"
-            (click)="setViewMode('list')">
+          <button class="view-btn" [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
             <i class="fas fa-list"></i>
           </button>
         </div>
@@ -165,7 +146,8 @@
       <div class="empty-content">
         <h3>{{ searchTerm ? 'No matching projects' : 'Start your journey' }}</h3>
         <p>
-          {{ searchTerm ? 'Try adjusting your search terms or filters' : 'Create your first project to begin tracking your development work' }}
+          {{ searchTerm ? 'Try adjusting your search terms or filters' : 'Create your first project to begin tracking
+          your development work' }}
         </p>
         <div class="empty-actions">
           <app-button variant="primary" size="sm" icon="fa-plus" (btnClick)="createNewProject()">
@@ -181,13 +163,10 @@
 
     <!-- Projects Grid/List -->
     <section *ngIf="filteredProjects.length > 0" class="projects-section">
-      <div class="projects-container"
-           [class.grid-view]="viewMode === 'grid'"
-           [class.list-view]="viewMode === 'list'">
+      <div class="projects-container" [class.grid-view]="viewMode === 'grid'" [class.list-view]="viewMode === 'list'">
 
-        <div class="project-item"
-             *ngFor="let project of filteredProjects; trackBy: trackByProjectId"
-             [routerLink]="['/projects', project.id]">
+        <div class="project-item" *ngFor="let project of filteredProjects; trackBy: trackByProjectId"
+          [routerLink]="['/projects', project.id]">
 
           <!-- Grid Card View -->
           <div *ngIf="viewMode === 'grid'" class="project-card">
@@ -231,8 +210,9 @@
                 </span>
               </div>
               <div class="footer-right">
-                <button class="quick-action" (click)="runAnalysis(project); $event.stopPropagation()">
-                  <i class="fas fa-play"></i>
+                <button class="quick-action" (click)="runAnalysis(project); $event.stopPropagation()"
+                  aria-label="Run analysis on {{ project.name }}">
+                  <i class="fas fa-microscope"></i>
                   Analyze
                 </button>
               </div>
@@ -289,8 +269,9 @@
                 <button class="action-btn" (click)="viewProject(project); $event.stopPropagation()">
                   <i class="fas fa-eye"></i>
                 </button>
-                <button class="action-btn" (click)="runAnalysis(project); $event.stopPropagation()">
-                  <i class="fas fa-play"></i>
+                <button class="action-btn" (click)="runAnalysis(project); $event.stopPropagation()"
+                  aria-label="Run analysis">
+                  <i class="fas fa-microscope"></i>
                 </button>
                 <button class="action-btn" (click)="showProjectMenu($event, project); $event.stopPropagation()">
                   <i class="fas fa-ellipsis-v"></i>
@@ -304,7 +285,8 @@
   </main>
 
   <!-- Quick Action Menu (if needed) -->
-  <div class="quick-menu" *ngIf="showMenu && selectedProject" [style.left.px]="menuPosition.x" [style.top.px]="menuPosition.y">
+  <div class="quick-menu" *ngIf="showMenu && selectedProject" [style.left.px]="menuPosition.x"
+    [style.top.px]="menuPosition.y">
     <div class="menu-item" (click)="editProject(selectedProject!)">
       <i class="fas fa-edit"></i>
       Edit

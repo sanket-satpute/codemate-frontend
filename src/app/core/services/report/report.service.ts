@@ -5,12 +5,12 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { BaseService } from '../base.service';
 import { ReportSummary, ReportRequest } from '../../models/report.model';
-
+import { ApiEndpoints } from '../../constants/api-endpoints';
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService extends BaseService {
-  private readonly apiUrl = `${environment.apiUrl}/reports`;
+  private readonly apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
 
   constructor() {
@@ -23,7 +23,7 @@ export class ReportService extends BaseService {
    * @returns An observable of the report summary.
    */
   generateReport(request: ReportRequest): Observable<ReportSummary> {
-    return this.http.post<ReportSummary>(this.apiUrl, request, { headers: this.getHeaders() })
+    return this.http.post<ReportSummary>(`${this.apiUrl}${ApiEndpoints.REPORTS.BASE}`, request)
       .pipe(
         catchError(this.handleError)
       );
@@ -35,7 +35,7 @@ export class ReportService extends BaseService {
    * @returns An observable array of report summaries.
    */
   getReports(projectId: string): Observable<ReportSummary[]> {
-    return this.http.get<ReportSummary[]>(`${this.apiUrl}/project/${projectId}`, { headers: this.getHeaders() })
+    return this.http.get<ReportSummary[]>(`${this.apiUrl}${ApiEndpoints.REPORTS.BY_PROJECT(projectId)}`)
       .pipe(
         catchError(this.handleError)
       );
@@ -47,7 +47,7 @@ export class ReportService extends BaseService {
    * @returns An observable of the report summary.
    */
   getReportById(reportId: string): Observable<ReportSummary> {
-    return this.http.get<ReportSummary>(`${this.apiUrl}/${reportId}`, { headers: this.getHeaders() })
+    return this.http.get<ReportSummary>(`${this.apiUrl}${ApiEndpoints.REPORTS.BY_ID(reportId)}`)
       .pipe(
         catchError(this.handleError)
       );
@@ -59,9 +59,8 @@ export class ReportService extends BaseService {
    * @returns An observable of the blob data.
    */
   downloadReport(reportId: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${reportId}/download`, {
-      headers: this.getHeaders(),
-      responseType: 'blob' // Important for file downloads
+    return this.http.get(`${this.apiUrl}${ApiEndpoints.REPORTS.DOWNLOAD(reportId)}`, {
+      responseType: 'blob'
     })
       .pipe(
         catchError(this.handleError)

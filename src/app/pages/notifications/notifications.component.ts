@@ -1,23 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NotificationsService } from '../../core/services/notifications/notifications.service';
+import { Notification } from '../../core/models/notification.model';
+import { Subscription } from 'rxjs';
 
-interface Notification {
-  id: string;
-  type: string;
-  title: string;
+/** View-model wrapper for template convenience */
+interface NotificationView extends Notification {
+  /** Alias for template: falls back to message */
   description: string;
-  fullDescription?: string;
-  timestamp: Date;
-  read: boolean;
-  statusBadges: string[];
-  relatedProject?: string;
-  relatedAnalysisType?: string;
+  badges: string[];
 }
 
-interface Category {
+interface TypeStyle {
+  icon: string;
+  color: string;
   label: string;
-  value: string;
 }
 
 interface PreferenceOption {
@@ -28,35 +26,42 @@ interface PreferenceOption {
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss']
 })
-export class NotificationsComponent implements OnInit {
-  newNotificationsAvailable = false;
-  isDetailDrawerOpen = false;
-  isPreferencesDrawerOpen = false;
-  selectedNotification: Notification | null = null;
+export class NotificationsComponent implements OnInit, OnDestroy {
+  private notificationsService = inject(NotificationsService);
+  private fetchSub: Subscription | null = null;
+
+  isDetailOpen = false;
+  isPreferencesOpen = false;
+  selectedNotification: NotificationView | null = null;
   soundEnabled = true;
 
-  categories: Category[] = [
-    { label: 'All', value: 'All' },
-    { label: 'System Alerts', value: 'System' },
-    { label: 'Code Analysis', value: 'Code Analysis' },
-    { label: 'Security', value: 'Security' },
-    { label: 'AI Recommendations', value: 'AI Recommendations' },
-    { label: 'Project Updates', value: 'Project Updates' },
-    { label: 'Errors', value: 'Errors' },
-    { label: 'Warnings', value: 'Warnings' },
-    { label: 'Chat & Collaboration', value: 'Chat & Collaboration' },
-    { label: 'Billing', value: 'Billing' },
+  categories = [
+    'All', 'System', 'Code Analysis', 'Security',
+    'AI Recommendations', 'Project Updates', 'Errors',
+    'Chat & Collaboration', 'Billing'
   ];
-  selectedCategory: string = 'All';
+  selectedCategory = 'All';
 
-  notifications: Notification[] = []; // This will be populated with actual data
-  groupedNotifications: { date: string; notifications: Notification[] }[] = [];
+  typeStyles: { [key: string]: TypeStyle } = {
+    'System': { icon: 'fas fa-bell', color: '#6366f1', label: 'System' },
+    'Code Analysis': { icon: 'fas fa-flask', color: '#f59e0b', label: 'Code Analysis' },
+    'Security': { icon: 'fas fa-shield-alt', color: '#ef4444', label: 'Security' },
+    'AI Recommendations': { icon: 'fas fa-brain', color: '#06b6d4', label: 'AI' },
+    'Project Updates': { icon: 'fas fa-code-branch', color: '#22c55e', label: 'Project' },
+    'Errors': { icon: 'fas fa-times-circle', color: '#f97316', label: 'Error' },
+    'Warnings': { icon: 'fas fa-exclamation-triangle', color: '#eab308', label: 'Warning' },
+    'Chat & Collaboration': { icon: 'fas fa-comments', color: '#8b5cf6', label: 'Chat' },
+    'Billing': { icon: 'fas fa-credit-card', color: '#ec4899', label: 'Billing' },
+  };
 
-  notificationCategories: PreferenceOption[] = [
+  notifications: NotificationView[] = [];
+  groupedNotifications: { date: string; notifications: NotificationView[] }[] = [];
+
+  preferenceCategories: PreferenceOption[] = [
     { label: 'Code Analysis', enabled: true },
     { label: 'Security Alerts', enabled: true },
     { label: 'AI Recommendations', enabled: true },
@@ -69,226 +74,147 @@ export class NotificationsComponent implements OnInit {
     { label: 'In-app', enabled: true },
     { label: 'Email', enabled: false },
     { label: 'Desktop notifications', enabled: true },
-    { label: 'Other', enabled: false },
   ];
 
   ngOnInit() {
     this.loadNotifications();
-    this.groupNotifications();
-    // Simulate new notifications arriving
-    setTimeout(() => {
-      this.newNotificationsAvailable = true;
-    }, 5000);
   }
 
+  ngOnDestroy() {
+    this.fetchSub?.unsubscribe();
+  }
+
+  get unreadCount(): number {
+    return this.notifications.filter(n => !n.read).length;
+  }
+
+  getTypeStyle(type: string | undefined): TypeStyle {
+    return this.typeStyles[type || ''] || { icon: 'fas fa-info-circle', color: '#6366f1', label: type || 'General' };
+  }
+
+  /**
+   * Fetches notifications from the real backend via NotificationsService
+   * and maps them to the view-model shape expected by the template.
+   */
   loadNotifications() {
-    // Mock data for demonstration
-    this.notifications = [
-      {
-        id: '1',
-        type: 'System',
-        title: 'System Update Completed',
-        description: 'Your CodeScope AI platform has been updated to the latest version.',
-        fullDescription: 'The platform has been successfully updated to version 2.1. All new features are now available. Please review the release notes for more details.',
-        timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-        read: false,
-        statusBadges: ['New', 'System'],
+    this.fetchSub = this.notificationsService.getNotifications().subscribe({
+      next: (raw: Notification[]) => {
+        this.notifications = raw.map(n => this.toView(n));
+        this.regroupNotifications();
       },
-      {
-        id: '2',
-        type: 'Code Analysis',
-        title: 'High Priority: Critical Security Vulnerability Found',
-        description: 'A critical security vulnerability (SQL Injection) was detected in project "Backend API".',
-        fullDescription: 'Detailed report available. Immediate action recommended to prevent data breaches. The vulnerability was found in `src/main/java/com/codescope/api/UserRepository.java` line 123.',
-        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-        read: false,
-        statusBadges: ['High Priority', 'Security', 'New'],
-        relatedProject: 'Backend API',
-        relatedAnalysisType: 'Security Scan'
-      },
-      {
-        id: '3',
-        type: 'AI Recommendations',
-        title: 'AI Suggestion: Performance Improvement for Frontend',
-        description: 'AI detected a potential performance bottleneck in "Frontend Dashboard" and suggested an optimization.',
-        fullDescription: 'The AI recommends refactoring the data loading mechanism in `src/app/dashboard/dashboard.component.ts` to use a more efficient caching strategy, potentially reducing load times by 15%.',
-        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-        read: true,
-        statusBadges: ['AI Generated', 'Performance'],
-        relatedProject: 'Frontend Dashboard',
-        relatedAnalysisType: 'AI Performance Analysis'
-      },
-      {
-        id: '4',
-        type: 'Project Updates',
-        title: 'New Feature Branch Merged to Main',
-        description: 'Feature "User Authentication" has been merged into the main branch of "User Management Service".',
-        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-        read: false,
-        statusBadges: ['Project Update'],
-        relatedProject: 'User Management Service'
-      },
-      {
-        id: '5',
-        type: 'Errors',
-        title: 'Build Failed for "Payment Gateway"',
-        description: 'The latest CI/CD pipeline run for "Payment Gateway" failed due to dependency resolution issues.',
-        timestamp: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000), // 8 days ago
-        read: true,
-        statusBadges: ['Error', 'Build'],
-        relatedProject: 'Payment Gateway'
-      },
-      {
-        id: '6',
-        type: 'Chat & Collaboration',
-        title: 'You were mentioned in a comment on "Issue #123"',
-        description: '@JohnDoe mentioned you in a discussion regarding "Bug fix for login flow".',
-        timestamp: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
-        read: false,
-        statusBadges: ['New', 'Collaboration'],
-        relatedProject: 'Frontend App'
-      },
-      {
-        id: '7',
-        type: 'Security',
-        title: 'Minor Security Flaw in "Reporting Service"',
-        description: 'A minor XSS vulnerability was found in the "Reporting Service" UI.',
-        timestamp: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
-        read: true,
-        statusBadges: ['Security', 'Low Priority'],
-        relatedProject: 'Reporting Service'
-      },
-      {
-        id: '8',
-        type: 'Code Analysis',
-        title: 'Code Smell Detected in "Auth Microservice"',
-        description: 'Duplicated code detected in multiple files within the "Auth Microservice".',
-        timestamp: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
-        read: true,
-        statusBadges: ['Code Quality'],
-        relatedProject: 'Auth Microservice'
-      },
-    ];
+      error: () => {
+        // Error is already handled inside the service (signal + console)
+        this.notifications = [];
+        this.regroupNotifications();
+      }
+    });
   }
 
-  groupNotifications() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  /** Convert the canonical Notification model to the template view-model */
+  private toView(n: Notification): NotificationView {
+    return {
+      ...n,
+      description: n.message,
+      badges: n.badges ?? (n.type ? [n.type] : []),
+    };
+  }
 
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
+  regroupNotifications() {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+    const last7Days = new Date(today); last7Days.setDate(today.getDate() - 7);
 
-    const last7Days = new Date(today);
-    last7Days.setDate(today.getDate() - 7);
-
-    const grouped: { [key: string]: Notification[] } = {
-      'Today': [],
-      'Yesterday': [],
-      'Last 7 days': [],
-      'Older': [],
+    const grouped: { [key: string]: NotificationView[] } = {
+      'Today': [], 'Yesterday': [], 'Last 7 Days': [], 'Older': [],
     };
 
-    const filteredNotifications = this.selectedCategory === 'All'
+    const filtered = this.selectedCategory === 'All'
       ? this.notifications
       : this.notifications.filter(n => n.type === this.selectedCategory);
 
-    filteredNotifications.forEach(notification => {
-      const notificationDate = new Date(notification.timestamp);
-      notificationDate.setHours(0, 0, 0, 0);
-
-      if (notificationDate.getTime() === today.getTime()) {
-        grouped['Today'].push(notification);
-      } else if (notificationDate.getTime() === yesterday.getTime()) {
-        grouped['Yesterday'].push(notification);
-      } else if (notificationDate > last7Days) {
-        grouped['Last 7 days'].push(notification);
-      } else {
-        grouped['Older'].push(notification);
-      }
+    filtered.forEach(n => {
+      const d = new Date(n.timestamp); d.setHours(0, 0, 0, 0);
+      if (d.getTime() === today.getTime()) grouped['Today'].push(n);
+      else if (d.getTime() === yesterday.getTime()) grouped['Yesterday'].push(n);
+      else if (d > last7Days) grouped['Last 7 Days'].push(n);
+      else grouped['Older'].push(n);
     });
 
     this.groupedNotifications = Object.keys(grouped)
-      .filter(key => grouped[key].length > 0)
-      .map(key => ({ date: key, notifications: grouped[key] }));
+      .filter(k => grouped[k].length > 0)
+      .map(k => ({ date: k, notifications: grouped[k] }));
   }
 
-  refreshNotifications() {
-    this.newNotificationsAvailable = false;
-    this.loadNotifications();
-    this.groupNotifications();
-    // In a real app, this would fetch new data from a service
+  selectCategory(cat: string) {
+    this.selectedCategory = cat;
+    this.regroupNotifications();
   }
 
   markAllAsRead() {
-    this.notifications.forEach(n => (n.read = true));
-  }
-
-  openPreferencesDrawer() {
-    this.isPreferencesDrawerOpen = true;
-  }
-
-  closePreferencesDrawer() {
-    this.isPreferencesDrawerOpen = false;
-  }
-
-  savePreferences() {
-    // Logic to save preferences (e.g., to a service or local storage)
-    console.log('Preferences saved:', {
-      notificationCategories: this.notificationCategories,
-      deliveryOptions: this.deliveryOptions,
-      soundEnabled: this.soundEnabled,
+    // Mark each unread notification as read via the backend
+    const unread = this.notifications.filter(n => !n.read);
+    unread.forEach(n => {
+      this.notificationsService.markAsRead(n.id).subscribe();
     });
-    this.closePreferencesDrawer();
+    this.notifications.forEach(n => n.read = true);
   }
 
-  selectCategory(category: string) {
-    this.selectedCategory = category;
-    this.groupNotifications();
-  }
-
-  openNotificationDetail(notification: Notification) {
+  openDetail(notification: NotificationView) {
     this.selectedNotification = notification;
-    this.isDetailDrawerOpen = true;
-    notification.read = true; // Mark as read when opened
+    this.isDetailOpen = true;
+    if (!notification.read) {
+      this.notificationsService.markAsRead(notification.id).subscribe();
+      notification.read = true;
+    }
   }
 
-  closeDetailDrawer() {
-    this.isDetailDrawerOpen = false;
+  closeDetail() {
+    this.isDetailOpen = false;
     this.selectedNotification = null;
   }
 
-  toggleReadStatus(notification: Notification) {
-    notification.read = !notification.read;
+  openPreferences() { this.isPreferencesOpen = true; }
+  closePreferences() { this.isPreferencesOpen = false; }
+
+  savePreferences() {
+    console.log('Preferences saved');
+    this.closePreferences();
   }
 
-  openProject(notification: Notification) {
-    console.log('Opening project for:', notification.relatedProject);
-    // Implement navigation to project
+  toggleRead(n: NotificationView) {
+    if (!n.read) {
+      this.notificationsService.markAsRead(n.id).subscribe();
+    }
+    n.read = !n.read;
   }
 
-  viewReport(notification: Notification) {
-    console.log('Viewing report for:', notification.id);
-    // Implement navigation to report
+  dismissNotification(n: NotificationView) {
+    this.notifications = this.notifications.filter(x => x.id !== n.id);
+    this.regroupNotifications();
+    if (this.selectedNotification?.id === n.id) this.closeDetail();
   }
 
-  dismissNotification(notification: Notification) {
-    this.notifications = this.notifications.filter(n => n.id !== notification.id);
-    this.groupNotifications();
-    console.log('Dismissed notification:', notification.id);
+  // Contextual: only for code/security types
+  isAnalysisType(n: NotificationView): boolean {
+    return ['Code Analysis', 'Security', 'AI Recommendations'].includes(n.type || '');
   }
 
-  rerunScan(notification: Notification) {
-    console.log('Re-running scan for:', notification.relatedProject, notification.relatedAnalysisType);
-    // Implement re-run scan logic
-  }
+  viewReport(n: NotificationView) { console.log('View report:', n.id); }
+  rerunScan(n: NotificationView) { console.log('Re-run scan:', n.relatedProject); }
+  fixWithAI(n: NotificationView) { console.log('Fix with AI:', n.id); }
+  openProject(n: NotificationView) { console.log('Open project:', n.relatedProject); }
 
-  fixWithAI(notification: Notification) {
-    console.log('Fixing with AI for:', notification.id);
-    // Implement AI fix logic
-  }
-
-  ignoreIssue(notification: Notification) {
-    console.log('Ignoring issue for:', notification.id);
-    // Implement ignore issue logic
+  getRelativeTime(date: Date | string): string {
+    const now = Date.now();
+    const d = date instanceof Date ? date : new Date(date);
+    const diff = now - d.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 }

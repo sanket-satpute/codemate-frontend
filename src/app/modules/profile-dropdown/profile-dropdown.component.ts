@@ -1,20 +1,29 @@
-import { 
-  Component, 
-  EventEmitter, 
-  Input, 
-  Output, 
-  inject, 
-  ElementRef, 
-  ViewChild, 
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+  ElementRef,
+  ViewChild,
   AfterViewInit,
   OnChanges,
   SimpleChanges,
   OnDestroy,
-  Renderer2
+  Renderer2,
+  computed
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ConfirmDialogService } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.service';
 import { ConfirmDialogData } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.model';
+import { ThemeService } from 'src/app/core/services/theme/theme.service';
+
+interface MenuItem {
+  icon: string;
+  label: string;
+  route: string;
+}
 
 @Component({
   selector: 'app-profile-dropdown',
@@ -35,72 +44,100 @@ export class ProfileDropdownComponent implements AfterViewInit, OnChanges, OnDes
 
   private confirmDialogService = inject(ConfirmDialogService);
   private renderer = inject(Renderer2);
+  private router = inject(Router);
+  private themeService = inject(ThemeService);
   private originalParent: HTMLElement | null = null;
 
+  currentTheme = this.themeService.currentTheme;
+
+  /** User initials computed from name */
+  userInitials = computed(() => {
+    const name = this.username;
+    if (!name) return '';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return parts[0].substring(0, 2).toUpperCase();
+  });
+
+  /** Per-user avatar gradient */
+  avatarGradient = computed(() => {
+    const name = this.username || this.email || '';
+    const gradients = [
+      'linear-gradient(135deg, #4F46E5, #22D3EE)',
+      'linear-gradient(135deg, #7C3AED, #EC4899)',
+      'linear-gradient(135deg, #059669, #22D3EE)',
+      'linear-gradient(135deg, #D97706, #EF4444)',
+      'linear-gradient(135deg, #2563EB, #8B5CF6)',
+      'linear-gradient(135deg, #0891B2, #6366F1)',
+      'linear-gradient(135deg, #DC2626, #F59E0B)',
+      'linear-gradient(135deg, #7C3AED, #2DD4BF)',
+    ];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return gradients[Math.abs(hash) % gradients.length];
+  });
+
+  /** Menu items */
+  menuItems: MenuItem[] = [
+    { icon: 'fas fa-user-circle', label: 'View Profile', route: '/settings' },
+    { icon: 'fas fa-cog', label: 'Settings', route: '/settings' },
+    { icon: 'fas fa-question-circle', label: 'Help Center', route: '/help-center' },
+  ];
+
   ngAfterViewInit(): void {
-    if (this.dropdownPanel) {
-      // CRITICAL FIX: Move dropdown to body to escape all parent constraints
-      this.originalParent = this.dropdownPanel.nativeElement.parentElement;
-      this.renderer.appendChild(document.body, this.dropdownPanel.nativeElement);
-      
-      // Position it initially
-      if (this.isVisible) {
-        this.positionDropdown();
-      }
+    if (this.isVisible) {
+      this.positionDropdown();
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Reposition when visibility changes
-    if (changes['isVisible'] && this.isVisible && this.dropdownPanel) {
-      // Use setTimeout to ensure DOM is ready
+    if (changes['isVisible'] && this.isVisible) {
+      // Wait for *ngIf to render the panel before positioning
       setTimeout(() => this.positionDropdown(), 0);
     }
   }
 
   ngOnDestroy(): void {
-    // Clean up: remove dropdown from body when component is destroyed
-    if (this.dropdownPanel && this.dropdownPanel.nativeElement.parentElement === document.body) {
-      this.renderer.removeChild(document.body, this.dropdownPanel.nativeElement);
-    }
+    // No explicit body cleanup needed since we no longer append to body
   }
 
-  /**
-   * Position the dropdown panel relative to the trigger button
-   */
   private positionDropdown(): void {
     if (!this.dropdownPanel || !this.triggerElement) return;
 
     const panel = this.dropdownPanel.nativeElement;
     const trigger = this.triggerElement;
-
-    // Get trigger button position
     const triggerRect = trigger.getBoundingClientRect();
 
-    // Calculate position (below and aligned to right of button)
-    const top = triggerRect.bottom + 8; // 8px gap
+    const top = triggerRect.bottom + 16; // 16px gap below trigger
     const right = window.innerWidth - triggerRect.right;
 
-    // Apply position
     panel.style.top = `${top}px`;
     panel.style.right = `${right}px`;
 
-    // Ensure it's within viewport bounds
     requestAnimationFrame(() => {
       const panelRect = panel.getBoundingClientRect();
-      
-      // If dropdown goes off bottom of screen, position it above the button
+
       if (panelRect.bottom > window.innerHeight - 10) {
         panel.style.top = `${triggerRect.top - panelRect.height - 8}px`;
       }
 
-      // If dropdown goes off left of screen, align to left edge of button
       if (panelRect.left < 10) {
-        const left = triggerRect.left;
-        panel.style.left = `${left}px`;
+        panel.style.left = `${triggerRect.left}px`;
         panel.style.right = 'auto';
       }
     });
+  }
+
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   onLogoutClick(): void {

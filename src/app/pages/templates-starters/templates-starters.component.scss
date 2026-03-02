@@ -1,669 +1,682 @@
-/* Global Variables and Mixins - Assuming these are defined in a global styles file like styles/_variables.scss or imported */
+// ──────────────────────────────────────────────────────
+// Templates & Starters — Dark Glassmorphic Theme
+// ──────────────────────────────────────────────────────
 
-@use 'sass:color';
-@use '../../../styles/global.scss' as global;
-@use '../../../styles/_variables.scss' as variables;
-@use '../../../styles/_mixins.scss' as mixins;
-@use '../../../styles/_animations.scss' as animations;
-
-// Directly use variables with their namespace
-$color-primary: variables.$primary-indigo-600;
-$color-accent: variables.$accent-cyan-400;
-$bg-main: variables.$bg-primary-navy-black;
-$bg-surface: variables.$bg-secondary; // Use bg-secondary for cards & panels as per requirements
-$text-light: variables.$text-primary;
-$text-medium: variables.$text-muted;
-$border-grey: variables.$border-neutral; // For general UI borders
-
-.templates-starters-container {
+.templates-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background-color: $bg-main;
-  font-family: variables.$font-family-primary;
-  color: $text-light;
+  height: 100%;
+  min-height: 100vh;
+  background: #0b0f19;
+  font-family: 'Inter', sans-serif;
+  color: #e2e8f0;
   overflow: hidden;
-  padding: 0;
 }
 
-/* 1. Page Header */
+// ─── Header ───
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: variables.$space-lg variables.$space-xl;
-  background-color: $bg-main;
-  border-bottom: 1px solid $border-grey;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  padding: 24px 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(15, 23, 42, 0.6);
+  flex-shrink: 0;
 
   .header-content {
-    h1 {
-      font-size: variables.$font-size-page-title;
-      font-weight: variables.$font-weight-bold;
-      color: $text-light;
+    .header-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #ffffff;
       margin: 0;
-      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      i {
+        font-size: 1.5rem;
+        color: #818cf8;
+      }
     }
 
-    p {
-      font-size: variables.$font-size-body-lg;
-      color: $text-medium;
-      margin-top: variables.$space-sm;
-      line-height: 1.4;
+    .header-subtitle {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin: 6px 0 0 0;
     }
   }
 
-  .header-actions {
+  .search-bar {
     display: flex;
-    gap: variables.$space-md;
     align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 10px 16px;
+    min-width: 260px;
+    transition: all 0.2s ease;
 
-    .search-bar {
-      display: flex;
-      align-items: center;
-      background-color: $bg-surface;
-      border: 1px solid $border-grey;
-      border-radius: variables.$border-radius-base;
-      padding: variables.$space-sm variables.$space-md;
-      transition: all variables.$transition-duration-fast ease-in-out;
+    i {
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.85rem;
+    }
 
-      .search-icon {
-        color: $text-medium;
-        margin-right: variables.$space-sm;
-        width: 20px;
-        height: 20px;
+    input {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      outline: none;
+      width: 100%;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.3);
       }
+    }
 
-      input {
-        flex-grow: 1;
-        background: none;
-        border: none;
-        color: $text-light;
-        font-family: variables.$font-family-primary;
-        font-size: variables.$font-size-body-md;
-        outline: none;
-
-        &::placeholder {
-          color: $text-medium;
-        }
-      }
-
-      &:focus-within {
-        border-color: $color-accent;
-        box-shadow: 0 0 8px rgba($color-accent, 0.4);
-      }
+    &:focus-within {
+      border-color: #818cf8;
+      box-shadow: 0 0 12px rgba(129, 140, 248, 0.15);
     }
   }
 }
 
-.main-content-wrapper {
+// ─── Main Content ───
+.main-content {
   flex-grow: 1;
   overflow-y: auto;
-  padding: variables.$space-xl; /* Padding for the main content area */
-  display: flex;
-  flex-direction: column;
-  gap: variables.$space-xl; /* Spacing between main sections */
+  padding: 24px 32px 32px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+  }
 }
 
-/* 2. Category Filters (Horizontal Bar) */
+// ─── Category Filters ───
 .category-filters {
-  padding-bottom: variables.$space-lg;
-  border-bottom: 1px solid $border-grey;
-  margin-bottom: variables.$space-xl;
-
-  .filter-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap; /* Allow filters to wrap */
-    gap: variables.$space-sm;
-    justify-content: center; /* Center align filters */
-
-    .filter-item {
-      .filter-button {
-        background-color: variables.$dark-blue-gray; // Grey #334155 is not a direct variable name
-        border: 1px solid $border-grey;
-        border-radius: variables.$border-radius-pill;
-        padding: 8px 16px;
-        font-family: variables.$font-family-primary;
-        font-size: variables.$font-size-body-sm;
-        color: $text-medium;
-        cursor: pointer;
-        transition: all variables.$transition-duration-fast ease-in-out;
-        white-space: nowrap;
-
-        &:hover {
-          border-color: $color-accent;
-          color: $color-accent;
-          box-shadow: 0 0 5px rgba($color-accent, 0.3);
-        }
-
-        &.selected {
-          background-color: $color-primary;
-          border-color: $color-primary;
-          color: $text-light;
-          box-shadow: 0 0 8px rgba($color-accent, 0.5);
-        }
-      }
-    }
-  }
-}
-
-/* 4. Featured Templates (Optional Section at Top) */
-.featured-templates-section {
-  margin-bottom: variables.$space-xl;
-
-  .section-title {
-    font-size: variables.$font-size-section-title;
-    font-weight: variables.$font-weight-bold;
-    color: $text-light;
-    margin-bottom: variables.$space-lg;
-  }
-
-  .featured-templates-list {
-    display: flex;
-    overflow-x: auto; /* Horizontal scroll */
-    gap: variables.$space-lg;
-    padding-bottom: variables.$space-sm; /* For scrollbar visibility */
-
-    /* Custom Scrollbar */
-    &::-webkit-scrollbar {
-      height: 8px;
-    }
-    &::-webkit-scrollbar-track {
-      background: $bg-main;
-      border-radius: variables.$border-radius-pill;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: $color-primary;
-      border-radius: variables.$border-radius-pill;
-      &:hover {
-        background: rgba(var(--primary-600), 0.7); /* Use rgba directly with CSS variable */
-      }
-    }
-
-    .featured-card {
-      flex-shrink: 0; /* Prevent cards from shrinking */
-      width: 320px; /* Fixed width for featured cards */
-      background-color: $bg-surface;
-      border-radius: variables.$border-radius-lg;
-      padding: variables.$space-lg;
-      box-shadow: variables.$shadow-md;
-      transition: all variables.$transition-duration-base ease-in-out;
-      border: 1px solid $border-grey;
-      position: relative;
-      overflow: hidden;
-
-      &:hover {
-        transform: translateY(-5px) scale(1.02);
-        border-color: $color-accent;
-        box-shadow: 0 8px 25px rgba($color-accent, 0.4), inset 0 0 8px rgba($color-accent, 0.2);
-
-        .card-glow {
-          opacity: 1;
-          transform: translate(-50%, -50%) scale(1);
-        }
-      }
-
-      .card-glow {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 150px;
-        height: 150px;
-        background: radial-gradient(circle, rgba($color-accent, 0.3) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(-50%, -50%) scale(0.1);
-        opacity: 0;
-        transition: all 0.5s ease-out;
-        z-index: 0;
-      }
-
-      .card-title {
-        font-size: variables.$font-size-section-title;
-        font-weight: variables.$font-weight-bold;
-        color: $text-light;
-        margin: 0 0 variables.$space-sm 0;
-        position: relative;
-        z-index: 1;
-      }
-
-      .card-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: variables.$space-xs;
-        margin-bottom: variables.$space-md;
-        position: relative;
-        z-index: 1;
-
-        .tag {
-          background-color: $border-grey;
-          color: $text-medium;
-          font-size: variables.$font-size-body-xs;
-          padding: 4px 8px;
-          border-radius: variables.$border-radius-xs;
-          white-space: nowrap;
-        }
-      }
-
-      .card-actions {
-        display: flex;
-        gap: variables.$space-sm;
-        margin-top: auto; /* Push actions to bottom */
-        width: 100%;
-        position: relative;
-        z-index: 1;
-
-        .use-button, .preview-button {
-          flex-grow: 1;
-          padding: 10px 15px;
-          border-radius: variables.$border-radius-sm;
-          font-size: variables.$font-size-body-sm;
-          font-weight: variables.$font-weight-medium;
-          cursor: pointer;
-          transition: all variables.$transition-duration-fast ease-in-out;
-        }
-
-        .use-button {
-          background-color: $color-primary;
-          color: $text-light;
-          border: none;
-
-          &:hover {
-            background-color: variables.$primary-indigo-700; /* Use predefined darker shade */
-            box-shadow: 0 0 8px rgba($color-accent, 0.4);
-          }
-        }
-
-        .preview-button {
-          background-color: transparent;
-          color: $color-accent;
-          border: 1px solid $color-accent;
-
-          &:hover {
-            background-color: $color-accent;
-            color: $bg-main;
-            box-shadow: 0 0 8px rgba($color-accent, 0.6);
-          }
-        }
-      }
-    }
-  }
-}
-
-/* 3. Template Grid (Main Content) */
-.template-grid-section {
-  flex-grow: 1; /* Take remaining space */
   display: flex;
-  flex-direction: column;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
-  .template-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: variables.$space-lg;
-
-    @media (max-width: 1200px) {
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    }
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .template-card {
-    background-color: $bg-surface;
-    border-radius: variables.$border-radius-lg;
-    padding: variables.$space-lg;
-    box-shadow: variables.$shadow-md;
-    transition: all variables.$transition-duration-base ease-in-out;
-    border: 1px solid $border-grey;
-    display: flex;
-    flex-direction: column;
+  .filter-chip {
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
 
     &:hover {
-      transform: translateY(-5px) scale(1.02);
-      border-color: $color-accent;
-      box-shadow: 0 8px 25px rgba($color-accent, 0.4), inset 0 0 8px rgba($color-accent, 0.2);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: rgba(255, 255, 255, 0.8);
     }
 
-    .card-icon {
-      width: 48px;
-      height: 48px;
-      background-color: $color-primary;
-      border-radius: variables.$border-radius-base;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: variables.$space-md;
-      box-shadow: 0 4px 10px rgba($color-primary, 0.3);
-
-      svg {
-        color: $text-light;
-        width: 28px;
-        height: 28px;
-      }
+    &.active {
+      background: #6366f1;
+      border-color: #6366f1;
+      color: #ffffff;
+      box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
     }
+  }
+}
 
-    .card-title {
-      font-size: variables.$font-size-section-title;
-      font-weight: variables.$font-weight-bold;
-      color: $text-light;
-      margin: 0 0 variables.$space-sm 0;
+// ─── Section Labels ───
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  i {
+    font-size: 0.7rem;
+    color: #818cf8;
+  }
+}
+
+// ─── Featured Section ───
+.featured-section {
+  margin-bottom: 32px;
+}
+
+.featured-scroll {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(129, 140, 248, 0.3);
+    border-radius: 4px;
+  }
+}
+
+.featured-card {
+  flex-shrink: 0;
+  width: 340px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  gap: 18px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(129, 140, 248, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .featured-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(129, 140, 248, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i {
+      font-size: 1.2rem;
+      color: #818cf8;
     }
+  }
 
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: variables.$space-xs;
-      margin-bottom: variables.$space-md;
+  .featured-info {
+    flex: 1;
+    min-width: 0;
 
-      .tag {
-        background-color: $border-grey;
-        color: $text-medium;
-        font-size: variables.$font-size-body-xs;
-        padding: variables.$space-xs variables.$space-sm;
-        border-radius: variables.$border-radius-xs;
-        white-space: nowrap;
-      }
-    }
-
-    .card-description {
-      font-size: variables.$font-size-body-sm;
-      color: $text-medium;
-      line-height: 1.5;
-      flex-grow: 1; /* Pushes meta and actions to bottom */
-      margin-bottom: variables.$space-md;
-      display: -webkit-box;
-      -webkit-line-clamp: 2; /* Limit to 2 lines */
-      -webkit-box-orient: vertical;
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0 0 6px 0;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .card-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin-top: auto; /* Push to bottom */
-      margin-bottom: variables.$space-md;
-      padding-top: variables.$space-md;
-      border-top: 1px solid $border-grey;
-
-      .star-rating, .download-count {
-        display: flex;
-        align-items: center;
-        gap: variables.$space-xs;
-        color: $text-medium;
-        font-size: variables.$font-size-body-sm;
-
-        svg {
-          color: variables.$accent-yellow-400; /* Star color */
-          width: 16px;
-          height: 16px;
-        }
-        &.download-count svg {
-          color: $text-medium; /* Download icon color */
-        }
-      }
-    }
-
-    .card-actions {
-      display: flex;
-      gap: variables.$space-sm;
-      width: 100%;
-
-      .use-button, .preview-button {
-        flex-grow: 1;
-        padding: 10px 15px;
-        border-radius: variables.$border-radius-sm;
-        font-size: variables.$font-size-body-sm;
-        font-weight: variables.$font-weight-medium;
-        cursor: pointer;
-        transition: all variables.$transition-duration-fast ease-in-out;
-      }
-
-      .use-button {
-        background-color: $color-primary;
-        color: $text-light;
-        border: none;
-
-      &:hover {
-        background-color: variables.$primary-indigo-700; /* Use predefined darker shade */
-        box-shadow: 0 0 8px rgba($color-accent, 0.4);
-      }
-      }
-
-      .preview-button {
-        background-color: transparent;
-        color: $color-accent;
-        border: 1px solid $color-accent;
-
-        &:hover {
-          background-color: $color-accent;
-          color: $bg-main;
-          box-shadow: 0 0 8px rgba($color-accent, 0.6);
-        }
-      }
+    p {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.45;
+      margin: 0 0 10px 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
   }
 
-  /* 6. Empty State (When No Templates Found) */
-  .empty-state {
-    background-color: $bg-surface;
-    border-radius: variables.$border-radius-lg;
-    padding: variables.$space-3xl variables.$space-xl;
-    text-align: center;
-    margin: variables.$space-xl auto;
-    max-width: 700px;
-    box-shadow: variables.$shadow-2xl;
-    border: 1px solid $border-grey;
-    display: none; /* Hidden by default, show when no templates found */
-    flex-direction: column;
+  .featured-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .featured-meta {
+    display: flex;
+    gap: 14px;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.4);
+
+    .rating i {
+      color: #f59e0b;
+      margin-right: 3px;
+      font-size: 0.65rem;
+    }
+
+    .uses i {
+      color: #22c55e;
+      margin-right: 3px;
+      font-size: 0.65rem;
+    }
+  }
+}
+
+// ─── Tags (shared) ───
+.tag {
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+
+  &.accent {
+    background: rgba(129, 140, 248, 0.12);
+    color: #a5b4fc;
+    border-color: rgba(129, 140, 248, 0.2);
+  }
+}
+
+// ─── Template Grid ───
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Template Card ───
+.template-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .card-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(129, 140, 248, 0.15);
+    display: flex;
     align-items: center;
-    gap: variables.$space-md;
+    justify-content: center;
+    margin-bottom: 14px;
 
-    .empty-state-icon {
-      color: $text-medium;
-      width: 80px;
-      height: 80px;
-      margin-bottom: variables.$space-md;
-      filter: drop-shadow(0 0 10px rgba($color-accent, 0.4)); /* Soft glowing effect */
+    i {
+      font-size: 1.1rem;
+      color: #818cf8;
+    }
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .card-description {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.55;
+    margin: 0 0 16px 0;
+    flex-grow: 1;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    .rating i {
+      color: #f59e0b;
+      margin-right: 4px;
+      font-size: 0.65rem;
     }
 
-    .empty-state-title {
-      font-size: variables.$font-size-section-title;
-      font-weight: variables.$font-weight-bold;
-      color: $text-light;
-      margin: 0;
+    .uses i {
+      color: #22c55e;
+      margin-right: 4px;
+      font-size: 0.65rem;
     }
+  }
 
-    .empty-state-subtitle {
-      font-size: variables.$font-size-body-lg;
-      color: $text-medium;
-      margin-bottom: variables.$space-lg;
-    }
+  .card-actions {
+    display: flex;
+    gap: 10px;
 
-    .empty-state-suggestions {
+    .btn-use,
+    .btn-preview {
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
       display: flex;
-      flex-wrap: wrap;
-      gap: variables.$space-sm;
-      justify-content: center;
+      align-items: center;
+      gap: 6px;
 
-      .suggestion-button {
-        background-color: $border-grey;
-        border: 1px solid $border-grey;
-        border-radius: variables.$border-radius-pill;
-        padding: variables.$space-sm variables.$space-md;
-        font-family: variables.$font-family-primary;
-        font-size: variables.$font-size-body-sm;
-        color: $text-medium;
-        cursor: pointer;
-        transition: all variables.$transition-duration-fast ease-in-out;
+      i {
+        font-size: 0.7rem;
+      }
+    }
 
-        &:hover {
-          border-color: $color-accent;
-          color: $color-accent;
-          box-shadow: 0 0 5px rgba($color-accent, 0.3);
-        }
+    .btn-use {
+      background: #6366f1;
+      border: none;
+      color: #ffffff;
+      flex: 1;
+
+      &:hover {
+        filter: brightness(1.15);
+        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+      }
+    }
+
+    .btn-preview {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.7);
+
+      &:hover {
+        border-color: #818cf8;
+        color: #818cf8;
+        background: rgba(129, 140, 248, 0.08);
       }
     }
   }
 }
 
-/* 5. Template Details Drawer / Modal */
-.template-details-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: 0; /* Hidden by default */
-  max-width: 600px; /* Max width for the drawer */
-  background-color: $bg-surface;
-  box-shadow: -8px 0 20px rgba(0, 0, 0, 0.4);
-  overflow-y: auto;
-  transition: width variables.$transition-duration-base ease-in-out;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
+// ─── Empty State ───
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.4);
 
-  &.open {
-    width: 450px; /* Example open width */
-    padding: variables.$space-xl;
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.3;
   }
 
-  .drawer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: variables.$space-lg;
-    padding-bottom: variables.$space-md;
-    border-bottom: 1px solid $border-grey;
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 8px 0;
+  }
 
-    .drawer-title {
-      font-size: variables.$font-size-section-title;
-      font-weight: variables.$font-weight-bold;
-      color: $text-light;
+  p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0 0 20px 0;
+  }
+
+  .suggestion-chips {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+
+    button {
+      padding: 8px 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: #818cf8;
+        color: #818cf8;
+      }
+    }
+  }
+}
+
+// ─── Preview Modal ───
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.preview-modal {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  width: 90%;
+  max-width: 580px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.25s ease;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 24px 0;
+
+    .modal-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(129, 140, 248, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      i {
+        font-size: 1.3rem;
+        color: #818cf8;
+      }
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
       margin: 0;
     }
 
-    .close-drawer-button {
-      background: none;
-      border: none;
-      color: $text-medium;
+    .modal-meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.45);
+
+      .rating i {
+        color: #f59e0b;
+        margin-right: 3px;
+      }
+
+      .uses i {
+        color: #22c55e;
+        margin-right: 3px;
+      }
+
+      .category-badge {
+        background: rgba(129, 140, 248, 0.15);
+        color: #a5b4fc;
+        padding: 2px 10px;
+        border-radius: 10px;
+        font-size: 0.7rem;
+      }
+    }
+
+    .close-btn {
+      margin-left: auto;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.4);
       cursor: pointer;
-      width: 32px;
-      height: 32px;
-      border-radius: variables.$border-radius-sm;
-      transition: all variables.$transition-duration-fast ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
 
       &:hover {
-        color: $color-accent;
-        background-color: $border-grey;
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #ef4444;
       }
     }
   }
 
-  .drawer-content {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: variables.$space-lg;
+  .modal-body {
+    padding: 20px 24px;
 
-    .full-description {
-      font-size: variables.$font-size-body-md;
-      color: $text-medium;
-      line-height: 1.6;
+    .modal-description {
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.65;
+      margin: 0 0 20px 0;
     }
 
-    .detail-section {
+    .modal-section {
+      margin-bottom: 20px;
+
       h4 {
-        font-size: variables.$font-size-body-lg;
-        color: $text-light;
-        margin-bottom: variables.$space-md;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: rgba(255, 255, 255, 0.35);
+        margin: 0 0 10px 0;
       }
 
-      .tech-stack-tags {
+      .modal-tags {
         display: flex;
+        gap: 8px;
         flex-wrap: wrap;
-        gap: variables.$space-xs;
-
-        .tag {
-          background-color: $border-grey;
-          color: $text-medium;
-          font-size: variables.$font-size-body-xs;
-          padding: variables.$space-xs variables.$space-sm;
-          border-radius: variables.$border-radius-xs;
-          white-space: nowrap;
-        }
       }
 
-      .folder-structure-tree {
-        background-color: variables.$border-neutral;
-        border-radius: variables.$border-radius-sm;
-        padding: variables.$space-md;
-        font-family: variables.$font-family-code;
-        font-size: variables.$font-size-body-sm;
-        color: $text-light;
-        overflow-x: auto;
-        white-space: pre;
-        border: 1px solid $border-grey;
-      }
-
-      ul {
+      .feature-list {
         list-style: none;
-        padding-left: variables.$space-md;
+        padding: 0;
         margin: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+
         li {
-          font-size: variables.$font-size-body-md;
-          color: $text-medium;
-          margin-bottom: variables.$space-xs;
-          &::before {
-            content: "•";
-            color: $color-primary;
-            display: inline-block;
-            width: 1em;
-            margin-left: -1em;
+          font-size: 0.82rem;
+          color: rgba(255, 255, 255, 0.6);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          i {
+            font-size: 0.65rem;
+            color: #22c55e;
           }
         }
       }
-
-      .screenshot-gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: variables.$space-md;
-
-        img {
-          width: 100%;
-          height: auto;
-          border-radius: variables.$border-radius-sm;
-          border: 1px solid $border-grey;
-          box-shadow: variables.$shadow-sm;
-        }
-      }
     }
+  }
 
-    .create-project-button {
+  .modal-footer {
+    padding: 0 24px 24px;
+
+    .btn-use-large {
       width: 100%;
-      padding: 14px 28px;
-      font-size: variables.$font-size-body-lg;
-      border-radius: variables.$border-radius-base;
-      background-color: $color-accent;
-      color: $bg-main;
-      font-weight: variables.$font-weight-semibold;
+      padding: 14px;
+      border-radius: 12px;
+      background: #6366f1;
       border: none;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: all variables.$transition-duration-fast ease-in-out;
-      margin-top: auto; /* Push to bottom of drawer */
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
 
       &:hover {
-        background-color: variables.$accent-cyan-700; /* Use predefined darker shade */
-        box-shadow: 0 0 15px rgba($color-accent, 0.7);
+        filter: brightness(1.15);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
       }
     }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

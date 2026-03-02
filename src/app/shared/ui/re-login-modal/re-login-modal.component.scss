@@ -1,0 +1,82 @@
+// Reusing styles from logout-confirmation-dialog.component.scss
+.logout-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(9, 10, 15, 0.7); // Dark backdrop
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; // Above everything
+  animation: fadeIn 0.3s ease-out;
+}
+
+.logout-dialog-panel {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-neutral);
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+.dialog-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: rgba(239, 68, 68, 0.1); // Light error red background
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--error);
+}
+
+.dialog-title {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.dialog-message {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 2rem;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+
+  .btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

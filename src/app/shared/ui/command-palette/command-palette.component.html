@@ -1,0 +1,40 @@
+<div class="command-palette-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)" role="dialog" aria-modal="true"
+    aria-label="Command Palette">
+
+    <div #palettePanel class="command-palette-panel">
+        <!-- Header / Input -->
+        <div class="palette-header">
+            <i class="fas fa-search search-icon"></i>
+            <input #searchInput type="text" class="palette-input" [(ngModel)]="searchQuery"
+                (ngModelChange)="onSearchChange()" placeholder="Search projects, pages, or actions..."
+                aria-label="Command search input">
+            <kbd class="esc-hint">ESC</kbd>
+        </div>
+
+        <!-- Loading indicator for projects -->
+        <div class="palette-loading" *ngIf="isLoadingProjects">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading projects...</span>
+        </div>
+
+        <!-- Results Body -->
+        <div class="palette-body" *ngIf="filteredActions.length > 0">
+            <div class="palette-group">
+                <div class="palette-group-title">Suggestions</div>
+
+                <div class="palette-item" *ngFor="let action of filteredActions; let i = index"
+                    [class.selected]="i === selectedIndex" (click)="executeAction(action)"
+                    (mouseenter)="selectedIndex = i">
+                    <i class="fas {{action.icon}} item-icon"></i>
+                    <span class="item-label">{{action.label}}</span>
+                    <i class="fas fa-level-down-alt item-enter-icon" *ngIf="i === selectedIndex"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-empty" *ngIf="filteredActions.length === 0 && !isLoadingProjects">
+            <p>No results found for "{{searchQuery}}"</p>
+        </div>
+    </div>
+
+</div>

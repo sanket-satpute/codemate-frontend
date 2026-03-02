@@ -1,53 +1,88 @@
 @use '../../../../styles/variables' as v;
 
+// ============================================================================
+// NOTIFICATION ITEM — Premium compact card
+// ============================================================================
+
 .notification-item {
   display: flex;
   width: 100%;
-  padding: 16px;
-  border-radius: 14px;
+  padding: v.$space-md;
+  border-radius: v.$border-radius-md;
 
-  background: rgba(v.$bg-secondary, 0.35);
-  backdrop-filter: blur(14px);
+  // Subtle hover background
+  background: transparent;
+  border: 1px solid transparent;
 
-  border: 1px solid rgba(v.$accent-cyan-400, 0.12);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-
-  transition: all 0.25s ease;
-  animation: fadeSlide 0.3s ease-out;
+  cursor: pointer;
+  transition: all 0.15s ease;
 
   &:hover {
-    border-color: rgba(v.$accent-cyan-400, 0.4);
-    box-shadow:
-      0 6px 28px rgba(0, 0, 0, 0.4),
-      0 0 12px rgba(v.$accent-cyan-400, 0.35);
-    transform: translateY(-2px);
+    background: v.$surface-hover;
+    border-color: v.$border-subtle;
+
+    .title {
+      color: v.$white;
+    }
   }
 
+  // Unread — left accent bar + subtle tint
   &.unread {
-    border-left: 4px solid v.$accent-cyan-400;
-    background: rgba(v.$accent-cyan-400, 0.12);
+    border-left: 3px solid v.$accent-cyan-400;
+    background: v.$accent-subtle;
+
+    &:hover {
+      background: v.$accent-hover;
+    }
+
+    .title {
+      color: v.$text-primary;
+    }
+
+    // Unread dot next to title
+    .title::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: v.$accent-cyan-400;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+      box-shadow: 0 0 8px v.$accent-cyan-400;
+    }
   }
 
   .content {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 3px;
     width: 100%;
+    min-width: 0;
   }
 
   .title {
     margin: 0;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
     color: v.$text-primary;
-    letter-spacing: -0.2px;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .message {
     margin: 0;
     color: v.$text-muted;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.4;
+    // 2-line clamp
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .footer {
@@ -60,17 +95,22 @@
   .timestamp {
     font-size: 11px;
     color: v.$text-muted;
-    letter-spacing: 0.3px;
+    opacity: 0.6;
   }
 }
 
-@keyframes fadeSlide {
-  from {
-    opacity: 0;
-    transform: translateX(14px);
+// ============================================================================
+// ACCESSIBILITY
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .notification-item {
+    transition: none;
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+}
+
+@media (prefers-contrast: high) {
+  .notification-item {
+    border: 1px solid v.$text-primary;
   }
 }

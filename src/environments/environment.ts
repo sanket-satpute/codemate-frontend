@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/api', // Default API URL for production
-  websocketUrl: 'http://localhost:8080/ws' // Default WebSocket URL for production
+  // Using localhost for now until we have a real production URL
+  apiUrl: 'http://localhost:8080/api',
+  websocketUrl: 'http://localhost:8080/ws'
 };

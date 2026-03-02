@@ -18,13 +18,12 @@ export class DashboardService extends BaseService {
   }
 
   /**
-   * Fetches aggregated dashboard data for a specific user.
-   * This aligns with the documented `GET /api/dashboard?userId={userId}` endpoint.
-   * @param userId The ID of the user.
-   * @returns An observable of the Dashboard object.
+   * Retrieves dashboard data for the authenticated user.
+   * Backend: GET /api/dashboard (userId extracted from JWT)
+   * @returns An observable of the dashboard data.
    */
-  getDashboardData(userId: string): Observable<Dashboard> {
-    return this.http.get<Dashboard>(`${this.apiUrl}?userId=${userId}`, { headers: this.getHeaders() })
+  getDashboardData(): Observable<any> {
+    return this.http.get<any>(this.apiUrl)
       .pipe(
         catchError(this.handleError)
       );

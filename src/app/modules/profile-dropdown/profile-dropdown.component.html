@@ -1,46 +1,55 @@
 <!-- ============================================================================
-     PREMIUM PROFILE DROPDOWN
-     Fixed positioning with proper z-index
+     PREMIUM PROFILE DROPDOWN — Rich menu with avatar, actions, and theme toggle
      ============================================================================ -->
-<div 
-  *ngIf="isVisible" 
-  #dropdownPanel
-  class="profile-dropdown-panel"
-  role="menu"
-  aria-label="User profile menu"
-  @dropdownAnimation
->
-  
-  <!-- User Information Section -->
-  <div class="user-info" role="group" aria-label="User information">
-    <p class="username">{{ username || 'Guest User' }}</p>
-    <p class="email">{{ email || 'guest@example.com' }}</p>
+<div *ngIf="isVisible" #dropdownPanel class="profile-dropdown-panel" role="menu" aria-label="User profile menu"
+  @dropdownAnimation>
+
+  <!-- Avatar Header -->
+  <div class="dropdown-header">
+    <div class="header-avatar" [style.background]="avatarGradient()">
+      <span class="header-initials" *ngIf="userInitials()">{{ userInitials() }}</span>
+      <i class="fas fa-user" *ngIf="!userInitials()"></i>
+    </div>
+    <div class="header-info">
+      <span class="header-name">{{ username || 'Guest User' }}</span>
+      <span class="header-email">{{ email || 'guest@example.com' }}</span>
+    </div>
+    <span class="role-badge">Developer</span>
   </div>
 
-  <!-- Optional: Additional Menu Items (Uncomment to use) -->
-  <!--
-  <a href="/profile" class="dropdown-menu-item" role="menuitem">
-    <i class="fas fa-user-circle"></i>
-    <span>View Profile</span>
-  </a>
+  <div class="dropdown-divider"></div>
 
-  <a href="/settings" class="dropdown-menu-item" role="menuitem">
-    <i class="fas fa-cog"></i>
-    <span>Settings</span>
-  </a>
+  <!-- Quick Actions -->
+  <div class="menu-section">
+    <a *ngFor="let item of menuItems" class="menu-item" role="menuitem" (click)="navigateTo(item.route)">
+      <i [class]="item.icon"></i>
+      <span>{{ item.label }}</span>
+      <i class="fas fa-chevron-right menu-item-arrow"></i>
+    </a>
+  </div>
 
   <div class="dropdown-divider"></div>
-  -->
 
-  <!-- Logout Button -->
-  <button 
-    class="logout-btn" 
-    (click)="onLogoutClick()"
-    role="menuitem"
-    aria-label="Logout from account"
-  >
-    <i class="fas fa-sign-out-alt"></i>
-    <span>Logout</span>
-  </button>
+  <!-- Appearance -->
+  <div class="menu-section">
+    <button class="menu-item theme-row" role="menuitem" (click)="toggleTheme()">
+      <i class="fas fa-palette"></i>
+      <span>Appearance</span>
+      <span class="theme-badge">
+        <i [class]="currentTheme() === 'dark' ? 'fas fa-moon' : 'fas fa-sun'"></i>
+        {{ currentTheme() === 'dark' ? 'Dark' : 'Light' }}
+      </span>
+    </button>
+  </div>
 
-</div>  
+  <div class="dropdown-divider"></div>
+
+  <!-- Logout -->
+  <div class="menu-section">
+    <button class="menu-item logout-item" (click)="onLogoutClick()" role="menuitem" aria-label="Logout from account">
+      <i class="fas fa-sign-out-alt"></i>
+      <span>Log out</span>
+    </button>
+  </div>
+
+</div>

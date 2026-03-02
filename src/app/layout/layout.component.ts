@@ -10,7 +10,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ConfirmDialogComponent } from '../shared/ui/confirm-dialog/confirm-dialog.component'; // Corrected path
 import { ConfirmDialogService } from '../shared/ui/confirm-dialog/confirm-dialog.service'; // Keep existing confirm dialog service
 import { LogoutConfirmationDialogComponent } from '../shared/ui/logout-confirmation-dialog/logout-confirmation-dialog.component'; // Import new logout dialog
-import { AuthService } from '../core/services/auth/auth.service'; // Import AuthService for logout logic (corrected path)
+import { ReLoginModalComponent } from '../shared/ui/re-login-modal/re-login-modal.component';
+import { CommandPaletteComponent } from '../shared/ui/command-palette/command-palette.component';
+import { AuthService } from '../core/services/auth.service';
+import { ShortcutService } from '../core/services/shortcut.service';
 
 @Component({
   selector: 'app-layout',
@@ -23,7 +26,9 @@ import { AuthService } from '../core/services/auth/auth.service'; // Import Auth
     FooterComponent,
     ThemeWipeComponent,
     ConfirmDialogComponent, // Include existing confirm dialog
-    LogoutConfirmationDialogComponent // Include new logout dialog
+    LogoutConfirmationDialogComponent, // Include new logout dialog
+    ReLoginModalComponent, // Include JWT Re-login dialog
+    CommandPaletteComponent // Global Spotlight
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss'
@@ -36,6 +41,7 @@ export class LayoutComponent {
   public confirmDialogService = inject(ConfirmDialogService); // Make public for template access if needed
   private authService = inject(AuthService); // Inject AuthService
   private router = inject(Router); // Inject Router
+  public shortcutService = inject(ShortcutService); // Global shortcuts
 
   dialogData = this.confirmDialogService.dialogData; // Access signal directly
 
@@ -70,6 +76,20 @@ export class LayoutComponent {
     console.log('Analytics Event: logout_canceled'); // Emit analytics event
     this.isLogoutDialogOpen = false; // Close dialog
   }
+
+  // Re-login Modal Methods
+  showReloginModal = this.authService.showReloginModal;
+
+  get currentUserEmail(): string {
+    return this.authService.currentUser()?.email || '';
+  }
+
+  onReloginCanceled() {
+    this.authService.showReloginModal.set(false);
+  }
+
+  // Command Palette
+  commandPaletteOpen = this.shortcutService.commandPaletteOpen;
 
   // Public wrapper for console.log for template events
   logDialogOpened(dialogType: string) {

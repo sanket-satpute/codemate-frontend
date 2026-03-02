@@ -47,15 +47,29 @@ export class FileUploadComponent {
       return;
     }
 
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    const validFiles = files.filter(file => {
+      if (file.size > MAX_FILE_SIZE) {
+        this.error.set(`File '${file.name}' exceeds the 10MB limit.`);
+        this.toastService.showError(`File '${file.name}' exceeds the 10MB limit.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) {
+      return;
+    }
+
     this.uploading.set(true);
     this.error.set(null);
     this.progress.set(0);
 
     // Simulate progress for now, actual progress can be implemented with HttpClient's reportProgress
     let uploadedCount = 0;
-    const totalFiles = files.length;
+    const totalFiles = validFiles.length;
 
-    files.forEach(file => {
+    validFiles.forEach(file => {
       this.projectFilesService.uploadFile(this.projectId, file).subscribe({
         next: (response) => {
           uploadedCount++;

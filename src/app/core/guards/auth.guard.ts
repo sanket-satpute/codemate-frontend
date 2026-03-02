@@ -7,9 +7,13 @@ export const authGuard: CanActivateFn = () => {
 
   // Check if the user is authenticated using the signal
   if (authService.isAuthenticated()) {
+    if (authService.isTokenExpired()) {
+      // Proactively prevent expired sessions from browsing by showing the modal
+      authService.showReloginModal.set(true);
+    }
     return true;
   } else {
-    // Redirect to the login page if not authenticated
+    // Redirect to the login page if not authenticated at all
     return router.createUrlTree(['/auth/login']);
   }
 };

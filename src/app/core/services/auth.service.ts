@@ -1,10 +1,13 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, Injector } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, throwError, Subject } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { AuthResponse, User, LoginRequest, RegisterRequest } from '../models/auth.model';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { ApiEndpoints } from '../constants/api-endpoints';
+import { jwtDecode } from 'jwt-decode';
+import { WebSocketService } from './websocket/websocket.service';
 
 const AUTH_TOKEN_KEY = 'jwt_token';
 const CURRENT_USER_KEY = 'current_user';
@@ -17,10 +20,13 @@ export class AuthService {
   isAuthenticated = signal<boolean>(false);
   currentUser = signal<User | null>(null);
   token = signal<string | null>(null);
+  showReloginModal = signal<boolean>(false);
+  authStateChanged$ = new Subject<boolean>();
 
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
   private router = inject(Router);
+  private injector = inject(Injector);
 
   constructor() {
     this.restoreFromLocalStorage();
@@ -34,6 +40,7 @@ export class AuthService {
     this.token.set(token);
     localStorage.setItem(AUTH_TOKEN_KEY, token);
     this.isAuthenticated.set(true);
+    this.authStateChanged$.next(true);
   }
 
   /**
@@ -43,6 +50,7 @@ export class AuthService {
     this.token.set(null);
     localStorage.removeItem(AUTH_TOKEN_KEY);
     this.isAuthenticated.set(false);
+    this.authStateChanged$.next(false);
   }
 
   /**
@@ -113,6 +121,26 @@ export class AuthService {
   }
 
   /**
+   * Checks if the stored JWT token is expired.
+   * @returns true if expired or invalid, false otherwise.
+   */
+  isTokenExpired(): boolean {
+    const currentToken = this.getJwt();
+    if (!currentToken) return true;
+
+    try {
+      const decoded: any = jwtDecode(currentToken);
+      if (!decoded || !decoded.exp) return true;
+
+      // decoded.exp is in seconds, convert to milliseconds
+      return (decoded.exp * 1000) < Date.now();
+    } catch (e) {
+      console.error('Error decoding token:', e);
+      return true;
+    }
+  }
+
+  /**
    * Handles HTTP errors from the backend.
    * @param error The HttpErrorResponse object.
    * @returns An Observable that emits an error.
@@ -126,7 +154,8 @@ export class AuthService {
       // Backend errors
       if (error.status === 401) {
         errorMessage = 'Unauthorized: Invalid credentials or session expired.';
-        this.logout(); // Automatically log out on 401
+        // We no longer automatically logout here. The AuthInterceptor handles
+        // token expiration gracefully by showing a relogin modal.
       } else if (error.error && typeof error.error === 'object' && error.error.message) {
         errorMessage = `Backend error: ${error.error.message}`;
       } else {
@@ -149,12 +178,20 @@ export class AuthService {
    * @returns An Observable of AuthResponse.
    */
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}${ApiEndpoints.AUTH.LOGIN}`, credentials).pipe(
       tap(response => {
         this.setToken(response.token);
-        // After successfully logging in and setting the token, fetch the full user details
-        this.getCurrentUser().subscribe(user => this.setUser(user));
       }),
+      // Use switchMap instead of nested subscribe to properly chain user fetch
+      switchMap(response =>
+        this.getCurrentUser().pipe(
+          // Map back to the original AuthResponse so downstream consumers get the expected type
+          tap(user => this.setUser(user)),
+          switchMap(() => [response])
+        )
+      ),
+      // Connect WebSocket after successful login
+      tap(() => this.connectWebSocket()),
       catchError((err) => this.handleError(err))
     );
   }
@@ -167,7 +204,7 @@ export class AuthService {
    * @returns An Observable of AuthResponse.
    */
   register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}${ApiEndpoints.AUTH.REGISTER}`, request).pipe(
       catchError((err) => this.handleError(err))
     );
   }
@@ -177,7 +214,7 @@ export class AuthService {
    * @returns An Observable of User.
    */
   getCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/me`).pipe(
+    return this.http.get<User>(`${this.apiUrl}${ApiEndpoints.AUTH.ME}`).pipe(
       tap(user => this.setUser(user)),
       catchError((err) => this.handleError(err))
     );
@@ -187,7 +224,33 @@ export class AuthService {
    * Logs out the current user, clears session data, and redirects to login.
    */
   logout(): void {
+    this.disconnectWebSocket();
     this.clearAuthData();
     this.router.navigate(['/auth/login']);
+  }
+
+  /**
+   * Lazily connect WebSocket after authentication.
+   * Uses Injector to avoid circular dependency with WebSocketService.
+   */
+  private connectWebSocket(): void {
+    try {
+      const wsService = this.injector.get(WebSocketService);
+      wsService.connect();
+    } catch (e) {
+      console.warn('WebSocket connection skipped:', e);
+    }
+  }
+
+  /**
+   * Disconnect WebSocket on logout.
+   */
+  private disconnectWebSocket(): void {
+    try {
+      const wsService = this.injector.get(WebSocketService);
+      wsService.close();
+    } catch (e) {
+      // Silently handle — WS may not have been connected
+    }
   }
 }

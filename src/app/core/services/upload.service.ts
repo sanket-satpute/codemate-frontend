@@ -6,12 +6,12 @@ import { environment } from '../../../environments/environment';
 import { UploadProjectRequest } from '../models/upload.model';
 import { Project } from '../models/project.model';
 import { JobStatus, JobState } from '../models/job.model'; // Use JobStatus and JobState
-
+import { ApiEndpoints } from '../constants/api-endpoints';
 @Injectable({
   providedIn: 'root',
 })
 export class UploadService {
-  private readonly apiUrl = `${environment.apiUrl}/upload`;
+  private readonly apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
 
   // Removed redundant empty constructor
@@ -25,7 +25,7 @@ export class UploadService {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<JobStatus>(`${this.apiUrl}/file`, formData, { // Changed type parameter to JobStatus
+    return this.http.post<JobStatus>(`${this.apiUrl}${ApiEndpoints.UPLOAD.FILE}`, formData, { // Changed type parameter to JobStatus
       reportProgress: true,
       observe: 'events',
     }).pipe(
@@ -60,6 +60,6 @@ export class UploadService {
    * @returns An Observable of the created Project.
    */
   uploadProject(projectData: UploadProjectRequest): Observable<Project> {
-    return this.http.post<Project>(`${this.apiUrl}/project`, projectData);
+    return this.http.post<Project>(`${this.apiUrl}${ApiEndpoints.UPLOAD.PROJECT}`, projectData);
   }
 }

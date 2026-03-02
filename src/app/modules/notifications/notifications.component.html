@@ -1,26 +1,52 @@
-<div *ngIf="isVisible" class="notifications-panel">
+<div *ngIf="isVisible" class="notifications-panel" role="dialog" aria-label="Notifications">
+
+  <!-- Premium Header -->
   <div class="panel-header">
-    <h2>Notifications</h2>
-    <button class="clear-btn" (click)="clearAll()" *ngIf="notifications().length > 0">Clear All</button>
+    <div class="header-left">
+      <h2>Notifications</h2>
+      <span class="notif-count" *ngIf="notifications().length > 0">
+        {{ notifications().length }}
+      </span>
+    </div>
+    <button class="clear-btn" (click)="clearAll()" *ngIf="notifications().length > 0">
+      <i class="fas fa-check-double"></i>
+      Clear All
+    </button>
   </div>
 
-  <app-loader *ngIf="loading()"></app-loader>
+  <!-- Content Area -->
+  <div class="panel-body">
+    <app-loader *ngIf="loading()"></app-loader>
 
-  <app-empty-state
-    *ngIf="!loading() && notifications().length === 0"
-    message="You're all caught up. No notifications."
-  ></app-empty-state>
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading() && notifications().length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-bell-slash"></i>
+      </div>
+      <p class="empty-title">All caught up!</p>
+      <p class="empty-message">No new notifications to show.</p>
+    </div>
 
-  <div *ngIf="error()" class="error-state">
-    {{ error() }}
+    <!-- Error State -->
+    <div *ngIf="error()" class="error-state">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>{{ error() }}</span>
+    </div>
+
+    <!-- Notification Items -->
+    <div class="notifications-list" *ngIf="!loading() && notifications().length > 0">
+      <app-notification-item *ngFor="let notification of notifications(); let i = index" [notification]="notification"
+        (markAsRead)="markAsRead($event)" [style.animation-delay]="i * 50 + 'ms'" class="notif-enter">
+      </app-notification-item>
+    </div>
   </div>
 
-  <div class="notifications-list" *ngIf="!loading() && notifications().length > 0">
-    <app-notification-item
-      *ngFor="let notification of notifications()"
-      [notification]="notification"
-      (markAsRead)="markAsRead($event)"
-    >
-    </app-notification-item>
+  <!-- Footer -->
+  <div class="panel-footer" *ngIf="notifications().length > 0">
+    <a class="view-all-link" routerLink="/notifications">
+      View all notifications
+      <i class="fas fa-arrow-right"></i>
+    </a>
   </div>
+
 </div>

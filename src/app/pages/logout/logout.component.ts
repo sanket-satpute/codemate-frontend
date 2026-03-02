@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
   styles: [`
     .page-content {
       padding: 20px;
-      color: var(--color-text-primary);
+      color: var(--text-primary);
     }
   `]
 })

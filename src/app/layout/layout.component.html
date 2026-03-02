@@ -34,22 +34,14 @@
      Clean, semantic structure with proper ARIA landmarks
      ============================================================================ -->
 <div class="app-container" role="application">
-  
+
   <!-- Sidebar Navigation -->
-  <app-sidebar
-    role="navigation"
-    aria-label="Main navigation"
-    (toggle)="onSidebarToggle($event)"
-    (logoutClicked)="openLogoutDialog()"
-  ></app-sidebar>
+  <app-sidebar role="navigation" aria-label="Main navigation" (toggle)="onSidebarToggle($event)"
+    (logoutClicked)="openLogoutDialog()"></app-sidebar>
 
   <!-- Main Content Area -->
-  <div 
-    class="main-content" 
-    [class.sidebar-collapsed]="!isSidebarExpanded"
-    role="main"
-  >
-    
+  <div class="main-content" [class.sidebar-collapsed]="!isSidebarExpanded" role="main">
+
     <!-- Top Navigation Bar -->
     <app-navbar role="banner"></app-navbar>
 
@@ -60,41 +52,34 @@
 
     <!-- Footer -->
     <app-footer role="contentinfo"></app-footer>
-    
+
   </div>
 
   <!-- ========================================================================
        OVERLAYS & DIALOGS
        Rendered conditionally for better performance
        ======================================================================== -->
-  
+
   <!-- Theme Transition Effect -->
-  <app-theme-wipe 
-    *ngIf="isWiping()" 
-    aria-hidden="true"
-  ></app-theme-wipe>
+  <app-theme-wipe *ngIf="isWiping()" aria-hidden="true"></app-theme-wipe>
 
   <!-- Global Confirmation Dialog -->
-  <app-confirm-dialog
-    *ngIf="dialogData()"
-    role="dialog"
-    aria-modal="true"
-    [attr.aria-labelledby]="'dialog-title-' + dialogData()!.title"
-    [title]="dialogData()!.title"
-    [message]="dialogData()!.message"
-    [confirmButtonText]="dialogData()!.confirmButtonText"
-    [cancelButtonText]="dialogData()!.cancelButtonText"
-    (confirm)="onConfirmGlobalDialog()"
-    (cancel)="onCancelGlobalDialog()"
-  ></app-confirm-dialog>
+  <app-confirm-dialog *ngIf="dialogData()" role="dialog" aria-modal="true"
+    [attr.aria-labelledby]="'dialog-title-' + dialogData()!.title" [title]="dialogData()!.title"
+    [message]="dialogData()!.message" [confirmButtonText]="dialogData()!.confirmButtonText"
+    [cancelButtonText]="dialogData()!.cancelButtonText" (confirm)="onConfirmGlobalDialog()"
+    (cancel)="onCancelGlobalDialog()"></app-confirm-dialog>
 
   <!-- Logout Confirmation Dialog -->
-  <app-logout-confirmation-dialog
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="logout-dialog-title"
-    [isOpen]="isLogoutDialogOpen"
-    (closeDialog)="onLogoutCanceled()"
-  ></app-logout-confirmation-dialog>
-  
+  <app-logout-confirmation-dialog role="dialog" aria-modal="true" aria-labelledby="logout-dialog-title"
+    [isOpen]="isLogoutDialogOpen" (closeDialog)="onLogoutCanceled()"></app-logout-confirmation-dialog>
+
+  <!-- Re-Login Modal for 401 Expirations -->
+  <app-re-login-modal [isOpen]="showReloginModal()" [email]="currentUserEmail" (closeDialog)="onReloginCanceled()">
+  </app-re-login-modal>
+
+  <!-- Global Command Palette / Spotlight -->
+  <app-command-palette [isOpen]="commandPaletteOpen()">
+  </app-command-palette>
+
 </div>

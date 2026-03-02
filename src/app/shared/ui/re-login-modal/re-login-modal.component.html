@@ -1,0 +1,41 @@
+<div class="logout-dialog-overlay" *ngIf="isOpen"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="relogin-dialog-title"
+     aria-describedby="relogin-dialog-description">
+  <div #dialogPanel class="logout-dialog-panel" style="max-width: 450px;">
+    <div class="dialog-icon-wrapper" style="background-color: var(--surface-hover); color: var(--warning);">
+      <svg class="logout-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+    <h2 id="relogin-dialog-title" class="dialog-title">Session Expired</h2>
+    <p id="relogin-dialog-description" class="dialog-message">For your security, your session has expired. Please verify your password to continue where you left off.</p>
+    
+    <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
+      <label for="email" class="form-label" style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">Email Address</label>
+      <input type="email" id="email" class="form-control" [value]="email" disabled style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-neutral); border-radius: 8px; background-color: var(--surface-hover); color: var(--text-muted); cursor: not-allowed;">
+    </div>
+
+    <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
+      <label for="password" class="form-label" style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-primary);">Password</label>
+      <input type="password" id="password" class="form-control" [(ngModel)]="password" placeholder="Enter your password" #passwordInput
+             [class.is-invalid]="errorMessage"
+             style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-neutral); border-radius: 8px; background-color: var(--surface-card); color: var(--text-primary);"
+             (keyup.enter)="onLogin()">
+      <div *ngIf="errorMessage" class="error-text" style="color: var(--error); font-size: 0.875rem; margin-top: 0.5rem;">
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <div class="dialog-actions" style="margin-top: 2rem;">
+      <button #cancelButton class="btn btn-outline" (click)="onCancel()" [disabled]="isLoggingIn">Sign Out Completely</button>
+      <button class="btn btn-primary" (click)="onLogin()" [disabled]="!password || isLoggingIn">
+        <span *ngIf="!isLoggingIn">Log Back In</span>
+        <span *ngIf="isLoggingIn">Verifying...</span>
+      </button>
+    </div>
+  </div>
+</div>

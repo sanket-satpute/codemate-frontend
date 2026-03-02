@@ -1,15 +1,15 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { NotificationItemComponent } from './notification-item/notification-item.component';
 import { NotificationsService } from '../../core/services/notifications/notifications.service';
 import { LoaderComponent } from '../../shared/ui/loader/loader.component';
-import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 import { Notification } from '../../core/models/notification.model';
 
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [CommonModule, NotificationItemComponent, LoaderComponent, EmptyStateComponent],
+  imports: [CommonModule, RouterModule, NotificationItemComponent, LoaderComponent],
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss']
 })

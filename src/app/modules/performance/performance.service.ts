@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PerformanceMetrics, Bottleneck } from './performance.model';
 import { environment } from '../../../environments/environment';
+import { ApiEndpoints } from 'src/app/core/constants/api-endpoints';
 
 @Injectable({
   providedIn: 'root'
@@ -10,14 +11,14 @@ import { environment } from '../../../environments/environment';
 export class PerformanceService {
   private apiUrl = environment.apiUrl;
   private eventSource: EventSource | undefined;
-  
+
   metrics = signal<PerformanceMetrics[]>([]);
 
   constructor(private http: HttpClient, private ngZone: NgZone) { }
 
   getRealtimeMetrics(projectId: string): Observable<PerformanceMetrics> {
     return new Observable(observer => {
-      const url = `${this.apiUrl}/performance/stream/${projectId}`;
+      const url = `${this.apiUrl}${ApiEndpoints.PERFORMANCE.STREAM(projectId)}`;
       this.eventSource = new EventSource(url);
 
       this.eventSource.onmessage = (event) => {
@@ -43,7 +44,7 @@ export class PerformanceService {
   }
 
   getBottlenecks(projectId: string): Observable<Bottleneck[]> {
-    return this.http.get<Bottleneck[]>(`${this.apiUrl}/performance/bottlenecks/${projectId}`);
+    return this.http.get<Bottleneck[]>(`${this.apiUrl}${ApiEndpoints.PERFORMANCE.BOTTLENECKS(projectId)}`);
   }
 
   stopRealtimeMetrics(): void {

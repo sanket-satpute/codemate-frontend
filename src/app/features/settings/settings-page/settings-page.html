@@ -1,171 +1,189 @@
 <div class="settings-container">
-  <!-- Left Sidebar (Settings navigation) -->
+  <!-- Sidebar -->
   <aside class="settings-sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </div>
     <nav class="sidebar-nav">
-      <a
-        *ngFor="let item of sidebarItems"
-        [routerLink]="['.', item.id]"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="selectSidebarItem(item.id)"
-      >
+      <button *ngFor="let item of sidebarItems" class="nav-item" [class.active]="item.id === activeSection"
+        [class.danger]="item.id === 'danger-zone'" (click)="selectSection(item.id)">
         <i [class]="item.icon"></i>
         <span>{{ item.label }}</span>
-      </a>
+      </button>
     </nav>
   </aside>
 
-  <!-- Right Side — Detailed Sections -->
+  <!-- Content -->
   <main class="settings-content">
-    <div class="settings-section" *ngIf="activeSection === 'profile'">
-      <h2 class="section-title">Profile</h2>
-      <p class="section-subtitle">Manage your personal information.</p>
 
-      <div class="card-grid">
-        <div class="card profile-photo">
-          <h3>Profile Photo</h3>
-          <div class="photo-area">
-            <img [src]="profile.photoUrl" alt="Profile Photo" class="profile-img">
-            <button class="upload-button">Upload Photo</button>
-            <button class="remove-button">Remove Photo</button>
-          </div>
-        </div>
-
-        <div class="card profile-details">
-          <h3>Details</h3>
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input id="name" type="text" [(ngModel)]="profile.name">
-          </div>
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input id="username" type="text" [(ngModel)]="profile.username">
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input id="email" type="email" [(ngModel)]="profile.email" readonly>
-          </div>
-          <div class="form-group">
-            <label for="phone">Phone</label>
-            <input id="phone" type="text" [(ngModel)]="profile.phone">
-          </div>
-          <div class="form-group">
-            <label for="role">Role</label>
-            <input id="role" type="text" [(ngModel)]="profile.role">
-          </div>
-          <button class="save-button">Save Changes</button>
-        </div>
+    <!-- ═══ Profile ═══ -->
+    <section class="section" *ngIf="activeSection === 'profile'">
+      <div class="section-head">
+        <h2><i class="fas fa-user-circle"></i> Profile</h2>
+        <p>Manage your personal information.</p>
       </div>
-    </div>
-
-    <div class="settings-section" *ngIf="activeSection === 'account-security'">
-      <h2 class="section-title">Account & Security</h2>
-      <p class="section-subtitle">Manage your login and security settings.</p>
-
-      <div class="card-grid">
-        <div class="card">
-          <h3>Password</h3>
-          <div class="form-group">
-            <label for="current-password">Current Password</label>
-            <input id="current-password" type="password">
-          </div>
-          <div class="form-group">
-            <label for="new-password">New Password</label>
-            <input id="new-password" type="password">
-          </div>
-          <div class="form-group">
-            <label for="confirm-password">Confirm New Password</label>
-            <input id="confirm-password" type="password">
-          </div>
-          <button class="save-button">Change Password</button>
-        </div>
-
-        <div class="card">
-          <h3>Two-Factor Authentication (2FA)</h3>
-          <div class="flex-row">
-            <span>Status: <strong>{{ twoFaEnabled ? 'Enabled' : 'Disabled' }}</strong></span>
-            <button class="toggle-2fa-button" (click)="toggle2fa()">{{ twoFaEnabled ? 'Disable' : 'Enable' }} 2FA</button>
-          </div>
-          <div *ngIf="twoFaEnabled" class="qr-code-section">
-            <img src="https://via.placeholder.com/150" alt="QR Code" class="qr-code">
-            <p>Scan this QR code with your authenticator app.</p>
-            <button class="generate-codes-button">Generate Backup Codes</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Devices & Sessions</h3>
-          <div class="device-list">
-            <div *ngFor="let device of loggedInDevices" class="device-item">
-              <span>{{ device.browser }} on {{ device.os }} ({{ device.ip }})</span>
-              <span>Logged in: {{ device.loginTime | date:'short' }}</span>
+      <div class="cards-grid">
+        <div class="card profile-card">
+          <div class="profile-avatar">
+            <div class="avatar-circle">{{ profile.initials }}</div>
+            <div class="avatar-actions">
+              <button class="btn-sm btn-primary"><i class="fas fa-upload"></i> Upload</button>
+              <button class="btn-sm btn-ghost"><i class="fas fa-trash"></i> Remove</button>
             </div>
           </div>
-          <button class="logout-all-button">Logout from All Other Devices</button>
+        </div>
+        <div class="card">
+          <h3>Details</h3>
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" [(ngModel)]="profile.name">
+          </div>
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" [(ngModel)]="profile.username">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="profile.email" readonly class="readonly">
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" [(ngModel)]="profile.phone">
+          </div>
+          <div class="form-group">
+            <label>Role</label>
+            <input type="text" [value]="profile.role" readonly class="readonly">
+          </div>
+          <button class="btn btn-primary" (click)="saveProfile()"><i class="fas fa-check"></i> Save Changes</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Account & Security ═══ -->
+    <section class="section" *ngIf="activeSection === 'account-security'">
+      <div class="section-head">
+        <h2><i class="fas fa-shield-alt"></i> Account & Security</h2>
+        <p>Manage your login and security settings.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3>Change Password</h3>
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" placeholder="••••••••">
+          </div>
+          <button class="btn btn-primary" (click)="changePassword()"><i class="fas fa-lock"></i> Update
+            Password</button>
+        </div>
+
+        <div class="card">
+          <h3>Two-Factor Authentication</h3>
+          <div class="toggle-row">
+            <div>
+              <span class="toggle-label">2FA Status</span>
+              <span class="toggle-desc" [class.text-green]="twoFaEnabled" [class.text-red]="!twoFaEnabled">
+                {{ twoFaEnabled ? 'Enabled' : 'Disabled' }}
+              </span>
+            </div>
+            <div class="toggle-switch" [class.on]="twoFaEnabled" (click)="toggle2fa()">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+          <div class="twofa-hint" *ngIf="twoFaEnabled">
+            <i class="fas fa-qrcode"></i>
+            <span>Scan the QR code with your authenticator app to complete setup.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Active Sessions</h3>
+          <div class="list-items">
+            <div *ngFor="let d of loggedInDevices" class="list-row">
+              <div class="list-row-info">
+                <i class="fas fa-globe"></i>
+                <div>
+                  <span class="list-primary">{{ d.browser }} on {{ d.os }}</span>
+                  <span class="list-secondary">{{ d.ip }} · {{ getRelativeTime(d.loginTime) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-ghost"><i class="fas fa-sign-out-alt"></i> Logout All Others</button>
         </div>
 
         <div class="card">
           <h3>Login History</h3>
-          <div class="login-history-list">
-            <div *ngFor="let login of loginHistory" class="login-item">
-              <span>{{ login.browser }} - {{ login.os }} - {{ login.ip }}</span>
-              <span class="timestamp">{{ login.timestamp | date:'medium' }}</span>
+          <div class="list-items">
+            <div *ngFor="let l of loginHistory" class="list-row">
+              <div class="list-row-info">
+                <i class="fas fa-history"></i>
+                <div>
+                  <span class="list-primary">{{ l.browser }} · {{ l.os }}</span>
+                  <span class="list-secondary">{{ l.ip }} · {{ getRelativeTime(l.timestamp) }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="settings-section" *ngIf="activeSection === 'preferences'">
-      <h2 class="section-title">Preferences</h2>
-      <p class="section-subtitle">Customize your CodeScope AI experience.</p>
-
-      <div class="card-grid">
+    <!-- ═══ Preferences ═══ -->
+    <section class="section" *ngIf="activeSection === 'preferences'">
+      <div class="section-head">
+        <h2><i class="fas fa-sliders-h"></i> Preferences</h2>
+        <p>Customize your CodeScope AI experience.</p>
+      </div>
+      <div class="cards-grid">
         <div class="card">
           <h3>Theme</h3>
-          <div class="radio-group">
-            <label *ngFor="let theme of themes" class="radio-item">
-              <input type="radio" [value]="theme.value" [(ngModel)]="selectedTheme">
-              <span>{{ theme.label }}</span>
-            </label>
+          <div class="theme-options">
+            <button
+              *ngFor="let t of [{v:'dark',l:'Dark',i:'fas fa-moon'},{v:'light',l:'Light',i:'fas fa-sun'},{v:'system',l:'System',i:'fas fa-desktop'}]"
+              class="theme-btn" [class.active]="t.v === selectedTheme" (click)="selectedTheme = t.v">
+              <i [class]="t.i"></i> {{ t.l }}
+            </button>
           </div>
         </div>
 
         <div class="card">
           <h3>Developer Settings</h3>
-          <div class="toggle-group">
-            <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="devSettings.lineNumbers">
-              <span>Show Line Numbers</span>
-            </label>
-            <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="devSettings.minimap">
-              <span>Enable Minimap</span>
-            </label>
-            <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="devSettings.autosave">
-              <span>Autosave</span>
-            </label>
+          <div class="toggle-row"
+            *ngFor="let s of [{l:'Show Line Numbers',k:'lineNumbers'},{l:'Enable Minimap',k:'minimap'},{l:'Autosave',k:'autosave'}]">
+            <span class="toggle-label">{{ s.l }}</span>
+            <div class="toggle-switch" [class.on]="$any(devSettings)[s.k]"
+              (click)="$any(devSettings)[s.k] = !$any(devSettings)[s.k]">
+              <div class="toggle-knob"></div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="tab-size">Tab Size</label>
-            <input id="tab-size" type="number" [(ngModel)]="devSettings.tabSize">
+          <div class="form-group" style="margin-top: 12px;">
+            <label>Tab Size</label>
+            <input type="number" [(ngModel)]="devSettings.tabSize" min="1" max="8" style="max-width: 80px;">
           </div>
         </div>
 
         <div class="card">
           <h3>Language & Region</h3>
           <div class="form-group">
-            <label for="language">Language</label>
-            <select id="language" [(ngModel)]="selectedLanguage">
+            <label>Language</label>
+            <select [(ngModel)]="selectedLanguage">
               <option value="en">English</option>
               <option value="es">Spanish</option>
               <option value="fr">French</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="region">Region</label>
-            <select id="region" [(ngModel)]="selectedRegion">
+            <label>Region</label>
+            <select [(ngModel)]="selectedRegion">
               <option value="us">United States</option>
               <option value="eu">Europe</option>
               <option value="asia">Asia</option>
@@ -176,236 +194,263 @@
         <div class="card">
           <h3>Dashboard & Display</h3>
           <div class="form-group">
-            <label for="default-project">Default Dashboard Project</label>
-            <select id="default-project" [(ngModel)]="defaultDashboardProject">
-              <option *ngFor="let project of availableProjects" [value]="project.id">{{ project.name }}</option>
+            <label>Default Project</label>
+            <select [(ngModel)]="defaultDashboardProject">
+              <option *ngFor="let p of availableProjects" [value]="p.id">{{ p.name }}</option>
             </select>
           </div>
-          <div class="radio-group">
-            <h4>Card Density</h4>
-            <label class="radio-item">
-              <input type="radio" value="comfortable" [(ngModel)]="cardDensity">
-              <span>Comfortable</span>
-            </label>
-            <label class="radio-item">
-              <input type="radio" value="compact" [(ngModel)]="cardDensity">
-              <span>Compact</span>
-            </label>
+          <div class="form-group">
+            <label>Card Density</label>
+            <div class="theme-options">
+              <button class="theme-btn" [class.active]="cardDensity === 'comfortable'"
+                (click)="cardDensity = 'comfortable'">
+                <i class="fas fa-expand-arrows-alt"></i> Comfortable
+              </button>
+              <button class="theme-btn" [class.active]="cardDensity === 'compact'" (click)="cardDensity = 'compact'">
+                <i class="fas fa-compress-arrows-alt"></i> Compact
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="settings-section" *ngIf="activeSection === 'notifications'">
-      <h2 class="section-title">Notifications Preferences</h2>
-      <p class="section-subtitle">Manage how you receive alerts and updates.</p>
-
-      <div class="card-grid">
+    <!-- ═══ Notifications ═══ -->
+    <section class="section" *ngIf="activeSection === 'notifications'">
+      <div class="section-head">
+        <h2><i class="fas fa-bell"></i> Notification Preferences</h2>
+        <p>Manage how you receive alerts and updates.</p>
+      </div>
+      <div class="cards-grid">
         <div class="card">
-          <h3>Categories Receiving Notifications</h3>
-          <div class="toggle-group">
-            <label *ngFor="let category of notificationPreferences.categories" class="toggle-item">
-              <input type="checkbox" [(ngModel)]="category.enabled">
-              <span>{{ category.label }}</span>
-            </label>
+          <h3>Categories</h3>
+          <div class="toggle-row" *ngFor="let c of notifCategories">
+            <span class="toggle-label">{{ c.label }}</span>
+            <div class="toggle-switch" [class.on]="c.enabled" (click)="c.enabled = !c.enabled">
+              <div class="toggle-knob"></div>
+            </div>
           </div>
         </div>
-
         <div class="card">
           <h3>Delivery Methods</h3>
-          <div class="toggle-group">
-            <label *ngFor="let method of notificationPreferences.deliveryMethods" class="toggle-item">
-              <input type="checkbox" [(ngModel)]="method.enabled">
-              <span>{{ method.label }}</span>
-            </label>
+          <div class="toggle-row" *ngFor="let m of deliveryMethods">
+            <span class="toggle-label">{{ m.label }}</span>
+            <div class="toggle-switch" [class.on]="m.enabled" (click)="m.enabled = !m.enabled">
+              <div class="toggle-knob"></div>
+            </div>
           </div>
         </div>
-
         <div class="card">
           <h3>Frequency</h3>
-          <div class="radio-group">
-            <label *ngFor="let freq of notificationPreferences.frequencies" class="radio-item">
-              <input type="radio" [value]="freq.value" [(ngModel)]="notificationPreferences.selectedFrequency">
-              <span>{{ freq.label }}</span>
-            </label>
+          <div class="theme-options">
+            <button *ngFor="let f of [{v:'instant',l:'Instant'},{v:'daily',l:'Daily'},{v:'weekly',l:'Weekly'}]"
+              class="theme-btn" [class.active]="f.v === selectedFrequency" (click)="selectedFrequency = f.v">
+              {{ f.l }}
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="settings-section" *ngIf="activeSection === 'billing'">
-      <h2 class="section-title">Billing</h2>
-      <p class="section-subtitle">Manage your subscription, payment methods, and invoices.</p>
-
-      <div class="card-grid">
-        <div class="card">
-          <h3>Current Plan</h3>
-          <p><strong>{{ billing.currentPlan }}</strong> - Renews {{ billing.renewalCycle }}</p>
-          <button class="primary-button">Upgrade Plan</button>
+    <!-- ═══ Billing ═══ -->
+    <section class="section" *ngIf="activeSection === 'billing'">
+      <div class="section-head">
+        <h2><i class="fas fa-credit-card"></i> Billing</h2>
+        <p>Manage your subscription, payments, and invoices.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card plan-card">
+          <div class="plan-badge">CURRENT PLAN</div>
+          <h3>{{ billing.currentPlan }}</h3>
+          <p class="plan-price">${{ billing.price }}<span>/month</span></p>
+          <p class="plan-renew">Renews {{ billing.renewalDate }}</p>
+          <button class="btn btn-primary"><i class="fas fa-arrow-up"></i> Upgrade Plan</button>
         </div>
 
         <div class="card">
           <h3>Payment Methods</h3>
-          <div *ngIf="billing.paymentMethods.length > 0; else noPaymentMethods">
-            <div *ngFor="let method of billing.paymentMethods" class="payment-method-item">
-              <span>**** **** **** {{ method.last4 }} ({{ method.type }})</span>
-              <button class="secondary-button">Remove</button>
+          <div class="list-items">
+            <div *ngFor="let m of billing.paymentMethods" class="list-row">
+              <div class="list-row-info">
+                <i [class]="m.icon" style="font-size: 1.2rem;"></i>
+                <div>
+                  <span class="list-primary">•••• {{ m.last4 }}</span>
+                  <span class="list-secondary">{{ m.type }}</span>
+                </div>
+              </div>
+              <button class="btn-sm btn-ghost"><i class="fas fa-trash"></i></button>
             </div>
           </div>
-          <ng-template #noPaymentMethods>
-            <p class="text-muted">No payment methods on file.</p>
-          </ng-template>
-          <button class="primary-button">Add New Card</button>
-        </div>
-
-        <div class="card">
-          <h3>Usage Analytics</h3>
-          <p class="text-muted">Detailed usage coming soon!</p>
-          <!-- Placeholder for usage analytics chart/data -->
+          <button class="btn btn-secondary"><i class="fas fa-plus"></i> Add Card</button>
         </div>
 
         <div class="card">
           <h3>Invoice History</h3>
-          <div class="invoice-list">
-            <div *ngFor="let invoice of billing.invoices" class="invoice-item">
-              <span>Invoice #{{ invoice.id }} - {{ invoice.date | date:'mediumDate' }}</span>
-              <span>{{ invoice.amount | currency }}</span>
-              <a [href]="invoice.pdfUrl" target="_blank" class="download-link">Download PDF</a>
+          <div class="list-items">
+            <div *ngFor="let inv of billing.invoices" class="list-row">
+              <div class="list-row-info">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <div>
+                  <span class="list-primary">{{ inv.id }}</span>
+                  <span class="list-secondary">{{ formatDate(inv.date) }}</span>
+                </div>
+              </div>
+              <span class="invoice-amount">${{ inv.amount }}</span>
             </div>
           </div>
-          <p *ngIf="billing.invoices.length === 0" class="text-muted">No invoices available.</p>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="settings-section" *ngIf="activeSection === 'integrations'">
-      <h2 class="section-title">Integrations</h2>
-      <p class="section-subtitle">Connect CodeScope AI with your favorite tools.</p>
-
-      <div class="card-grid">
-        <div *ngFor="let integration of integrations" class="card integration-card">
-          <div class="integration-header">
-            <h4>{{ integration.name }}</h4>
-            <span [class]="{'status-connected': integration.connected, 'status-disconnected': !integration.connected}">
-              {{ integration.connected ? 'Connected' : 'Disconnected' }}
-            </span>
+    <!-- ═══ Integrations ═══ -->
+    <section class="section" *ngIf="activeSection === 'integrations'">
+      <div class="section-head">
+        <h2><i class="fas fa-puzzle-piece"></i> Integrations</h2>
+        <p>Connect CodeScope AI with your favorite tools.</p>
+      </div>
+      <div class="cards-grid integrations-grid">
+        <div *ngFor="let i of integrations" class="card integration-card" [class.connected]="i.connected">
+          <div class="integ-top">
+            <div class="integ-icon"><i [class]="i.icon"></i></div>
+            <span class="integ-status" [class.on]="i.connected">{{ i.connected ? 'Connected' : 'Not connected' }}</span>
           </div>
-          <p class="text-muted">Permissions: {{ integration.permissions }}</p>
-          <p *ngIf="integration.lastSynced" class="text-muted">Last Synced: {{ integration.lastSynced | date:'short' }}</p>
-          <button (click)="toggleIntegration(integration)" class="integration-button"
-                  [class.connect-button]="!integration.connected"
-                  [class.disconnect-button]="integration.connected">
-            {{ integration.connected ? 'Disconnect' : 'Connect' }}
+          <h4>{{ i.name }}</h4>
+          <p class="integ-perms">{{ i.permissions }}</p>
+          <p class="integ-synced" *ngIf="i.lastSynced">Synced {{ getRelativeTime(i.lastSynced) }}</p>
+          <button class="btn-sm" [class.btn-primary]="!i.connected" [class.btn-ghost]="i.connected"
+            (click)="toggleIntegration(i)">
+            {{ i.connected ? 'Disconnect' : 'Connect' }}
           </button>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="settings-section" *ngIf="activeSection === 'api-keys'">
-      <h2 class="section-title">API Keys</h2>
-      <p class="section-subtitle">Manage your API access tokens for external services.</p>
-
-      <div class="card-grid">
+    <!-- ═══ API Keys ═══ -->
+    <section class="section" *ngIf="activeSection === 'api-keys'">
+      <div class="section-head">
+        <h2><i class="fas fa-key"></i> API Keys</h2>
+        <p>Manage your API access tokens.</p>
+      </div>
+      <div class="cards-grid">
         <div class="card">
-          <h3>Create New API Key</h3>
+          <h3>Create New Key</h3>
           <div class="form-group">
-            <label for="key-name">Key Name</label>
-            <input id="key-name" type="text" [(ngModel)]="newApiKeyName">
+            <label>Key Name</label>
+            <input type="text" [(ngModel)]="newApiKeyName" placeholder="e.g. CI/CD Pipeline">
           </div>
-          <button class="primary-button" (click)="createApiKey()">Create Key</button>
+          <button class="btn btn-primary" (click)="createApiKey()"><i class="fas fa-plus"></i> Create Key</button>
         </div>
 
-        <div class="card">
-          <h3>Existing API Keys</h3>
-          <div *ngIf="apiKeys.length > 0; else noApiKeys">
-            <div *ngFor="let key of apiKeys" class="api-key-item">
-              <span class="key-display">{{ key.partialKey }}</span>
+        <div class="card" *ngIf="apiKeys.length > 0">
+          <h3>Existing Keys</h3>
+          <div class="list-items">
+            <div *ngFor="let k of apiKeys" class="list-row api-key-row">
+              <div class="list-row-info">
+                <i class="fas fa-key"></i>
+                <div>
+                  <code class="key-code">{{ k.partialKey }}</code>
+                  <span class="list-secondary">Used {{ getRelativeTime(k.lastUsed) }} · Expires {{
+                    formatDate(k.expiryDate) }}</span>
+                </div>
+              </div>
               <div class="key-actions">
-                <button class="icon-button" (click)="copyApiKey(key.fullKey)">
-                  <i class="fas fa-copy"></i>
+                <button class="btn-icon" (click)="copyApiKey(k)" [title]="copiedKeyId === k.id ? 'Copied!' : 'Copy'">
+                  <i class="fas" [class.fa-check]="copiedKeyId === k.id" [class.fa-copy]="copiedKeyId !== k.id"></i>
                 </button>
-                <button class="icon-button" (click)="revokeApiKey(key.id)">
+                <button class="btn-icon danger" (click)="revokeApiKey(k.id)" title="Revoke">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
-              <p class="text-muted">Last Used: {{ key.lastUsed | date:'short' }}</p>
-              <p class="text-muted">Expires: {{ key.expiryDate | date:'mediumDate' }}</p>
             </div>
           </div>
-          <ng-template #noApiKeys>
-            <p class="text-muted">No API keys created yet.</p>
-          </ng-template>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="settings-section" *ngIf="activeSection === 'workspace-settings'">
-      <h2 class="section-title">Workspace Settings</h2>
-      <p class="section-subtitle">Manage your team, roles, and workspace resources.</p>
-
-      <div class="card-grid">
+    <!-- ═══ Workspace ═══ -->
+    <section class="section" *ngIf="activeSection === 'workspace'">
+      <div class="section-head">
+        <h2><i class="fas fa-users-cog"></i> Workspace</h2>
+        <p>Manage your team, roles, and resources.</p>
+      </div>
+      <div class="cards-grid">
         <div class="card">
           <h3>Members</h3>
-          <div class="member-list">
-            <div *ngFor="let member of workspace.members" class="member-item">
-              <span>{{ member.name }} ({{ member.role }})</span>
-              <button class="secondary-button">Manage Role</button>
+          <div class="list-items">
+            <div *ngFor="let m of workspace.members" class="list-row">
+              <div class="list-row-info">
+                <div class="member-avatar">{{ m.initials }}</div>
+                <div>
+                  <span class="list-primary">{{ m.name }}</span>
+                  <span class="list-secondary">{{ m.role }}</span>
+                </div>
+              </div>
+              <button class="btn-sm btn-secondary">Manage</button>
             </div>
           </div>
-          <button class="primary-button">Invite New Member</button>
-        </div>
-
-        <div class="card">
-          <h3>Project Limits</h3>
-          <p>Current: {{ workspace.projectLimit }} projects</p>
-          <button class="secondary-button">Adjust Limit</button>
+          <button class="btn btn-primary"><i class="fas fa-user-plus"></i> Invite Member</button>
         </div>
 
         <div class="card">
           <h3>Storage Usage</h3>
-          <p>Used: {{ workspace.storageUsed }} / {{ workspace.storageLimit }}</p>
+          <div class="storage-info">
+            <span>{{ formatStorage(workspace.storageUsedMB) }} / {{ formatStorage(workspace.storageLimitMB) }}</span>
+            <span class="storage-pct">{{ storagePercent() }}%</span>
+          </div>
           <div class="progress-bar">
-            <div class="progress" [style.width]="(workspace.storageUsed / workspace.storageLimit * 100) + '%'"></div>
+            <div class="progress-fill" [style.width.%]="storagePercent()"></div>
           </div>
         </div>
 
         <div class="card">
-          <h3>Custom Roles</h3>
-          <p class="text-muted">Define granular permissions for your team.</p>
-          <button class="secondary-button">Manage Roles</button>
+          <h3>Project Limit</h3>
+          <p class="limit-value">{{ workspace.projectLimit }} projects</p>
+          <button class="btn btn-secondary"><i class="fas fa-plus"></i> Adjust Limit</button>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="settings-section danger-zone-section" *ngIf="activeSection === 'danger-zone'">
-      <h2 class="section-title">Danger Zone</h2>
-      <p class="section-subtitle">Irreversible actions that require extra confirmation.</p>
-
-      <div class="card-grid">
-        <div class="card danger-card">
-          <h3>Delete Account</h3>
-          <p class="text-muted">Permanently delete your user account and all associated data.</p>
-          <button class="danger-button" (click)="confirmDeleteAccount()">Delete Account</button>
-        </div>
-
-        <div class="card danger-card">
-          <h3>Delete Workspace</h3>
-          <p class="text-muted">Permanently delete this workspace and all projects within it.</p>
-          <button class="danger-button" (click)="confirmDeleteWorkspace()">Delete Workspace</button>
-        </div>
-
-        <div class="card danger-card">
-          <h3>Transfer Ownership</h3>
-          <p class="text-muted">Transfer ownership of this workspace to another member.</p>
-          <button class="danger-button" (click)="confirmTransferOwnership()">Transfer Ownership</button>
-        </div>
-
-        <div class="card danger-card">
-          <h3>Reset All Settings</h3>
-          <p class="text-muted">Revert all your personal settings to their default values.</p>
-          <button class="danger-button" (click)="confirmResetSettings()">Reset Settings</button>
+    <!-- ═══ Danger Zone ═══ -->
+    <section class="section" *ngIf="activeSection === 'danger-zone'">
+      <div class="section-head danger-head">
+        <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
+        <p>Irreversible actions that require extra confirmation.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card danger-card" *ngFor="let d of [
+          {t:'Delete Account',m:'Permanently delete your user account and all data.',fn:'deleteAccount'},
+          {t:'Delete Workspace',m:'Permanently delete this workspace and all projects.',fn:'deleteWorkspace'},
+          {t:'Transfer Ownership',m:'Transfer administrative control to another member.',fn:'transferOwnership'},
+          {t:'Reset All Settings',m:'Revert all settings to their default values.',fn:'resetAllSettings'}
+        ]">
+          <div class="danger-info">
+            <h4>{{ d.t }}</h4>
+            <p>{{ d.m }}</p>
+          </div>
+          <button class="btn btn-danger" (click)="$any(this)[d.fn]()">{{ d.t }}</button>
         </div>
       </div>
-    </div>
+    </section>
+
   </main>
+
+  <!-- Toast -->
+  <div class="toast" [class.visible]="toastVisible">
+    <i class="fas fa-check-circle"></i> {{ toastMessage }}
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <i class="fas fa-exclamation-triangle modal-warn-icon"></i>
+        <h3>{{ deleteModalTitle }}</h3>
+      </div>
+      <p class="modal-message">{{ deleteModalMessage }}</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn btn-danger" (click)="confirmDelete()">Confirm</button>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,402 +1,811 @@
-@use 'sass:color';
-@use '../../../../styles/_variables.scss' as variables;
-@use '../../../../styles/_mixins.scss' as mixins;
+// ─────────────────────────────────────────────
+// Settings Page — Dark Glassmorphic Theme
+// ─────────────────────────────────────────────
 
 .settings-container {
   display: flex;
   height: 100%;
-  background-color: variables.$bg-primary-navy-black;
-  font-family: variables.$font-family-primary;
-  color: variables.$text-primary;
+  min-height: 100vh;
+  background: #0b0f19;
+  font-family: 'Inter', sans-serif;
+  color: #e2e8f0;
   overflow: hidden;
-  border-radius: variables.$border-radius-lg;
-  box-shadow: variables.$shadow-2xl;
 }
 
-/* Left Sidebar */
+// ─── Sidebar ───
 .settings-sidebar {
-  width: 280px;
+  width: 240px;
   flex-shrink: 0;
-  background-color: variables.$bg-secondary;
-  border-right: 1px solid variables.$border-neutral;
-  padding: variables.$space-xl variables.$space-md;
+  background: rgba(15, 23, 42, 0.7);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 8px;
+
+    i {
+      color: #818cf8;
+      font-size: 1.1rem;
+    }
+  }
 
   .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: variables.$space-sm;
+    gap: 2px;
+  }
 
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: variables.$space-md;
-      padding: variables.$space-sm variables.$space-md;
-      border-radius: variables.$border-radius-base;
-      color: variables.$text-muted;
-      font-size: variables.$font-size-body-md;
-      text-decoration: none;
-      transition: all variables.$transition-duration-fast variables.$ease-in-out;
-      position: relative;
-      overflow: hidden;
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 9px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.45);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    width: 100%;
 
-      i {
-        font-size: variables.$font-size-subtitle;
-        width: 24px;
-        text-align: center;
-      }
+    i {
+      width: 18px;
+      text-align: center;
+      font-size: 0.82rem;
+    }
+
+    &:hover {
+      background: rgba(99, 102, 241, 0.08);
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    &.active {
+      background: #6366f1;
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+    }
+
+    &.danger {
+      color: rgba(239, 68, 68, 0.6);
 
       &:hover {
-        background-color: rgba(variables.$primary-indigo-600, 0.1);
-        color: variables.$text-primary;
+        background: rgba(239, 68, 68, 0.08);
+        color: #ef4444;
       }
 
       &.active {
-        background-color: variables.$primary-indigo-600;
-        color: variables.$white;
-        font-weight: variables.$font-weight-semibold;
-        box-shadow: 0 0 8px rgba(variables.$primary-indigo-600, 0.5);
-
-        &::after {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          height: 100%;
-          width: 4px;
-          background-color: variables.$accent-cyan-400;
-          border-radius: 0 variables.$border-radius-xs variables.$border-radius-xs 0;
-        }
+        background: #ef4444;
+        color: #fff;
+        box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
       }
     }
   }
 }
 
-/* Right Side — Detailed Sections */
+// ─── Content ───
 .settings-content {
-  flex-grow: 1;
-  padding: variables.$space-xl;
+  flex: 1;
+  padding: 28px 36px;
   overflow-y: auto;
-  background-color: variables.$bg-primary-navy-black;
 
-  .settings-section {
-    margin-bottom: variables.$space-3xl; // Spacing between major sections
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
 
-    .section-title {
-      font-size: variables.$font-size-page-title;
-      font-weight: variables.$font-weight-bold;
-      color: variables.$text-primary;
-      margin-bottom: variables.$space-sm;
-      padding-bottom: variables.$space-md;
-      border-bottom: 1px solid variables.$border-neutral;
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+  }
+}
+
+.section {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-head {
+  margin-bottom: 24px;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    i {
+      color: #818cf8;
+      font-size: 1.2rem;
+    }
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0;
+  }
+
+  &.danger-head h2 i {
+    color: #ef4444;
+  }
+}
+
+// ─── Cards Grid ───
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.integrations-grid {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.card {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  h3 {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  h4 {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// ─── Form Elements ───
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  input,
+  select {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    color: #e2e8f0;
+    font-family: inherit;
+    transition: all 0.15s ease;
+    outline: none;
+
+    &:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
     }
 
-    .section-subtitle {
-      font-size: variables.$font-size-body-lg;
-      color: variables.$text-muted;
-      margin-bottom: variables.$space-xl;
+    &.readonly {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+}
+
+// ─── Buttons ───
+.btn,
+.btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 9px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  font-family: inherit;
+
+  i {
+    font-size: 0.72rem;
+  }
+}
+
+.btn {
+  padding: 10px 18px;
+  font-size: 0.8rem;
+  align-self: flex-start;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.72rem;
+}
+
+.btn-primary {
+  background: #6366f1;
+  color: #fff;
+
+  &:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+  }
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.6);
+
+  &:hover {
+    border-color: #818cf8 !important;
+    color: #818cf8;
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  color: #ef4444;
+
+  &:hover {
+    background: #ef4444;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+  }
+}
+
+.btn-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  font-size: 0.72rem;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #818cf8;
+    border-color: rgba(129, 140, 248, 0.3);
+  }
+
+  &.danger:hover {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+}
+
+// ─── Toggle Switch ───
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+
+  .toggle-label {
+    font-size: 0.84rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .toggle-desc {
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: block;
+    margin-top: 2px;
+  }
+}
+
+.text-green {
+  color: #22c55e;
+}
+
+.text-red {
+  color: #ef4444;
+}
+
+.toggle-switch {
+  width: 38px;
+  height: 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+
+  .toggle-knob {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: all 0.2s ease;
+  }
+
+  &.on {
+    background: #6366f1;
+
+    .toggle-knob {
+      left: 20px;
+      background: #fff;
+    }
+  }
+}
+
+// ─── Theme Options ───
+.theme-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.theme-btn {
+  padding: 8px 16px;
+  border-radius: 9px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  &.active {
+    background: #6366f1;
+    border-color: #6366f1;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+  }
+}
+
+// ─── List Items ───
+.list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .list-row-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &>i {
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.85rem;
+      width: 18px;
+      text-align: center;
     }
 
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: variables.$space-lg;
-
-      .card {
-        @include mixins.card-base; // Use base card styling
-        background-color: variables.$surface-card;
-        padding: variables.$space-lg;
-        display: flex;
-        flex-direction: column;
-        gap: variables.$space-md;
-        transition: all variables.$transition-duration-fast variables.$ease-in-out;
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: variables.$shadow-md;
-        }
-
-        h3 {
-          font-size: variables.$font-size-section-title;
-          color: variables.$text-primary;
-          margin-bottom: variables.$space-sm;
-          border-bottom: 1px solid variables.$border-neutral;
-          padding-bottom: variables.$space-xs;
-        }
-
-        p {
-          font-size: variables.$font-size-body-md;
-          color: variables.$text-primary;
-        }
-
-        .text-muted {
-          color: variables.$text-muted;
-          font-size: variables.$font-size-body-sm;
-        }
-
-        .form-group {
-          margin-bottom: variables.$space-md;
-
-          label {
-            display: block;
-            font-size: variables.$font-size-body-sm;
-            color: variables.$text-muted;
-            margin-bottom: variables.$space-xs;
-          }
-
-          input[type="text"],
-          input[type="email"],
-          input[type="password"],
-          input[type="number"],
-          select {
-            width: 100%;
-            font-size: variables.$font-size-body-md;
-            @include mixins.input-styles;
-          }
-        }
-
-        .save-button, .upload-button, .remove-button, .toggle-2fa-button,
-        .generate-codes-button, .logout-all-button, .primary-button, .secondary-button, .danger-button,
-        .integration-button, .download-link {
-          @include mixins.button-primary; // Default button style from mixins
-          font-size: variables.$font-size-body-sm;
-          padding: variables.$space-sm variables.$space-md;
-          align-self: flex-start;
-          margin-top: variables.$space-sm;
-        }
-
-        .secondary-button {
-          @include mixins.button-secondary; // Secondary button style
-        }
-
-        .danger-button {
-          background-color: variables.$error-color;
-          color: variables.$white;
-          border: 1px solid variables.$error-color;
-          &:hover {
-            background-color: variables.$error-color; /* Removed color.adjust as it's incompatible with CSS variables */
-            box-shadow: 0 0 10px rgba(variables.$error-color, 0.5);
-          }
-        }
-      }
-
-      /* Specific Card Styles */
-      .profile-photo {
-        .photo-area {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: variables.$space-sm;
-          padding: variables.$space-md;
-          border: 1px dashed variables.$border-neutral;
-          border-radius: variables.$border-radius-base;
-
-          .profile-img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid variables.$primary-indigo-600;
-            box-shadow: variables.$shadow-sm;
-          }
-        }
-      }
-
-      .flex-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .qr-code-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: variables.$space-md;
-        margin-top: variables.$space-md;
-        padding-top: variables.$space-md;
-        border-top: 1px solid variables.$border-neutral;
-
-        .qr-code {
-          width: 120px;
-          height: 120px;
-          border: 1px solid variables.$border-neutral;
-          border-radius: variables.$border-radius-sm;
-        }
-      }
-
-      .device-list, .login-history-list {
-        display: flex;
-        flex-direction: column;
-        gap: variables.$space-xs;
-
-        .device-item, .login-item {
-          background-color: variables.$bg-primary-navy-black;
-          padding: variables.$space-sm;
-          border-radius: variables.$border-radius-xs;
-          border: 1px solid variables.$border-neutral;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: variables.$font-size-body-sm;
-          color: variables.$text-muted;
-          gap: variables.$space-sm;
-
-          span.timestamp {
-            font-size: variables.$font-size-body-xs;
-            color: variables.$text-muted;
-          }
-        }
-      }
-
-      .radio-group, .toggle-group {
-        display: flex;
-        flex-direction: column;
-        gap: variables.$space-sm;
-      }
-
-      .radio-item, .toggle-item {
-        display: flex;
-        align-items: center;
-        gap: variables.$space-sm;
-        font-size: variables.$font-size-body-md;
-        color: variables.$text-muted;
-        cursor: pointer;
-
-        input[type="radio"] {
-          @include mixins.custom-radio(variables.$primary-indigo-600, variables.$border-neutral, variables.$white); // Assuming custom-radio mixin exists
-        }
-
-        input[type="checkbox"] {
-          @include mixins.custom-checkbox(variables.$primary-indigo-600, variables.$border-neutral, variables.$white);
-        }
-      }
-
-      .payment-method-item, .invoice-item, .api-key-item, .member-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: variables.$bg-primary-navy-black;
-        padding: variables.$space-sm;
-        border-radius: variables.$border-radius-xs;
-        border: 1px solid variables.$border-neutral;
-        font-size: variables.$font-size-body-md;
-        color: variables.$text-primary;
-        margin-bottom: variables.$space-xs;
-
-        .download-link {
-          @include mixins.button-secondary;
-          padding: variables.$space-xs variables.$space-sm;
-          font-size: variables.$font-size-body-xs;
-        }
-      }
-
-      .integration-card {
-        .integration-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: variables.$space-xs;
-
-          h4 {
-            margin: 0;
-            font-size: variables.$font-size-subtitle;
-          }
-
-          .status-connected {
-            color: variables.$success-color;
-            font-weight: variables.$font-weight-semibold;
-          }
-          .status-disconnected {
-            color: variables.$error-color;
-            font-weight: variables.$font-weight-semibold;
-          }
-        }
-        .integration-button {
-          @include mixins.button-primary;
-          margin-top: variables.$space-md;
-          align-self: flex-end; // Align to bottom right
-          &.disconnect-button {
-            background-color: variables.$error-color;
-            border-color: variables.$error-color;
-            &:hover {
-              background-color: variables.$error-color; /* Removed color.adjust as it's incompatible with CSS variables */
-              box-shadow: 0 0 10px rgba(variables.$error-color, 0.5);
-            }
-          }
-        }
-      }
-
-      .api-key-item {
-        flex-wrap: wrap; // Allow key to wrap
-        .key-display {
-          font-family: variables.$font-family-code;
-          background-color: variables.$bg-primary-navy-black;
-          padding: variables.$space-xs;
-          border-radius: variables.$border-radius-xs;
-          border: 1px solid variables.$border-neutral;
-          flex-grow: 1;
-          margin-right: variables.$space-sm;
-          white-space: pre-wrap; // Allow text to wrap
-          word-break: break-all; // Break long words
-        }
-        .key-actions {
-          display: flex;
-          gap: variables.$space-xs;
-          margin-left: auto;
-
-          .icon-button {
-            background: none;
-            border: 1px solid variables.$border-neutral;
-            color: variables.$text-muted;
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
-            border-radius: variables.$border-radius-xs;
-            transition: all variables.$transition-duration-fast variables.$ease-in-out;
-
-            &:hover {
-              color: variables.$accent-cyan-400;
-              background-color: variables.$bg-secondary-focus;
-              border-color: variables.$accent-cyan-400;
-            }
-          }
-        }
-        p {
-          width: 100%;
-          margin-top: variables.$space-xs;
-          font-size: variables.$font-size-body-xs;
-        }
-      }
-
-      .progress-bar {
-        height: 8px;
-        background-color: variables.$border-neutral;
-        border-radius: variables.$border-radius-pill;
-        overflow: hidden;
-
-        .progress {
-          height: 100%;
-          background-color: variables.$primary-indigo-600;
-          border-radius: variables.$border-radius-pill;
-          transition: width variables.$transition-duration-base variables.$ease-in-out;
-        }
-      }
-
-      .danger-card {
-        border-color: variables.$error-color;
-        background-color: rgba(variables.$error-color, 0.1);
-        .danger-button {
-          @include mixins.button-primary;
-          background-color: variables.$error-color;
-          border: 1px solid variables.$error-color;
-          color: variables.$white;
-          &:hover {
-            background-color: variables.$error-color; /* Removed color.adjust as it's incompatible with CSS variables */
-            box-shadow: 0 0 10px rgba(variables.$error-color, 0.5);
-          }
-        }
-      }
+    &>div {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
+  }
+
+  .list-primary {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+
+  .list-secondary {
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+// ─── Profile ───
+.profile-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .profile-avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .avatar-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+  }
+
+  .avatar-actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+// ─── 2FA ───
+.twofa-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 9px;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+
+  i {
+    color: #818cf8;
+    font-size: 1.2rem;
+  }
+}
+
+// ─── Billing ───
+.plan-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.08));
+  border-color: rgba(99, 102, 241, 0.2);
+
+  .plan-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #818cf8;
+  }
+
+  .plan-price {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+
+    span {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  .plan-renew {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+.invoice-amount {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+// ─── Integrations ───
+.integration-card {
+  &.connected {
+    border-color: rgba(34, 197, 94, 0.15);
+  }
+
+  .integ-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .integ-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .integ-status {
+    font-size: 0.62rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.25);
+
+    &.on {
+      color: #22c55e;
+    }
+  }
+
+  .integ-perms {
+    font-size: 0.72rem;
+  }
+
+  .integ-synced {
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+// ─── API Keys ───
+.key-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: #818cf8;
+  background: rgba(99, 102, 241, 0.08);
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.key-actions {
+  display: flex;
+  gap: 4px;
+}
+
+// ─── Workspace ───
+.member-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.storage-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+
+  .storage-pct {
+    color: #818cf8;
+    font-weight: 600;
+  }
+}
+
+.progress-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  overflow: hidden;
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #818cf8);
+    border-radius: 6px;
+    transition: width 0.4s ease;
+  }
+}
+
+.limit-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+// ─── Danger Zone ───
+.danger-card {
+  border-color: rgba(239, 68, 68, 0.12) !important;
+  background: rgba(239, 68, 68, 0.03) !important;
+  flex-direction: row !important;
+  justify-content: space-between;
+  align-items: center;
+
+  .danger-info {
+    flex: 1;
+
+    h4 {
+      color: #fff;
+      margin: 0 0 4px 0;
+      font-size: 0.86rem;
+    }
+
+    p {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.35);
+      margin: 0;
+    }
+  }
+}
+
+// ─── Toast ───
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #111827;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1001;
+
+  &.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  i {
+    font-size: 0.9rem;
+  }
+}
+
+// ─── Modal ───
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+.modal-panel {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .modal-warn-icon {
+      color: #ef4444;
+      font-size: 1.3rem;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+  }
+
+  .modal-message {
+    font-size: 0.84rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
   }
 }

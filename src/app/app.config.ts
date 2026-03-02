@@ -5,17 +5,19 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { routes } from './app.routes';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { BaseResponseInterceptor } from './core/interceptors/base-response.interceptor';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { WebSocketService } from './core/services/websocket/websocket.service';
-import { AnalyticsService } from './core/services/analytics/analytics.service'; // Import AnalyticsService
+import { AnalyticsService } from './core/services/analytics/analytics.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
-    provideHttpClient(withInterceptors([AuthInterceptor])),
+    provideHttpClient(withInterceptors([AuthInterceptor, BaseResponseInterceptor, errorInterceptor])),
     WebSocketService,
-    AnalyticsService, // Add AnalyticsService to providers
+    AnalyticsService,
     provideAnimations()
   ]
 };

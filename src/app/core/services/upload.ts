@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ApiEndpoints } from '../constants/api-endpoints';
 
 export interface FileUploadResponse {
   projectId: string;
@@ -24,7 +25,7 @@ export class Upload {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<FileUploadResponse>(`${this.apiUrl}/upload/file`, formData, {
+    return this.http.post<FileUploadResponse>(`${this.apiUrl}${ApiEndpoints.UPLOAD.FILE}`, formData, {
       reportProgress: true,
       observe: 'events'
     });

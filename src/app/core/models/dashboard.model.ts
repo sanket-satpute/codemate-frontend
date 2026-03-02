@@ -6,6 +6,8 @@ export interface Dashboard {
   totalJobs: number;
   successfulJobs: number;
   failedJobs: number;
+  totalFiles?: number;
+  lastActive?: string;
   recentProjects?: ProjectSummary[];
   recentActivities?: Activity[];
 }

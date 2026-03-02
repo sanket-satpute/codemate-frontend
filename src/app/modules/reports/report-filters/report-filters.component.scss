@@ -2,7 +2,7 @@
 @use 'mixins' as m;
 
 .filters-form {
-  background-color: var(--color-surface-card);
+  background-color: var(--surface-card);
   padding: 1.5rem;
   border-radius: var(--border-radius-base);
   box-shadow: var(--shadow-sm);
@@ -22,7 +22,7 @@
     label {
       font-weight: 500;
       margin-bottom: 0.5rem;
-      color: var(--color-text-primary);
+      color: var(--text-primary);
     }
 
     input,

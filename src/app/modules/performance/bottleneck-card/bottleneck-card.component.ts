@@ -16,15 +16,15 @@ export class BottleneckCardComponent {
   getSeverityColor(severity: 'low' | 'medium' | 'high' | 'critical'): string {
     switch (severity) {
       case 'low':
-        return 'var(--color-success)';
+        return 'var(--success)';
       case 'medium':
-        return 'var(--color-warning)';
+        return 'var(--warning)';
       case 'high':
-        return 'var(--color-danger)';
+        return 'var(--error)';
       case 'critical':
         return 'var(--color-critical)';
       default:
-        return 'var(--color-text-secondary)';
+        return 'var(--text-muted)';
     }
   }
 }

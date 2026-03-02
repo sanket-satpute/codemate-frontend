@@ -21,25 +21,6 @@ export class ButtonComponent {
   @Input() size: ButtonSize = 'md';
   @Input() shape: ButtonShape = 'rounded';
   @Input() type: ButtonHtmlType = 'button';
-
-  // Backward compatibility for old 'type' property (can be HTML type or variant)
-  @Input('type') set oldTypeProperty(value: string) {
-    if (['button', 'submit', 'reset'].includes(value)) {
-      this.type = value as ButtonHtmlType;
-    } else {
-      this.variant = value as ButtonVariant;
-    }
-  }
-
-  // Backward compatibility for old 'size' property
-  @Input('size') set oldSizeProperty(value: string) {
-    switch (value) {
-      case 'small': this.size = 'sm'; break;
-      case 'medium': this.size = 'md'; break;
-      case 'large': this.size = 'lg'; break;
-      default: this.size = value as ButtonSize;
-    }
-  }
   @Input() disabled = false;
   @Input() loading = false;
   @Input() icon: string | null = null;
