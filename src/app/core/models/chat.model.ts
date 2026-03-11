@@ -1,15 +1,14 @@
 export interface ChatMessage {
   id: string;
   projectId: string;
-  fileId: string; // Added fileId to ChatMessage
-  sender: 'user' | 'ai';
+  sender: 'USER' | 'AI';
   message: string;
-  timestamp: string; // Changed from Date to string (ISO 8601 format)
+  timestamp: string;
+  metadata?: string;
+  isStreaming?: boolean;
 }
 
-export interface SendMessageRequest {
-  projectId: string;
-  fileId: string; // Added fileId to SendMessageRequest
-  sender: 'user' | 'ai'; // Added sender to SendMessageRequest
-  message: string;
+export interface ChatResponseDTO {
+  userMessage: ChatMessage;
+  aiMessage: ChatMessage;
 }

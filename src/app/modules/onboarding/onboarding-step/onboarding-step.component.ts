@@ -83,7 +83,6 @@ export class OnboardingStepComponent implements OnInit {
       this.projectName = '';
       this.projectDescription = '';
       this.projectVisibility = 'private';
-      console.log('Project created:', { name: this.projectName, description: this.projectDescription, visibility: this.projectVisibility });
     } else {
       console.warn('Project name is required.');
       // Add visual feedback for required field
@@ -95,13 +94,11 @@ export class OnboardingStepComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files) {
       this.filesUploaded.emit(input.files);
-      console.log('Files selected for upload:', input.files);
     }
   }
 
   // Initiate analysis
   startAnalysis(): void {
     this.analysisInitiated.emit();
-    console.log('Analysis initiated.');
   }
 }

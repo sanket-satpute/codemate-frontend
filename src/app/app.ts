@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router'; // RouterOutlet is for app.html's <router-outlet>
 import { AuthService } from './core/services/auth.service';
 import { LocalStorageService } from './core/services/local-storage/local-storage.service';
+import { ToastComponent } from './shared/ui/toast/toast.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet], // Removed LayoutComponent from here
+  imports: [CommonModule, RouterOutlet, ToastComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -18,8 +19,8 @@ export class App implements OnInit {
   private router = inject(Router);
 
   ngOnInit(): void {
-    // Attempt to restore authentication state from local storage on app initialization
-    this.authService.restoreFromLocalStorage();
+    // Attempt to restore authentication state from storage on app initialization
+    this.authService.restoreSession();
 
     // Check if onboarding is completed
     const hasCompletedOnboarding = this.localStorageService.getItem('hasCompletedOnboarding');

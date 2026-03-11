@@ -7,23 +7,17 @@
         Notifications
         <span class="unread-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
       </h1>
-      <p class="subtitle">Stay updated on scans, analysis reports, insights, and system events.</p>
+      <p class="subtitle">Stay updated on scans, analysis reports, and system events.</p>
     </div>
     <div class="header-actions">
-      <button class="btn-secondary" (click)="markAllAsRead()">
+      <button class="btn-secondary" (click)="markAllAsRead()" *ngIf="unreadCount > 0">
         <i class="fas fa-check-double"></i> Mark All Read
       </button>
-      <button class="btn-primary" (click)="openPreferences()">
-        <i class="fas fa-cog"></i> Preferences
+      <button class="btn-secondary danger" (click)="clearAll()" *ngIf="notifications.length > 0">
+        <i class="fas fa-trash-alt"></i> Clear All
       </button>
     </div>
   </header>
-
-  <!-- Category Filters -->
-  <nav class="category-filters">
-    <button *ngFor="let cat of categories" class="filter-chip" [class.active]="cat === selectedCategory"
-      (click)="selectCategory(cat)">{{ cat }}</button>
-  </nav>
 
   <!-- Notification Feed -->
   <div class="notification-feed">
@@ -34,24 +28,15 @@
           <div *ngFor="let n of group.notifications" class="notification-card" [class.unread]="!n.read"
             (click)="openDetail(n)">
             <div class="unread-dot" *ngIf="!n.read"></div>
-            <div class="card-icon" [style.background]="getTypeStyle(n.type).color + '20'"
-              [style.color]="getTypeStyle(n.type).color">
-              <i [class]="getTypeStyle(n.type).icon"></i>
+            <div class="card-icon">
+              <i class="fas fa-bell"></i>
             </div>
             <div class="card-body">
               <div class="card-top">
                 <h4 class="card-title">{{ n.title }}</h4>
                 <span class="card-time">{{ getRelativeTime(n.timestamp) }}</span>
               </div>
-              <p class="card-description">{{ n.description }}</p>
-              <div class="card-badges">
-                <span *ngFor="let badge of n.badges" class="badge"
-                  [style.background]="getTypeStyle(n.type).color + '18'" [style.color]="getTypeStyle(n.type).color"
-                  [style.border-color]="getTypeStyle(n.type).color + '30'">{{ badge }}</span>
-                <span class="project-tag" *ngIf="n.relatedProject">
-                  <i class="fas fa-folder"></i> {{ n.relatedProject }}
-                </span>
-              </div>
+              <p class="card-description">{{ n.message }}</p>
             </div>
             <div class="card-quick-actions">
               <button title="Toggle read" (click)="toggleRead(n); $event.stopPropagation()">
@@ -73,7 +58,6 @@
       <i class="fas fa-inbox"></i>
       <h3>You're all caught up!</h3>
       <p>No notifications to display.</p>
-      <button class="btn-primary" (click)="selectCategory('All')">Show All</button>
     </div>
   </ng-template>
 
@@ -81,16 +65,12 @@
   <div class="modal-overlay" *ngIf="isDetailOpen" (click)="closeDetail()">
     <div class="modal-panel" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <div class="modal-icon" [style.background]="getTypeStyle(selectedNotification!.type).color + '20'"
-          [style.color]="getTypeStyle(selectedNotification!.type).color">
-          <i [class]="getTypeStyle(selectedNotification!.type).icon"></i>
+        <div class="modal-icon">
+          <i class="fas fa-bell"></i>
         </div>
         <div class="modal-title-area">
           <h2>{{ selectedNotification!.title }}</h2>
           <div class="modal-meta">
-            <span class="type-label" [style.color]="getTypeStyle(selectedNotification!.type).color">
-              {{ getTypeStyle(selectedNotification!.type).label }}
-            </span>
             <span class="time">{{ getRelativeTime(selectedNotification!.timestamp) }}</span>
           </div>
         </div>
@@ -99,99 +79,11 @@
         </button>
       </div>
       <div class="modal-body">
-        <p class="detail-description">{{ selectedNotification!.fullDescription || selectedNotification!.description }}
-        </p>
-        <div class="detail-row" *ngIf="selectedNotification!.relatedProject">
-          <span class="detail-label">Project</span>
-          <span class="detail-value">{{ selectedNotification!.relatedProject }}</span>
-        </div>
-        <div class="detail-row" *ngIf="selectedNotification!.relatedAnalysisType">
-          <span class="detail-label">Analysis</span>
-          <span class="detail-value">{{ selectedNotification!.relatedAnalysisType }}</span>
-        </div>
-        <div class="detail-badges">
-          <span *ngFor="let badge of selectedNotification!.badges" class="badge accent"
-            [style.background]="getTypeStyle(selectedNotification!.type).color + '18'"
-            [style.color]="getTypeStyle(selectedNotification!.type).color"
-            [style.border-color]="getTypeStyle(selectedNotification!.type).color + '30'">{{ badge }}</span>
-        </div>
+        <p class="detail-description">{{ selectedNotification!.message }}</p>
       </div>
       <div class="modal-footer">
-        <!-- Contextual actions for analysis types -->
-        <ng-container *ngIf="isAnalysisType(selectedNotification!)">
-          <button class="btn-secondary" (click)="viewReport(selectedNotification!)">
-            <i class="fas fa-file-alt"></i> View Report
-          </button>
-          <button class="btn-primary" (click)="rerunScan(selectedNotification!)">
-            <i class="fas fa-redo"></i> Re-run Scan
-          </button>
-          <button class="btn-accent" (click)="fixWithAI(selectedNotification!)">
-            <i class="fas fa-magic"></i> Fix with AI
-          </button>
-        </ng-container>
-        <!-- Generic actions for other types -->
-        <ng-container *ngIf="!isAnalysisType(selectedNotification!)">
-          <button class="btn-secondary" *ngIf="selectedNotification!.relatedProject"
-            (click)="openProject(selectedNotification!)">
-            <i class="fas fa-external-link-alt"></i> Open Project
-          </button>
-        </ng-container>
         <button class="btn-ghost" (click)="dismissNotification(selectedNotification!)">
           <i class="fas fa-trash"></i> Dismiss
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Preferences Modal -->
-  <div class="modal-overlay" *ngIf="isPreferencesOpen" (click)="closePreferences()">
-    <div class="modal-panel preferences-panel" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <div class="modal-icon" style="background: rgba(99,102,241,0.15); color: #818cf8;">
-          <i class="fas fa-sliders-h"></i>
-        </div>
-        <div class="modal-title-area">
-          <h2>Notification Preferences</h2>
-          <div class="modal-meta">
-            <span class="time">Customize what you receive</span>
-          </div>
-        </div>
-        <button class="close-btn" (click)="closePreferences()" aria-label="Close">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="pref-section">
-          <h4>Categories</h4>
-          <label *ngFor="let cat of preferenceCategories" class="toggle-row">
-            <span>{{ cat.label }}</span>
-            <div class="toggle-switch" [class.on]="cat.enabled" (click)="cat.enabled = !cat.enabled">
-              <div class="toggle-knob"></div>
-            </div>
-          </label>
-        </div>
-        <div class="pref-section">
-          <h4>Delivery</h4>
-          <label *ngFor="let opt of deliveryOptions" class="toggle-row">
-            <span>{{ opt.label }}</span>
-            <div class="toggle-switch" [class.on]="opt.enabled" (click)="opt.enabled = !opt.enabled">
-              <div class="toggle-knob"></div>
-            </div>
-          </label>
-        </div>
-        <div class="pref-section">
-          <h4>Sound</h4>
-          <label class="toggle-row">
-            <span>Notification sounds</span>
-            <div class="toggle-switch" [class.on]="soundEnabled" (click)="soundEnabled = !soundEnabled">
-              <div class="toggle-knob"></div>
-            </div>
-          </label>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-primary full-width" (click)="savePreferences()">
-          <i class="fas fa-check"></i> Save Preferences
         </button>
       </div>
     </div>

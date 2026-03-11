@@ -11,6 +11,7 @@ import { WebSocketService } from './websocket/websocket.service';
 
 const AUTH_TOKEN_KEY = 'jwt_token';
 const CURRENT_USER_KEY = 'current_user';
+const REMEMBER_ME_KEY = 'remember_me';
 
 @Injectable({
   providedIn: 'root'
@@ -29,49 +30,104 @@ export class AuthService {
   private injector = inject(Injector);
 
   constructor() {
-    this.restoreFromLocalStorage();
+    this.restoreSession();
+  }
+
+  // ─── Storage helpers ───────────────────────────────────────────────
+  // When "Remember Me" is ON  → persist in localStorage  (survives browser close)
+  // When "Remember Me" is OFF → persist in sessionStorage (cleared on browser close)
+  // On restore we check BOTH storages, preferring localStorage.
+
+  /**
+   * Returns the active storage backend based on the rememberMe preference.
+   */
+  private getStorage(): Storage {
+    return localStorage.getItem(REMEMBER_ME_KEY) === 'false'
+      ? sessionStorage
+      : localStorage;
   }
 
   /**
-   * Sets the JWT token in the store and local storage.
-   * @param token The JWT token string.
+   * Reads a key from whichever storage currently holds it.
+   * Prefers localStorage, falls back to sessionStorage.
+   */
+  private readFromAnyStorage(key: string): string | null {
+    return localStorage.getItem(key) ?? sessionStorage.getItem(key);
+  }
+
+  /**
+   * Writes a key/value to the active storage and removes it from the other.
+   */
+  private writeToStorage(key: string, value: string): void {
+    const active = this.getStorage();
+    const inactive = active === localStorage ? sessionStorage : localStorage;
+    active.setItem(key, value);
+    inactive.removeItem(key); // keep only one copy
+  }
+
+  /**
+   * Removes a key from BOTH storages.
+   */
+  private removeFromAllStorage(key: string): void {
+    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
+  }
+
+  // ─── Public API ────────────────────────────────────────────────────
+
+  /**
+   * Persists the "Remember Me" preference. Must be called BEFORE setToken/setUser
+   * so the correct storage backend is chosen.
+   */
+  setRememberMe(remember: boolean): void {
+    // The flag itself always lives in localStorage so restoreSession can read it
+    if (remember) {
+      localStorage.removeItem(REMEMBER_ME_KEY); // default = remember
+    } else {
+      localStorage.setItem(REMEMBER_ME_KEY, 'false');
+    }
+  }
+
+  /**
+   * Sets the JWT token in the signal and the active storage.
    */
   setToken(token: string): void {
     this.token.set(token);
-    localStorage.setItem(AUTH_TOKEN_KEY, token);
+    this.writeToStorage(AUTH_TOKEN_KEY, token);
     this.isAuthenticated.set(true);
     this.authStateChanged$.next(true);
   }
 
   /**
-   * Clears the JWT token from the store and local storage.
+   * Clears the JWT token from every location.
    */
   clearToken(): void {
     this.token.set(null);
-    localStorage.removeItem(AUTH_TOKEN_KEY);
+    this.removeFromAllStorage(AUTH_TOKEN_KEY);
     this.isAuthenticated.set(false);
     this.authStateChanged$.next(false);
   }
 
   /**
-   * Sets the current user in the store and local storage.
-   * @param user The User object.
+   * Sets the current user in the signal and the active storage.
    */
   setUser(user: User | null): void {
     this.currentUser.set(user);
     if (user) {
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+      this.writeToStorage(CURRENT_USER_KEY, JSON.stringify(user));
     } else {
-      localStorage.removeItem(CURRENT_USER_KEY);
+      this.removeFromAllStorage(CURRENT_USER_KEY);
     }
   }
 
   /**
-   * Restores authentication state from local storage on service initialization.
+   * Restores authentication state from storage on service initialization.
+   * Checks both localStorage and sessionStorage so sessions survive
+   * page reloads, HMR, and (when "Remember Me" is on) browser restarts.
    */
-  restoreFromLocalStorage(): void {
-    const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
-    const storedUser = localStorage.getItem(CURRENT_USER_KEY);
+  restoreSession(): void {
+    const storedToken = this.readFromAnyStorage(AUTH_TOKEN_KEY);
+    const storedUser = this.readFromAnyStorage(CURRENT_USER_KEY);
 
     if (storedToken) {
       this.token.set(storedToken);
@@ -81,48 +137,29 @@ export class AuthService {
     if (storedUser) {
       try {
         this.currentUser.set(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Error parsing stored user data:', e);
+      } catch {
         this.clearAuthData();
       }
     }
-
-    // If token exists but user doesn't, we will not attempt to fetch the user
-    // immediately during service initialization to avoid potential race conditions
-    // with HTTP interceptors. Instead, user data should be fetched
-    // via a guard, resolver, or when explicitly requested after app bootstrap.
   }
 
   /**
-   * Clears all authentication-related data.
-   */
-  private clearAuthData(): void {
-    this.clearToken();
-    this.setUser(null);
-  }
-
-  /**
-   * Retrieves the JWT token from local storage.
-   * @returns The JWT token string or null if not found.
+   * Retrieves the JWT token — signal first, then falls back to storage.
    */
   getJwt(): string | null {
-    // Return the token from the signal, or try localStorage as a fallback
-    // This ensures that even if the signal hasn't fully propagated,
-    // the latest token from storage is used, especially during initial app load
     const currentToken = this.token();
     if (currentToken) {
       return currentToken;
     }
-    const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
+    const storedToken = this.readFromAnyStorage(AUTH_TOKEN_KEY);
     if (storedToken) {
-      this.token.set(storedToken); // Update the signal if found in localStorage
+      this.token.set(storedToken);
     }
     return storedToken;
   }
 
   /**
    * Checks if the stored JWT token is expired.
-   * @returns true if expired or invalid, false otherwise.
    */
   isTokenExpired(): boolean {
     const currentToken = this.getJwt();
@@ -131,66 +168,50 @@ export class AuthService {
     try {
       const decoded: any = jwtDecode(currentToken);
       if (!decoded || !decoded.exp) return true;
-
-      // decoded.exp is in seconds, convert to milliseconds
       return (decoded.exp * 1000) < Date.now();
-    } catch (e) {
-      console.error('Error decoding token:', e);
+    } catch {
       return true;
     }
   }
 
   /**
    * Handles HTTP errors from the backend.
-   * @param error The HttpErrorResponse object.
-   * @returns An Observable that emits an error.
    */
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unknown error occurred!';
     if (error.error instanceof ErrorEvent) {
-      // Client-side errors
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Backend errors
       if (error.status === 401) {
         errorMessage = 'Unauthorized: Invalid credentials or session expired.';
-        // We no longer automatically logout here. The AuthInterceptor handles
-        // token expiration gracefully by showing a relogin modal.
       } else if (error.error && typeof error.error === 'object' && error.error.message) {
         errorMessage = `Backend error: ${error.error.message}`;
       } else {
         errorMessage = `Server returned code: ${error.status}, error message: ${error.message}`;
       }
     }
-    console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
 
   /**
-   * Sends a login request to the backend.
-   * @param email User's email.
-   * @param password User's password.
-   * @returns An Observable of AuthResponse.
-   */
-  /**
    * Sends a login request with user credentials to the backend.
    * @param credentials The LoginRequest object containing email and password.
-   * @returns An Observable of AuthResponse.
+   * @param rememberMe Whether to persist the session across browser restarts.
    */
-  login(credentials: LoginRequest): Observable<AuthResponse> {
+  login(credentials: LoginRequest, rememberMe = true): Observable<AuthResponse> {
+    // Set storage mode BEFORE writing any auth data
+    this.setRememberMe(rememberMe);
+
     return this.http.post<AuthResponse>(`${this.apiUrl}${ApiEndpoints.AUTH.LOGIN}`, credentials).pipe(
       tap(response => {
         this.setToken(response.token);
       }),
-      // Use switchMap instead of nested subscribe to properly chain user fetch
       switchMap(response =>
         this.getCurrentUser().pipe(
-          // Map back to the original AuthResponse so downstream consumers get the expected type
           tap(user => this.setUser(user)),
           switchMap(() => [response])
         )
       ),
-      // Connect WebSocket after successful login
       tap(() => this.connectWebSocket()),
       catchError((err) => this.handleError(err))
     );
@@ -198,10 +219,6 @@ export class AuthService {
 
   /**
    * Sends a registration request to the backend.
-   * @param name User's name.
-   * @param email User's email.
-   * @param password User's password.
-   * @returns An Observable of AuthResponse.
    */
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}${ApiEndpoints.AUTH.REGISTER}`, request).pipe(
@@ -211,7 +228,6 @@ export class AuthService {
 
   /**
    * Fetches the current user's details from the backend.
-   * @returns An Observable of User.
    */
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}${ApiEndpoints.AUTH.ME}`).pipe(
@@ -230,8 +246,16 @@ export class AuthService {
   }
 
   /**
+   * Clears all authentication-related data from signals and both storages.
+   */
+  private clearAuthData(): void {
+    this.clearToken();
+    this.setUser(null);
+    localStorage.removeItem(REMEMBER_ME_KEY);
+  }
+
+  /**
    * Lazily connect WebSocket after authentication.
-   * Uses Injector to avoid circular dependency with WebSocketService.
    */
   private connectWebSocket(): void {
     try {
@@ -249,7 +273,7 @@ export class AuthService {
     try {
       const wsService = this.injector.get(WebSocketService);
       wsService.close();
-    } catch (e) {
+    } catch {
       // Silently handle — WS may not have been connected
     }
   }

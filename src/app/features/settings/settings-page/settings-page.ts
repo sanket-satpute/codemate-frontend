@@ -1,6 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SettingsService } from '../../../core/services/settings/settings.service';
+import { ToastService } from '../../../core/services/toast';
+import { ThemeService, ThemePreference } from '../../../core/services/theme/theme.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { UserProfile, PasswordChangeDTO, ChangeEmailDTO, DisableAccountDTO, DeleteAccountDTO } from '../../../core/models/auth.model';
 
 interface SidebarItem {
   id: string;
@@ -10,90 +15,9 @@ interface SidebarItem {
 
 interface Profile {
   name: string;
-  username: string;
   email: string;
-  phone: string;
   role: string;
   initials: string;
-}
-
-interface Device {
-  browser: string;
-  os: string;
-  ip: string;
-  loginTime: Date;
-}
-
-interface LoginHistory {
-  browser: string;
-  os: string;
-  ip: string;
-  timestamp: Date;
-}
-
-interface DeveloperSettings {
-  lineNumbers: boolean;
-  minimap: boolean;
-  autosave: boolean;
-  tabSize: number;
-}
-
-interface Project {
-  id: string;
-  name: string;
-}
-
-interface NotificationCategoryPref {
-  label: string;
-  enabled: boolean;
-}
-
-interface DeliveryMethodPref {
-  label: string;
-  enabled: boolean;
-}
-
-interface PaymentMethod {
-  last4: string;
-  type: string;
-  icon: string;
-}
-
-interface Invoice {
-  id: string;
-  date: Date;
-  amount: number;
-}
-
-interface Integration {
-  id: string;
-  name: string;
-  icon: string;
-  connected: boolean;
-  permissions: string;
-  lastSynced?: Date;
-}
-
-interface ApiKey {
-  id: string;
-  partialKey: string;
-  fullKey: string;
-  lastUsed: Date;
-  expiryDate: Date;
-}
-
-interface Member {
-  id: string;
-  name: string;
-  role: string;
-  initials: string;
-}
-
-interface Workspace {
-  members: Member[];
-  projectLimit: number;
-  storageUsedMB: number;
-  storageLimitMB: number;
 }
 
 @Component({
@@ -104,232 +28,396 @@ interface Workspace {
   styleUrl: './settings-page.scss',
 })
 export class SettingsPage implements OnInit {
+  private readonly settingsService = inject(SettingsService);
+  private readonly toastService = inject(ToastService);
+  private readonly themeService = inject(ThemeService);
+  private readonly authService = inject(AuthService);
+
   activeSection = 'profile';
-  toastMessage = '';
-  toastVisible = false;
-  showDeleteModal = false;
-  deleteModalTitle = '';
-  deleteModalMessage = '';
-  deleteModalAction: (() => void) | null = null;
-  copiedKeyId = '';
+  loadingProfile = true;
+  savingProfile = false;
+
+  // Password form
+  currentPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+  changingPassword = false;
+
+  // Touched tracking
+  passwordTouched: Record<string, boolean> = {
+    currentPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  };
+
+  // Per-field error getters
+  get currentPasswordError(): string {
+    if (!this.passwordTouched['currentPassword']) return '';
+    if (!this.currentPassword.trim()) return 'Current password is required';
+    return '';
+  }
+
+  get newPasswordError(): string {
+    if (!this.passwordTouched['newPassword']) return '';
+    if (!this.newPassword.trim()) return 'New password is required';
+    if (this.newPassword.length < 8) return 'Password must be at least 8 characters';
+    return '';
+  }
+
+  get confirmPasswordError(): string {
+    if (!this.passwordTouched['confirmPassword']) return '';
+    if (!this.confirmPassword.trim()) return 'Please confirm your new password';
+    if (this.newPassword !== this.confirmPassword) return 'Passwords do not match';
+    return '';
+  }
+
+  get isPasswordFormValid(): boolean {
+    return (
+      !!this.currentPassword.trim() &&
+      !!this.newPassword.trim() &&
+      this.newPassword.length >= 8 &&
+      this.newPassword === this.confirmPassword
+    );
+  }
+
+  markPasswordTouched(field: string): void {
+    this.passwordTouched[field] = true;
+  }
 
   sidebarItems: SidebarItem[] = [
     { id: 'profile', label: 'Profile', icon: 'fas fa-user-circle' },
     { id: 'account-security', label: 'Account & Security', icon: 'fas fa-shield-alt' },
     { id: 'preferences', label: 'Preferences', icon: 'fas fa-sliders-h' },
-    { id: 'notifications', label: 'Notifications', icon: 'fas fa-bell' },
-    { id: 'billing', label: 'Billing', icon: 'fas fa-credit-card' },
-    { id: 'integrations', label: 'Integrations', icon: 'fas fa-puzzle-piece' },
-    { id: 'api-keys', label: 'API Keys', icon: 'fas fa-key' },
-    { id: 'workspace', label: 'Workspace', icon: 'fas fa-users-cog' },
-    { id: 'danger-zone', label: 'Danger Zone', icon: 'fas fa-exclamation-triangle' },
+    { id: 'danger-zone', label: 'Reset & Account', icon: 'fas fa-shield-alt' },
   ];
 
-  profile: Profile = {
-    name: 'John Doe',
-    username: 'johndoe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    role: 'Admin',
-    initials: 'JD',
-  };
+  profile: Profile = { name: '', email: '', role: '', initials: '' };
+  selectedTheme: ThemePreference = 'system';
 
-  twoFaEnabled = true;
-  loggedInDevices: Device[] = [
-    { browser: 'Chrome', os: 'Windows 11', ip: '192.168.1.1', loginTime: new Date(Date.now() - 3600000) },
-    { browser: 'Firefox', os: 'macOS', ip: '10.0.0.5', loginTime: new Date(Date.now() - 86400000) },
-  ];
-  loginHistory: LoginHistory[] = [
-    { browser: 'Chrome', os: 'Windows 11', ip: '192.168.1.1', timestamp: new Date(Date.now() - 3600000) },
-    { browser: 'Firefox', os: 'macOS', ip: '10.0.0.5', timestamp: new Date(Date.now() - 86400000) },
-    { browser: 'Edge', os: 'Windows 10', ip: '172.16.0.10', timestamp: new Date(Date.now() - 2 * 86400000) },
-  ];
+  // Profile field touched tracking
+  profileTouched: Record<string, boolean> = { name: false };
 
-  selectedTheme = 'dark';
-  devSettings: DeveloperSettings = { lineNumbers: true, minimap: false, autosave: true, tabSize: 2 };
-  selectedLanguage = 'en';
-  selectedRegion = 'us';
-  defaultDashboardProject = 'project-1';
-  availableProjects: Project[] = [
-    { id: 'project-1', name: 'CodeScope AI Backend' },
-    { id: 'project-2', name: 'CodeScope AI Frontend' },
-    { id: 'project-3', name: 'Mobile App' },
-  ];
-  cardDensity = 'comfortable';
+  // Profile validation getters (name only — email changed via dialog)
+  get nameError(): string {
+    if (!this.profileTouched['name']) return '';
+    if (!this.profile.name.trim()) return 'Name is required';
+    if (this.profile.name.trim().length < 2) return 'Name must be at least 2 characters';
+    return '';
+  }
 
-  notifCategories: NotificationCategoryPref[] = [
-    { label: 'Code Analysis', enabled: true },
-    { label: 'Security Alerts', enabled: true },
-    { label: 'AI Recommendations', enabled: true },
-    { label: 'Build/Deploy Updates', enabled: false },
-    { label: 'Chat Mentions', enabled: true },
-    { label: 'Billing Alerts', enabled: false },
-  ];
-  deliveryMethods: DeliveryMethodPref[] = [
-    { label: 'In-app', enabled: true },
-    { label: 'Email', enabled: false },
-    { label: 'Push Notifications', enabled: true },
-  ];
-  selectedFrequency = 'instant';
+  get isProfileValid(): boolean {
+    return !!this.profile.name.trim() && this.profile.name.trim().length >= 2;
+  }
 
-  billing = {
-    currentPlan: 'Pro Developer',
-    price: 49.99,
-    renewalDate: 'Dec 31, 2025',
-    paymentMethods: [
-      { last4: '1234', type: 'Visa', icon: 'fab fa-cc-visa' } as PaymentMethod,
-      { last4: '5678', type: 'Mastercard', icon: 'fab fa-cc-mastercard' } as PaymentMethod,
-    ],
-    invoices: [
-      { id: 'INV-2025-11', date: new Date(2025, 10, 1), amount: 49.99 } as Invoice,
-      { id: 'INV-2025-10', date: new Date(2025, 9, 1), amount: 49.99 } as Invoice,
-    ],
-  };
+  // ─── Change Email Dialog ────────────────────────────────────
+  showEmailDialog = false;
+  emailDialogPassword = '';
+  emailDialogNewEmail = '';
+  emailDialogConfirmEmail = '';
+  changingEmail = false;
+  emailDialogTouched: Record<string, boolean> = { password: false, newEmail: false, confirmEmail: false };
 
-  integrations: Integration[] = [
-    { id: 'github', name: 'GitHub', icon: 'fab fa-github', connected: true, permissions: 'Read/Write repos', lastSynced: new Date(Date.now() - 3600000) },
-    { id: 'gitlab', name: 'GitLab', icon: 'fab fa-gitlab', connected: false, permissions: 'None' },
-    { id: 'bitbucket', name: 'Bitbucket', icon: 'fab fa-bitbucket', connected: false, permissions: 'None' },
-    { id: 'slack', name: 'Slack', icon: 'fab fa-slack', connected: true, permissions: 'Send notifications' },
-    { id: 'discord', name: 'Discord', icon: 'fab fa-discord', connected: false, permissions: 'None' },
-    { id: 'jira', name: 'Jira', icon: 'fab fa-jira', connected: true, permissions: 'Create issues' },
-    { id: 'vscode', name: 'VS Code', icon: 'fas fa-code', connected: true, permissions: 'Full access' },
-    { id: 'webhooks', name: 'Webhooks', icon: 'fas fa-link', connected: false, permissions: 'None' },
-  ];
+  get emailDialogPasswordError(): string {
+    if (!this.emailDialogTouched['password']) return '';
+    if (!this.emailDialogPassword.trim()) return 'Current password is required';
+    return '';
+  }
 
-  newApiKeyName = '';
-  apiKeys: ApiKey[] = [
-    { id: 'key-1', partialKey: 'cm_live_abc...xyz', fullKey: 'cm_live_demo_key_1234567890abcdef', lastUsed: new Date(Date.now() - 7200000), expiryDate: new Date(2026, 0, 1) },
-    { id: 'key-2', partialKey: 'cm_test_def...uvw', fullKey: 'cm_test_demo_key_0987654321fedcba', lastUsed: new Date(Date.now() - 172800000), expiryDate: new Date(2027, 5, 15) },
-  ];
+  get emailDialogNewEmailError(): string {
+    if (!this.emailDialogTouched['newEmail']) return '';
+    if (!this.emailDialogNewEmail.trim()) return 'New email is required';
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(this.emailDialogNewEmail.trim())) return 'Please enter a valid email address';
+    if (this.emailDialogNewEmail.trim().toLowerCase() === this.profile.email.toLowerCase())
+      return 'New email must be different from current email';
+    return '';
+  }
 
-  workspace: Workspace = {
-    members: [
-      { id: 'mem-1', name: 'John Doe', role: 'Admin', initials: 'JD' },
-      { id: 'mem-2', name: 'Jane Smith', role: 'Developer', initials: 'JS' },
-      { id: 'mem-3', name: 'Peter Jones', role: 'Guest', initials: 'PJ' },
-    ],
-    projectLimit: 10,
-    storageUsedMB: 5 * 1024,
-    storageLimitMB: 10 * 1024,
-  };
+  get emailDialogConfirmError(): string {
+    if (!this.emailDialogTouched['confirmEmail']) return '';
+    if (!this.emailDialogConfirmEmail.trim()) return 'Please confirm your new email';
+    if (this.emailDialogNewEmail.trim().toLowerCase() !== this.emailDialogConfirmEmail.trim().toLowerCase())
+      return 'Emails do not match';
+    return '';
+  }
+
+  get isEmailDialogValid(): boolean {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return !!this.emailDialogPassword.trim() &&
+      !!this.emailDialogNewEmail.trim() &&
+      emailRegex.test(this.emailDialogNewEmail.trim()) &&
+      this.emailDialogNewEmail.trim().toLowerCase() !== this.profile.email.toLowerCase() &&
+      this.emailDialogNewEmail.trim().toLowerCase() === this.emailDialogConfirmEmail.trim().toLowerCase();
+  }
+
+  openEmailDialog(): void {
+    this.emailDialogPassword = '';
+    this.emailDialogNewEmail = '';
+    this.emailDialogConfirmEmail = '';
+    this.emailDialogTouched = { password: false, newEmail: false, confirmEmail: false };
+    this.changingEmail = false;
+    this.showEmailDialog = true;
+  }
+
+  closeEmailDialog(): void {
+    this.showEmailDialog = false;
+  }
+
+  submitEmailChange(): void {
+    this.emailDialogTouched['password'] = true;
+    this.emailDialogTouched['newEmail'] = true;
+    this.emailDialogTouched['confirmEmail'] = true;
+
+    if (!this.isEmailDialogValid) {
+      return;
+    }
+
+    this.changingEmail = true;
+    const data: ChangeEmailDTO = {
+      currentPassword: this.emailDialogPassword,
+      newEmail: this.emailDialogNewEmail.trim(),
+      confirmNewEmail: this.emailDialogConfirmEmail.trim(),
+    };
+    this.settingsService.changeEmail(data).subscribe({
+      next: (user) => {
+        this.profile.email = user.email || '';
+        // Propagate to auth service so navbar, profile dropdown update
+        this.authService.setUser({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        });
+        this.changingEmail = false;
+        this.showEmailDialog = false;
+        this.toastService.showSuccess('Email changed successfully');
+      },
+      error: () => {
+        this.changingEmail = false;
+        // Error toast handled by global errorInterceptor
+      },
+    });
+  }
+
+  // Disable account form
+  disableDays = 7;
+  disablePassword = '';
+  disablingAccount = false;
+  disablePasswordTouched = false;
+
+  // Delete account form
+  deletePassword = '';
+  deleteConfirmText = '';
+  deletingAccount = false;
+  deletePasswordTouched = false;
+  deleteConfirmTouched = false;
 
   ngOnInit() {
     this.activeSection = 'profile';
+    this.selectedTheme = this.themeService.themePreference();
+    this.loadProfile();
+  }
+
+  applyTheme(preference: ThemePreference): void {
+    this.selectedTheme = preference;
+    this.themeService.setTheme(preference);
+  }
+
+  private loadProfile(): void {
+    this.loadingProfile = true;
+    this.settingsService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.profile = {
+          name: user.name || '',
+          email: user.email || '',
+          role: user.role || 'User',
+          initials: this.getInitials(user.name || ''),
+        };
+        this.loadingProfile = false;
+      },
+      error: () => {
+        this.loadingProfile = false;
+      },
+    });
+  }
+
+  private getInitials(name: string): string {
+    return name
+      .split(' ')
+      .filter(Boolean)
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2) || '?';
   }
 
   selectSection(id: string) { this.activeSection = id; }
 
-  showToast(msg: string) {
-    this.toastMessage = msg;
-    this.toastVisible = true;
-    setTimeout(() => { this.toastVisible = false; }, 3000);
-  }
+  saveProfile(): void {
+    this.profileTouched['name'] = true;
 
-  saveProfile() { this.showToast('Profile saved successfully'); }
-  changePassword() { this.showToast('Password changed successfully'); }
-
-  toggle2fa() {
-    this.twoFaEnabled = !this.twoFaEnabled;
-    this.showToast(`2FA ${this.twoFaEnabled ? 'enabled' : 'disabled'}`);
-  }
-
-  toggleIntegration(i: Integration) {
-    i.connected = !i.connected;
-    this.showToast(`${i.name} ${i.connected ? 'connected' : 'disconnected'}`);
-  }
-
-  createApiKey() {
-    if (this.newApiKeyName.trim()) {
-      const key: ApiKey = {
-        id: `key-${Date.now()}`,
-        partialKey: `cm_${this.newApiKeyName.substring(0, 4)}...${Math.random().toString(36).substring(2, 5)}`,
-        fullKey: `cm_${this.newApiKeyName}_${Date.now()}_${Math.random().toString(36).substring(2)}`,
-        lastUsed: new Date(),
-        expiryDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-      };
-      this.apiKeys.push(key);
-      this.newApiKeyName = '';
-      this.showToast('API key created');
+    if (!this.isProfileValid) {
+      this.toastService.showWarning('Name must be at least 2 characters');
+      return;
     }
-  }
 
-  copyApiKey(key: ApiKey) {
-    navigator.clipboard.writeText(key.fullKey).then(() => {
-      this.copiedKeyId = key.id;
-      this.showToast('API key copied to clipboard');
-      setTimeout(() => { this.copiedKeyId = ''; }, 2000);
+    this.savingProfile = true;
+    const profileData: UserProfile = {
+      name: this.profile.name.trim(),
+      email: this.profile.email, // send current email unchanged
+    };
+    this.settingsService.updateProfile(profileData).subscribe({
+      next: (user) => {
+        this.profile = {
+          name: user.name || '',
+          email: user.email || '',
+          role: user.role || 'User',
+          initials: this.getInitials(user.name || ''),
+        };
+        // Propagate updated user to AuthService so navbar, profile dropdown, etc. update
+        this.authService.setUser({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        });
+        this.savingProfile = false;
+        this.profileTouched = { name: false };
+        this.toastService.showSuccess('Profile saved successfully');
+      },
+      error: () => {
+        this.savingProfile = false;
+      },
     });
   }
 
-  revokeApiKey(id: string) {
-    this.openDeleteModal('Revoke API Key', 'This key will be permanently revoked and cannot be recovered.', () => {
-      this.apiKeys = this.apiKeys.filter(k => k.id !== id);
-      this.showToast('API key revoked');
+  changePassword(): void {
+    // Mark all fields as touched to trigger inline errors
+    this.passwordTouched['currentPassword'] = true;
+    this.passwordTouched['newPassword'] = true;
+    this.passwordTouched['confirmPassword'] = true;
+
+    if (!this.isPasswordFormValid) {
+      // Show first relevant error as toast too
+      if (!this.currentPassword.trim() || !this.newPassword.trim() || !this.confirmPassword.trim()) {
+        this.toastService.showWarning('Please fill in all password fields');
+      } else if (this.newPassword.length < 8) {
+        this.toastService.showWarning('Password must be at least 8 characters');
+      } else if (this.newPassword !== this.confirmPassword) {
+        this.toastService.showError('New passwords do not match');
+      }
+      return;
+    }
+
+    this.changingPassword = true;
+    const data: PasswordChangeDTO = {
+      currentPassword: this.currentPassword,
+      newPassword: this.newPassword,
+      confirmNewPassword: this.confirmPassword,
+    };
+    this.settingsService.changePassword(data).subscribe({
+      next: () => {
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+        this.changingPassword = false;
+        this.passwordTouched = { currentPassword: false, newPassword: false, confirmPassword: false };
+        this.toastService.showSuccess('Password changed successfully');
+      },
+      error: () => {
+        this.changingPassword = false;
+        // Error toast handled by global errorInterceptor
+      },
     });
   }
 
-  openDeleteModal(title: string, message: string, action: () => void) {
-    this.deleteModalTitle = title;
-    this.deleteModalMessage = message;
-    this.deleteModalAction = action;
-    this.showDeleteModal = true;
+  openDeleteModal(title: string, message: string, action: () => void) { }
+  confirmDelete() { }
+  cancelDelete() { }
+
+  // ─── Disable account error getters ─────────────────────────────
+  get disablePasswordError(): string {
+    if (!this.disablePasswordTouched) return '';
+    if (!this.disablePassword.trim()) return 'Password is required to disable your account';
+    return '';
   }
 
-  confirmDelete() {
-    if (this.deleteModalAction) this.deleteModalAction();
-    this.showDeleteModal = false;
+  // ─── Delete account error getters ──────────────────────────────
+  get deletePasswordError(): string {
+    if (!this.deletePasswordTouched) return '';
+    if (!this.deletePassword.trim()) return 'Password is required';
+    return '';
   }
 
-  cancelDelete() { this.showDeleteModal = false; }
+  get deleteConfirmError(): string {
+    if (!this.deleteConfirmTouched) return '';
+    if (this.deleteConfirmText !== 'DELETE MY ACCOUNT') return 'Please type DELETE MY ACCOUNT exactly';
+    return '';
+  }
 
-  deleteAccount() {
-    this.openDeleteModal('Delete Account', 'This will permanently delete your account and all data. This cannot be undone.', () => {
-      this.showToast('Account deletion requested');
+  // ─── Reset Theme ───────────────────────────────────────────────
+  resetTheme(): void {
+    this.applyTheme('system');
+    this.toastService.showSuccess('Theme reset to system default');
+  }
+
+  // ─── Disable Account ──────────────────────────────────────────
+  disableAccount(): void {
+    this.disablePasswordTouched = true;
+    if (!this.disablePassword.trim()) {
+      this.toastService.showWarning('Please enter your password');
+      return;
+    }
+
+    this.disablingAccount = true;
+    const data: DisableAccountDTO = {
+      days: this.disableDays,
+      password: this.disablePassword,
+    };
+    this.settingsService.disableAccount(data).subscribe({
+      next: () => {
+        this.disablingAccount = false;
+        this.toastService.showSuccess(`Account disabled for ${this.disableDays} days. Logging out...`);
+        // Log the user out after a short delay so they see the toast
+        setTimeout(() => {
+          this.authService.logout();
+        }, 2000);
+      },
+      error: () => {
+        this.disablingAccount = false;
+      },
     });
   }
 
-  deleteWorkspace() {
-    this.openDeleteModal('Delete Workspace', 'All projects and data in this workspace will be permanently lost.', () => {
-      this.showToast('Workspace deletion requested');
+  // ─── Delete Account Permanently ───────────────────────────────
+  deleteAccountPermanently(): void {
+    this.deletePasswordTouched = true;
+    this.deleteConfirmTouched = true;
+
+    if (!this.deletePassword.trim()) {
+      this.toastService.showWarning('Please enter your password');
+      return;
+    }
+    if (this.deleteConfirmText !== 'DELETE MY ACCOUNT') {
+      this.toastService.showWarning('Please type DELETE MY ACCOUNT to confirm');
+      return;
+    }
+
+    this.deletingAccount = true;
+    const data: DeleteAccountDTO = {
+      password: this.deletePassword,
+    };
+    this.settingsService.deleteAccount(data).subscribe({
+      next: () => {
+        this.deletingAccount = false;
+        this.toastService.showSuccess('Account permanently deleted. Redirecting...');
+        setTimeout(() => {
+          this.authService.logout();
+        }, 2000);
+      },
+      error: () => {
+        this.deletingAccount = false;
+      },
     });
-  }
-
-  transferOwnership() {
-    this.openDeleteModal('Transfer Ownership', 'Administrative control of this workspace will be transferred.', () => {
-      this.showToast('Ownership transfer initiated');
-    });
-  }
-
-  resetAllSettings() {
-    this.openDeleteModal('Reset All Settings', 'All your settings will revert to their default values.', () => {
-      this.selectedTheme = 'dark';
-      this.devSettings = { lineNumbers: true, minimap: false, autosave: true, tabSize: 2 };
-      this.showToast('Settings reset to defaults');
-    });
-  }
-
-  formatStorage(mb: number): string {
-    if (mb >= 1024) return `${(mb / 1024).toFixed(1)} GB`;
-    return `${mb} MB`;
-  }
-
-  storagePercent(): number {
-    return Math.round((this.workspace.storageUsedMB / this.workspace.storageLimitMB) * 100);
-  }
-
-  getRelativeTime(date: Date): string {
-    const diff = Date.now() - date.getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    if (days < 30) return `${days}d ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  }
-
-  formatDate(date: Date): string {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 }

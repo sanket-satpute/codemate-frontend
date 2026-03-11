@@ -1,0 +1,75 @@
+<div class="dialog-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)"
+     role="dialog" aria-modal="true" aria-labelledby="picker-title">
+  <div class="dialog-panel">
+    <!-- Header -->
+    <div class="dialog-icon-wrapper">
+      <i [class]="headerIcon"></i>
+    </div>
+    <h2 id="picker-title" class="dialog-title">{{ title }}</h2>
+    <p class="dialog-subtitle">Choose a project from your workspace.</p>
+
+    <!-- Search bar -->
+    <div class="search-box">
+      <i class="fas fa-search search-icon"></i>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearch()"
+        placeholder="Search projects…"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Loading -->
+    <div class="project-list-area" *ngIf="loading()">
+      <div class="loading-indicator">
+        <i class="fas fa-circle-notch fa-spin"></i>
+        <span>Loading projects…</span>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="project-list-area" *ngIf="!loading() && error()">
+      <p class="empty-state error">{{ error() }}</p>
+    </div>
+
+    <!-- Empty state -->
+    <div class="project-list-area" *ngIf="!loading() && !error() && filteredProjects.length === 0">
+      <p class="empty-state" *ngIf="allProjects.length === 0">
+        No projects yet. Create a project first!
+      </p>
+      <p class="empty-state" *ngIf="allProjects.length > 0">
+        No projects match "{{ searchTerm }}"
+      </p>
+    </div>
+
+    <!-- Project list -->
+    <div class="project-list-area" *ngIf="!loading() && !error() && filteredProjects.length > 0">
+      <div class="project-list">
+        <button
+          class="project-item"
+          *ngFor="let project of filteredProjects"
+          (click)="selectProject(project)"
+          type="button"
+        >
+          <div class="project-info">
+            <span class="project-name">{{ project.name }}</span>
+            <span class="project-meta">
+              {{ project.status || 'PENDING' }}
+              <span *ngIf="project.createdAt"> · {{ project.createdAt | date:'mediumDate' }}</span>
+            </span>
+          </div>
+          <span class="cta-badge">
+            <i [class]="ctaIcon"></i>
+            {{ ctaLabel }}
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="dialog-footer">
+      <button class="btn btn-outline" (click)="close()" type="button">Cancel</button>
+    </div>
+  </div>
+</div>

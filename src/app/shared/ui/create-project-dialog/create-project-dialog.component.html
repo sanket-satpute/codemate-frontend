@@ -1,0 +1,132 @@
+<div class="dialog-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)"
+     role="dialog" aria-modal="true" aria-labelledby="create-project-title">
+  <div class="dialog-panel">
+    <!-- Header -->
+    <div class="dialog-icon-wrapper">
+      <i class="fas fa-folder-plus"></i>
+    </div>
+    <h2 id="create-project-title" class="dialog-title">Create New Project</h2>
+    <p class="dialog-subtitle">Add your project files for AI-powered code analysis.</p>
+
+    <!-- Form -->
+    <form class="dialog-form" (ngSubmit)="onSubmit()">
+      <!-- Project Name -->
+      <div class="form-group">
+        <label for="projectName">Project Name <span class="required">*</span></label>
+        <input
+          id="projectName"
+          type="text"
+          [(ngModel)]="projectName"
+          name="projectName"
+          placeholder="e.g. My Awesome App"
+          maxlength="100"
+          autocomplete="off"
+          [class.input-error]="nameError()"
+          [disabled]="submitting()"
+        />
+        <span class="error-text" *ngIf="nameError()">{{ nameError() }}</span>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="projectDesc">Description <span class="optional">(optional)</span></label>
+        <textarea
+          id="projectDesc"
+          [(ngModel)]="projectDescription"
+          name="projectDescription"
+          placeholder="Brief description of your project…"
+          rows="2"
+          maxlength="200"
+          [disabled]="submitting()"
+        ></textarea>
+      </div>
+
+      <!-- File Drop Zone -->
+      <div class="form-group">
+        <label>Project Files <span class="required">*</span></label>
+        <div
+          class="drop-zone"
+          [class.dragging]="isDragging()"
+          [class.has-files]="selectedFiles().length > 0"
+          [class.has-error]="filesError()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          (click)="fileInput.click()"
+        >
+          <input
+            #fileInput
+            type="file"
+            multiple
+            (change)="onFileSelect($event)"
+            class="file-input-hidden"
+            [disabled]="submitting()"
+          />
+
+          <ng-container *ngIf="selectedFiles().length === 0">
+            <div class="drop-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <p class="drop-text">
+              <span class="drop-highlight">Click to browse</span> or drag &amp; drop files here
+            </p>
+            <p class="drop-hint">
+              .java, .py, .js, .ts, .html, .css, .json, .xml, .zip, .md, .txt and more
+            </p>
+          </ng-container>
+
+          <ng-container *ngIf="selectedFiles().length > 0">
+            <div class="drop-mini-icon" (click)="$event.stopPropagation(); fileInput.click()">
+              <i class="fas fa-plus"></i> Add more files
+            </div>
+          </ng-container>
+        </div>
+        <span class="error-text" *ngIf="filesError()">{{ filesError() }}</span>
+      </div>
+
+      <!-- Selected Files List -->
+      <div class="file-list" *ngIf="selectedFiles().length > 0">
+        <div class="file-list-header">
+          <span class="file-count">{{ selectedFiles().length }} file(s) &middot; {{ formatSize(totalFileSize()) }}</span>
+          <button type="button" class="clear-btn" (click)="clearFiles()" [disabled]="submitting()">
+            <i class="fas fa-times"></i> Clear all
+          </button>
+        </div>
+        <div class="file-items">
+          <div class="file-item" *ngFor="let f of selectedFiles(); let i = index">
+            <i [class]="f.icon + ' file-icon'"></i>
+            <div class="file-info">
+              <span class="file-name">{{ f.name }}</span>
+              <span class="file-size">{{ formatSize(f.size) }}</span>
+            </div>
+            <button type="button" class="remove-file-btn" (click)="removeFile(i)" [disabled]="submitting()" title="Remove file">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Progress -->
+      <div class="upload-progress" *ngIf="submitting()">
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar-fill" [style.width.%]="uploadProgress()"></div>
+        </div>
+        <span class="progress-text">
+          Uploading to cloud… {{ uploadProgress() | number:'1.0-0' }}%
+        </span>
+      </div>
+
+      <!-- Actions -->
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-outline" (click)="close()" [disabled]="submitting()">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+          <i class="fas fa-spinner fa-spin" *ngIf="submitting()"></i>
+          <i class="fas fa-rocket" *ngIf="!submitting()"></i>
+          {{ submitting() ? 'Creating…' : 'Create Project' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

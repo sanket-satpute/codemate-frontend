@@ -52,21 +52,11 @@ export class LoginComponent {
     if (email && password) {
       const credentials = { email, password };
 
-      this.authService.login(credentials).pipe(
+      this.authService.login(credentials, !!rememberMe).pipe(
         takeUntilDestroyed(this.destroyRef)
       ).subscribe({
         next: () => {
           this.isLoading.set(false);
-          // Persist token based on rememberMe preference
-          if (!rememberMe) {
-            // If "remember me" is unchecked, move token from localStorage to sessionStorage
-            // so it expires when the browser tab closes
-            const token = localStorage.getItem('jwt_token');
-            if (token) {
-              sessionStorage.setItem('jwt_token', token);
-              localStorage.removeItem('jwt_token');
-            }
-          }
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {

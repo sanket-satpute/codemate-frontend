@@ -27,35 +27,38 @@
         <div class="card profile-card">
           <div class="profile-avatar">
             <div class="avatar-circle">{{ profile.initials }}</div>
-            <div class="avatar-actions">
-              <button class="btn-sm btn-primary"><i class="fas fa-upload"></i> Upload</button>
-              <button class="btn-sm btn-ghost"><i class="fas fa-trash"></i> Remove</button>
-            </div>
           </div>
         </div>
         <div class="card">
           <h3>Details</h3>
-          <div class="form-group">
-            <label>Name</label>
-            <input type="text" [(ngModel)]="profile.name">
+          <div *ngIf="loadingProfile" class="loading-placeholder">
+            <p>Loading profile...</p>
           </div>
-          <div class="form-group">
-            <label>Username</label>
-            <input type="text" [(ngModel)]="profile.username">
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" [(ngModel)]="profile.email" readonly class="readonly">
-          </div>
-          <div class="form-group">
-            <label>Phone</label>
-            <input type="text" [(ngModel)]="profile.phone">
-          </div>
-          <div class="form-group">
-            <label>Role</label>
-            <input type="text" [value]="profile.role" readonly class="readonly">
-          </div>
-          <button class="btn btn-primary" (click)="saveProfile()"><i class="fas fa-check"></i> Save Changes</button>
+          <ng-container *ngIf="!loadingProfile">
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" [(ngModel)]="profile.name" (blur)="profileTouched['name'] = true"
+                [class.input-error]="nameError">
+              <span class="field-error" *ngIf="nameError">{{ nameError }}</span>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <div class="email-field-row">
+                <input type="email" [value]="profile.email" readonly class="readonly">
+                <button class="btn-edit-icon" (click)="openEmailDialog()" title="Change email">
+                  <i class="fas fa-pen"></i>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Role</label>
+              <input type="text" [value]="profile.role" readonly class="readonly">
+            </div>
+            <button class="btn btn-primary" (click)="saveProfile()" [disabled]="savingProfile">
+              <i class="fas" [class.fa-check]="!savingProfile" [class.fa-spinner]="savingProfile" [class.fa-spin]="savingProfile"></i>
+              {{ savingProfile ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </ng-container>
         </div>
       </div>
     </section>
@@ -69,70 +72,28 @@
       <div class="cards-grid">
         <div class="card">
           <h3>Change Password</h3>
-          <div class="form-group">
+          <div class="form-group" [class.has-error]="currentPasswordError">
             <label>Current Password</label>
-            <input type="password" placeholder="••••••••">
+            <input type="password" [(ngModel)]="currentPassword" placeholder="••••••••"
+              (blur)="markPasswordTouched('currentPassword')" [class.input-error]="currentPasswordError">
+            <span class="field-error" *ngIf="currentPasswordError">{{ currentPasswordError }}</span>
           </div>
-          <div class="form-group">
+          <div class="form-group" [class.has-error]="newPasswordError">
             <label>New Password</label>
-            <input type="password" placeholder="••••••••">
+            <input type="password" [(ngModel)]="newPassword" placeholder="••••••••"
+              (blur)="markPasswordTouched('newPassword')" [class.input-error]="newPasswordError">
+            <span class="field-error" *ngIf="newPasswordError">{{ newPasswordError }}</span>
           </div>
-          <div class="form-group">
+          <div class="form-group" [class.has-error]="confirmPasswordError">
             <label>Confirm Password</label>
-            <input type="password" placeholder="••••••••">
+            <input type="password" [(ngModel)]="confirmPassword" placeholder="••••••••"
+              (blur)="markPasswordTouched('confirmPassword')" [class.input-error]="confirmPasswordError">
+            <span class="field-error" *ngIf="confirmPasswordError">{{ confirmPasswordError }}</span>
           </div>
-          <button class="btn btn-primary" (click)="changePassword()"><i class="fas fa-lock"></i> Update
-            Password</button>
-        </div>
-
-        <div class="card">
-          <h3>Two-Factor Authentication</h3>
-          <div class="toggle-row">
-            <div>
-              <span class="toggle-label">2FA Status</span>
-              <span class="toggle-desc" [class.text-green]="twoFaEnabled" [class.text-red]="!twoFaEnabled">
-                {{ twoFaEnabled ? 'Enabled' : 'Disabled' }}
-              </span>
-            </div>
-            <div class="toggle-switch" [class.on]="twoFaEnabled" (click)="toggle2fa()">
-              <div class="toggle-knob"></div>
-            </div>
-          </div>
-          <div class="twofa-hint" *ngIf="twoFaEnabled">
-            <i class="fas fa-qrcode"></i>
-            <span>Scan the QR code with your authenticator app to complete setup.</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Active Sessions</h3>
-          <div class="list-items">
-            <div *ngFor="let d of loggedInDevices" class="list-row">
-              <div class="list-row-info">
-                <i class="fas fa-globe"></i>
-                <div>
-                  <span class="list-primary">{{ d.browser }} on {{ d.os }}</span>
-                  <span class="list-secondary">{{ d.ip }} · {{ getRelativeTime(d.loginTime) }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-ghost"><i class="fas fa-sign-out-alt"></i> Logout All Others</button>
-        </div>
-
-        <div class="card">
-          <h3>Login History</h3>
-          <div class="list-items">
-            <div *ngFor="let l of loginHistory" class="list-row">
-              <div class="list-row-info">
-                <i class="fas fa-history"></i>
-                <div>
-                  <span class="list-primary">{{ l.browser }} · {{ l.os }}</span>
-                  <span class="list-secondary">{{ l.ip }} · {{ getRelativeTime(l.timestamp) }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <button class="btn btn-primary" (click)="changePassword()" [disabled]="changingPassword">
+            <i class="fas" [class.fa-lock]="!changingPassword" [class.fa-spinner]="changingPassword" [class.fa-spin]="changingPassword"></i>
+            {{ changingPassword ? 'Updating...' : 'Update Password' }}
+          </button>
         </div>
       </div>
     </section>
@@ -148,309 +109,143 @@
           <h3>Theme</h3>
           <div class="theme-options">
             <button
-              *ngFor="let t of [{v:'dark',l:'Dark',i:'fas fa-moon'},{v:'light',l:'Light',i:'fas fa-sun'},{v:'system',l:'System',i:'fas fa-desktop'}]"
-              class="theme-btn" [class.active]="t.v === selectedTheme" (click)="selectedTheme = t.v">
+              *ngFor="let t of [{v:'light',l:'Light',i:'fas fa-sun'},{v:'dark',l:'Dark',i:'fas fa-moon'},{v:'system',l:'System',i:'fas fa-desktop'}]"
+              class="theme-btn" [class.active]="t.v === selectedTheme" (click)="applyTheme($any(t.v))">
               <i [class]="t.i"></i> {{ t.l }}
             </button>
           </div>
         </div>
-
-        <div class="card">
-          <h3>Developer Settings</h3>
-          <div class="toggle-row"
-            *ngFor="let s of [{l:'Show Line Numbers',k:'lineNumbers'},{l:'Enable Minimap',k:'minimap'},{l:'Autosave',k:'autosave'}]">
-            <span class="toggle-label">{{ s.l }}</span>
-            <div class="toggle-switch" [class.on]="$any(devSettings)[s.k]"
-              (click)="$any(devSettings)[s.k] = !$any(devSettings)[s.k]">
-              <div class="toggle-knob"></div>
-            </div>
-          </div>
-          <div class="form-group" style="margin-top: 12px;">
-            <label>Tab Size</label>
-            <input type="number" [(ngModel)]="devSettings.tabSize" min="1" max="8" style="max-width: 80px;">
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Language & Region</h3>
-          <div class="form-group">
-            <label>Language</label>
-            <select [(ngModel)]="selectedLanguage">
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Region</label>
-            <select [(ngModel)]="selectedRegion">
-              <option value="us">United States</option>
-              <option value="eu">Europe</option>
-              <option value="asia">Asia</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Dashboard & Display</h3>
-          <div class="form-group">
-            <label>Default Project</label>
-            <select [(ngModel)]="defaultDashboardProject">
-              <option *ngFor="let p of availableProjects" [value]="p.id">{{ p.name }}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Card Density</label>
-            <div class="theme-options">
-              <button class="theme-btn" [class.active]="cardDensity === 'comfortable'"
-                (click)="cardDensity = 'comfortable'">
-                <i class="fas fa-expand-arrows-alt"></i> Comfortable
-              </button>
-              <button class="theme-btn" [class.active]="cardDensity === 'compact'" (click)="cardDensity = 'compact'">
-                <i class="fas fa-compress-arrows-alt"></i> Compact
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
-    <!-- ═══ Notifications ═══ -->
-    <section class="section" *ngIf="activeSection === 'notifications'">
-      <div class="section-head">
-        <h2><i class="fas fa-bell"></i> Notification Preferences</h2>
-        <p>Manage how you receive alerts and updates.</p>
+    <!-- ═══ Reset & Account ═══ -->
+    <section class="section" *ngIf="activeSection === 'danger-zone'">
+      <div class="section-head danger-head">
+        <h2><i class="fas fa-shield-alt"></i> Reset & Account</h2>
+        <p>Manage your account settings and perform critical actions.</p>
       </div>
       <div class="cards-grid">
+
+        <!-- Reset Theme -->
         <div class="card">
-          <h3>Categories</h3>
-          <div class="toggle-row" *ngFor="let c of notifCategories">
-            <span class="toggle-label">{{ c.label }}</span>
-            <div class="toggle-switch" [class.on]="c.enabled" (click)="c.enabled = !c.enabled">
-              <div class="toggle-knob"></div>
-            </div>
+          <div class="danger-info">
+            <h4><i class="fas fa-palette"></i> Reset Theme</h4>
+            <p>Reset theme preference to follow your system settings.</p>
           </div>
+          <button class="btn btn-secondary" (click)="resetTheme()">
+            <i class="fas fa-undo"></i> Reset to System Default
+          </button>
         </div>
-        <div class="card">
-          <h3>Delivery Methods</h3>
-          <div class="toggle-row" *ngFor="let m of deliveryMethods">
-            <span class="toggle-label">{{ m.label }}</span>
-            <div class="toggle-switch" [class.on]="m.enabled" (click)="m.enabled = !m.enabled">
-              <div class="toggle-knob"></div>
-            </div>
+
+        <!-- Disable Account -->
+        <div class="card warning-card">
+          <div class="danger-info">
+            <h4><i class="fas fa-pause-circle"></i> Disable Account</h4>
+            <p>Temporarily disable your account. You won't be able to log in during this period. The account will automatically reactivate after the chosen duration.</p>
           </div>
-        </div>
-        <div class="card">
-          <h3>Frequency</h3>
-          <div class="theme-options">
-            <button *ngFor="let f of [{v:'instant',l:'Instant'},{v:'daily',l:'Daily'},{v:'weekly',l:'Weekly'}]"
-              class="theme-btn" [class.active]="f.v === selectedFrequency" (click)="selectedFrequency = f.v">
-              {{ f.l }}
+          <div class="disable-form">
+            <div class="form-group">
+              <label>Disable for</label>
+              <select [(ngModel)]="disableDays">
+                <option [ngValue]="7">7 days</option>
+                <option [ngValue]="14">14 days</option>
+                <option [ngValue]="30">30 days (1 month)</option>
+                <option [ngValue]="90">90 days (3 months)</option>
+                <option [ngValue]="180">180 days (6 months)</option>
+                <option [ngValue]="365">365 days (1 year)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Confirm your password</label>
+              <input type="password" [(ngModel)]="disablePassword" placeholder="Enter your current password">
+              <span class="field-error" *ngIf="disablePasswordError">{{ disablePasswordError }}</span>
+            </div>
+            <button class="btn btn-warning" (click)="disableAccount()" [disabled]="disablingAccount">
+              <i class="fas" [class.fa-pause-circle]="!disablingAccount" [class.fa-spinner]="disablingAccount" [class.fa-spin]="disablingAccount"></i>
+              {{ disablingAccount ? 'Disabling...' : 'Disable Account' }}
             </button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ═══ Billing ═══ -->
-    <section class="section" *ngIf="activeSection === 'billing'">
-      <div class="section-head">
-        <h2><i class="fas fa-credit-card"></i> Billing</h2>
-        <p>Manage your subscription, payments, and invoices.</p>
-      </div>
-      <div class="cards-grid">
-        <div class="card plan-card">
-          <div class="plan-badge">CURRENT PLAN</div>
-          <h3>{{ billing.currentPlan }}</h3>
-          <p class="plan-price">${{ billing.price }}<span>/month</span></p>
-          <p class="plan-renew">Renews {{ billing.renewalDate }}</p>
-          <button class="btn btn-primary"><i class="fas fa-arrow-up"></i> Upgrade Plan</button>
-        </div>
-
-        <div class="card">
-          <h3>Payment Methods</h3>
-          <div class="list-items">
-            <div *ngFor="let m of billing.paymentMethods" class="list-row">
-              <div class="list-row-info">
-                <i [class]="m.icon" style="font-size: 1.2rem;"></i>
-                <div>
-                  <span class="list-primary">•••• {{ m.last4 }}</span>
-                  <span class="list-secondary">{{ m.type }}</span>
-                </div>
-              </div>
-              <button class="btn-sm btn-ghost"><i class="fas fa-trash"></i></button>
-            </div>
-          </div>
-          <button class="btn btn-secondary"><i class="fas fa-plus"></i> Add Card</button>
-        </div>
-
-        <div class="card">
-          <h3>Invoice History</h3>
-          <div class="list-items">
-            <div *ngFor="let inv of billing.invoices" class="list-row">
-              <div class="list-row-info">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <div>
-                  <span class="list-primary">{{ inv.id }}</span>
-                  <span class="list-secondary">{{ formatDate(inv.date) }}</span>
-                </div>
-              </div>
-              <span class="invoice-amount">${{ inv.amount }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ Integrations ═══ -->
-    <section class="section" *ngIf="activeSection === 'integrations'">
-      <div class="section-head">
-        <h2><i class="fas fa-puzzle-piece"></i> Integrations</h2>
-        <p>Connect CodeScope AI with your favorite tools.</p>
-      </div>
-      <div class="cards-grid integrations-grid">
-        <div *ngFor="let i of integrations" class="card integration-card" [class.connected]="i.connected">
-          <div class="integ-top">
-            <div class="integ-icon"><i [class]="i.icon"></i></div>
-            <span class="integ-status" [class.on]="i.connected">{{ i.connected ? 'Connected' : 'Not connected' }}</span>
-          </div>
-          <h4>{{ i.name }}</h4>
-          <p class="integ-perms">{{ i.permissions }}</p>
-          <p class="integ-synced" *ngIf="i.lastSynced">Synced {{ getRelativeTime(i.lastSynced) }}</p>
-          <button class="btn-sm" [class.btn-primary]="!i.connected" [class.btn-ghost]="i.connected"
-            (click)="toggleIntegration(i)">
-            {{ i.connected ? 'Disconnect' : 'Connect' }}
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ API Keys ═══ -->
-    <section class="section" *ngIf="activeSection === 'api-keys'">
-      <div class="section-head">
-        <h2><i class="fas fa-key"></i> API Keys</h2>
-        <p>Manage your API access tokens.</p>
-      </div>
-      <div class="cards-grid">
-        <div class="card">
-          <h3>Create New Key</h3>
-          <div class="form-group">
-            <label>Key Name</label>
-            <input type="text" [(ngModel)]="newApiKeyName" placeholder="e.g. CI/CD Pipeline">
-          </div>
-          <button class="btn btn-primary" (click)="createApiKey()"><i class="fas fa-plus"></i> Create Key</button>
-        </div>
-
-        <div class="card" *ngIf="apiKeys.length > 0">
-          <h3>Existing Keys</h3>
-          <div class="list-items">
-            <div *ngFor="let k of apiKeys" class="list-row api-key-row">
-              <div class="list-row-info">
-                <i class="fas fa-key"></i>
-                <div>
-                  <code class="key-code">{{ k.partialKey }}</code>
-                  <span class="list-secondary">Used {{ getRelativeTime(k.lastUsed) }} · Expires {{
-                    formatDate(k.expiryDate) }}</span>
-                </div>
-              </div>
-              <div class="key-actions">
-                <button class="btn-icon" (click)="copyApiKey(k)" [title]="copiedKeyId === k.id ? 'Copied!' : 'Copy'">
-                  <i class="fas" [class.fa-check]="copiedKeyId === k.id" [class.fa-copy]="copiedKeyId !== k.id"></i>
-                </button>
-                <button class="btn-icon danger" (click)="revokeApiKey(k.id)" title="Revoke">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ Workspace ═══ -->
-    <section class="section" *ngIf="activeSection === 'workspace'">
-      <div class="section-head">
-        <h2><i class="fas fa-users-cog"></i> Workspace</h2>
-        <p>Manage your team, roles, and resources.</p>
-      </div>
-      <div class="cards-grid">
-        <div class="card">
-          <h3>Members</h3>
-          <div class="list-items">
-            <div *ngFor="let m of workspace.members" class="list-row">
-              <div class="list-row-info">
-                <div class="member-avatar">{{ m.initials }}</div>
-                <div>
-                  <span class="list-primary">{{ m.name }}</span>
-                  <span class="list-secondary">{{ m.role }}</span>
-                </div>
-              </div>
-              <button class="btn-sm btn-secondary">Manage</button>
-            </div>
-          </div>
-          <button class="btn btn-primary"><i class="fas fa-user-plus"></i> Invite Member</button>
-        </div>
-
-        <div class="card">
-          <h3>Storage Usage</h3>
-          <div class="storage-info">
-            <span>{{ formatStorage(workspace.storageUsedMB) }} / {{ formatStorage(workspace.storageLimitMB) }}</span>
-            <span class="storage-pct">{{ storagePercent() }}%</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="storagePercent()"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Project Limit</h3>
-          <p class="limit-value">{{ workspace.projectLimit }} projects</p>
-          <button class="btn btn-secondary"><i class="fas fa-plus"></i> Adjust Limit</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ Danger Zone ═══ -->
-    <section class="section" *ngIf="activeSection === 'danger-zone'">
-      <div class="section-head danger-head">
-        <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
-        <p>Irreversible actions that require extra confirmation.</p>
-      </div>
-      <div class="cards-grid">
-        <div class="card danger-card" *ngFor="let d of [
-          {t:'Delete Account',m:'Permanently delete your user account and all data.',fn:'deleteAccount'},
-          {t:'Delete Workspace',m:'Permanently delete this workspace and all projects.',fn:'deleteWorkspace'},
-          {t:'Transfer Ownership',m:'Transfer administrative control to another member.',fn:'transferOwnership'},
-          {t:'Reset All Settings',m:'Revert all settings to their default values.',fn:'resetAllSettings'}
-        ]">
+        <!-- Delete Account Permanently -->
+        <div class="card danger-card">
           <div class="danger-info">
-            <h4>{{ d.t }}</h4>
-            <p>{{ d.m }}</p>
+            <h4><i class="fas fa-trash-alt"></i> Delete Account Permanently</h4>
+            <p>This action is <strong>irreversible</strong>. All your data, projects, and analysis results will be permanently removed. This cannot be undone.</p>
           </div>
-          <button class="btn btn-danger" (click)="$any(this)[d.fn]()">{{ d.t }}</button>
+          <div class="delete-form">
+            <div class="form-group">
+              <label>Type your password to confirm</label>
+              <input type="password" [(ngModel)]="deletePassword" placeholder="Enter your current password">
+              <span class="field-error" *ngIf="deletePasswordError">{{ deletePasswordError }}</span>
+            </div>
+            <div class="form-group">
+              <label>Type <strong>DELETE MY ACCOUNT</strong> to confirm</label>
+              <input type="text" [(ngModel)]="deleteConfirmText" placeholder="DELETE MY ACCOUNT">
+              <span class="field-error" *ngIf="deleteConfirmError">{{ deleteConfirmError }}</span>
+            </div>
+            <button class="btn btn-danger" (click)="deleteAccountPermanently()" [disabled]="deletingAccount">
+              <i class="fas" [class.fa-trash-alt]="!deletingAccount" [class.fa-spinner]="deletingAccount" [class.fa-spin]="deletingAccount"></i>
+              {{ deletingAccount ? 'Deleting...' : 'Permanently Delete Account' }}
+            </button>
+          </div>
         </div>
+
       </div>
     </section>
 
   </main>
+</div>
 
-  <!-- Toast -->
-  <div class="toast" [class.visible]="toastVisible">
-    <i class="fas fa-check-circle"></i> {{ toastMessage }}
-  </div>
+<!-- ═══ Change Email Dialog ═══ -->
+<div class="dialog-overlay" *ngIf="showEmailDialog" (click)="closeEmailDialog()">
+  <div class="dialog-panel" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <div class="dialog-title">
+        <i class="fas fa-envelope"></i>
+        <h3>Change Email Address</h3>
+      </div>
+      <button class="dialog-close" (click)="closeEmailDialog()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
 
-  <!-- Delete Confirmation Modal -->
-  <div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
-    <div class="modal-panel" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <i class="fas fa-exclamation-triangle modal-warn-icon"></i>
-        <h3>{{ deleteModalTitle }}</h3>
+    <p class="dialog-desc">
+      Your email is used for logging in. For security, please verify your identity by entering your current password.
+    </p>
+
+    <div class="dialog-current-email">
+      <span class="label">Current email</span>
+      <span class="value">{{ profile.email }}</span>
+    </div>
+
+    <div class="dialog-form">
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" [(ngModel)]="emailDialogPassword" placeholder="Enter your current password"
+          (blur)="emailDialogTouched['password'] = true" [class.input-error]="emailDialogPasswordError">
+        <span class="field-error" *ngIf="emailDialogPasswordError">{{ emailDialogPasswordError }}</span>
       </div>
-      <p class="modal-message">{{ deleteModalMessage }}</p>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
-        <button class="btn btn-danger" (click)="confirmDelete()">Confirm</button>
+      <div class="form-group">
+        <label>New Email</label>
+        <input type="email" [(ngModel)]="emailDialogNewEmail" placeholder="Enter new email address"
+          (blur)="emailDialogTouched['newEmail'] = true" [class.input-error]="emailDialogNewEmailError">
+        <span class="field-error" *ngIf="emailDialogNewEmailError">{{ emailDialogNewEmailError }}</span>
       </div>
+      <div class="form-group">
+        <label>Confirm New Email</label>
+        <input type="email" [(ngModel)]="emailDialogConfirmEmail" placeholder="Re-enter new email address"
+          (blur)="emailDialogTouched['confirmEmail'] = true" [class.input-error]="emailDialogConfirmError">
+        <span class="field-error" *ngIf="emailDialogConfirmError">{{ emailDialogConfirmError }}</span>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button class="btn btn-ghost" (click)="closeEmailDialog()" [disabled]="changingEmail">Cancel</button>
+      <button class="btn btn-primary" (click)="submitEmailChange()" [disabled]="changingEmail">
+        <i class="fas" [class.fa-check]="!changingEmail" [class.fa-spinner]="changingEmail" [class.fa-spin]="changingEmail"></i>
+        {{ changingEmail ? 'Updating...' : 'Change Email' }}
+      </button>
     </div>
   </div>
 </div>

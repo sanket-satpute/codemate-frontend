@@ -29,6 +29,9 @@ export function errorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
                     case 404:
                         errorMessage = 'Resource not found (404).';
                         break;
+                    case 409:
+                        errorMessage = error.error?.message || 'Conflict (409). The resource already exists.';
+                        break;
                     case 413:
                         errorMessage = 'Payload too large (413). Please reduce the file size and try again.';
                         break;

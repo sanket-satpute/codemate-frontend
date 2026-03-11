@@ -2,123 +2,126 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { Stomp, IFrame, IMessage, StompSubscription } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 
+/**
+ * WebSocket service using native WebSocket (no SockJS/STOMP).
+ *
+ * Protocol (matches the reactive backend handler):
+ *   Client → Server:  { "type": "SUBSCRIBE", "topic": "/topic/notifications" }
+ *   Server → Client:  { "topic": "/topic/...", "payload": { ... } }
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class WebSocketService {
-  private client: any = null;
-  private messagesSubject: Subject<unknown> = new Subject<unknown>();
-  public messages: Observable<unknown>;
+  private ws: WebSocket | null = null;
+  private messagesSubject = new Subject<{ topic: string; payload: unknown }>();
+  public messages: Observable<{ topic: string; payload: unknown }>;
   private connected$ = new BehaviorSubject<boolean>(false);
-  private subscriptions: Map<string, StompSubscription> = new Map();
+  private pendingSubscriptions = new Set<string>();
   private reconnectTimer: any = null;
+  private maxReconnectAttempts = 3;
+  private reconnectAttempts = 0;
 
   constructor() {
     this.messages = this.messagesSubject.asObservable();
-    // Don't auto-connect — wait until connect() is explicitly called
-    // (e.g. after login when a JWT token is available)
   }
 
   /**
-   * Establishes a STOMP over SockJS WebSocket connection.
-   * Only connects if a JWT token is available. Safe to call multiple times.
+   * Opens a native WebSocket to the backend /ws endpoint.
+   * JWT is passed as a query parameter for authentication.
    */
   connect(): void {
-    if (this.client && this.client.connected) {
+    if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
       return;
     }
 
-    const token = localStorage.getItem('jwt_token');
+    const token = localStorage.getItem('jwt_token') ?? sessionStorage.getItem('jwt_token');
     if (!token) {
-      // No token yet — skip connection. Will be called again after login.
       return;
     }
 
     try {
-      const socket = new SockJS(environment.websocketUrl);
-      this.client = Stomp.over(socket);
+      // Convert http(s)://host/ws → ws(s)://host/ws?token=JWT
+      const wsUrl = environment.websocketUrl
+        .replace(/^http/, 'ws') + '?token=' + encodeURIComponent(token);
 
-      // Disable debug logging in production
-      this.client.debug = () => { };
+      this.ws = new WebSocket(wsUrl);
 
-      const headers: Record<string, string> = {
-        Authorization: `Bearer ${token}`
+      this.ws.onopen = () => {
+        console.log('WebSocket connected');
+        this.connected$.next(true);
+        this.reconnectAttempts = 0;
+
+        // Re-subscribe to any pending topics
+        this.pendingSubscriptions.forEach(topic => this.sendSubscribe(topic));
       };
 
-      this.client.connect(
-        headers,
-        (_frame?: IFrame) => {
-          console.log('WebSocket connected via STOMP');
-          this.connected$.next(true);
-          // Clear any pending reconnect
-          if (this.reconnectTimer) {
-            clearTimeout(this.reconnectTimer);
-            this.reconnectTimer = null;
+      this.ws.onmessage = (event: MessageEvent) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.topic && data.payload !== undefined) {
+            this.messagesSubject.next({ topic: data.topic, payload: data.payload });
           }
-        },
-        (error: string | IFrame) => {
-          console.error('STOMP connection error:', error);
-          this.connected$.next(false);
-          // Auto-reconnect after 5 seconds if token still exists
-          this.reconnectTimer = setTimeout(() => {
-            if (localStorage.getItem('jwt_token')) {
-              this.connect();
-            }
-          }, 5000);
+        } catch (e) {
+          console.warn('Failed to parse WebSocket message:', e);
         }
-      );
+      };
+
+      this.ws.onerror = (event) => {
+        console.warn('WebSocket error:', event);
+      };
+
+      this.ws.onclose = () => {
+        console.warn('WebSocket closed');
+        this.connected$.next(false);
+        this.reconnectAttempts++;
+        if (this.reconnectAttempts < this.maxReconnectAttempts && (localStorage.getItem('jwt_token') ?? sessionStorage.getItem('jwt_token'))) {
+          this.reconnectTimer = setTimeout(() => this.connect(), 5000);
+        } else if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+          console.warn('WebSocket: max reconnect attempts reached, giving up.');
+        }
+      };
     } catch (err) {
-      console.error('Failed to establish WebSocket connection:', err);
+      console.warn('Failed to establish WebSocket connection:', err);
       this.connected$.next(false);
     }
   }
 
   /**
-   * Subscribes to a STOMP topic and returns an Observable of messages.
-   * Backend publishes messages to /topic/* destinations.
+   * Subscribe to a backend topic and get an Observable of messages for that topic.
+   * Matches the old STOMP onTopic() API so consumers don't need to change.
    */
   onTopic(topic: string): Observable<unknown> {
     return new Observable(observer => {
-      const sub = this.connected$.pipe(
-        filter((connected: boolean) => connected)
-      ).subscribe(() => {
-        if (!this.subscriptions.has(topic)) {
-          const stompSub = this.client.subscribe(topic, (message: IMessage) => {
-            try {
-              const parsed = JSON.parse(message.body);
-              this.messagesSubject.next({ topic, payload: parsed });
-              observer.next(parsed);
-            } catch (e) {
-              console.error('Failed to parse STOMP message:', e);
-            }
-          });
-          this.subscriptions.set(topic, stompSub);
-        }
-      });
+      this.pendingSubscriptions.add(topic);
+
+      // If already connected, subscribe immediately
+      if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        this.sendSubscribe(topic);
+      }
+
+      // Listen for messages on this specific topic
+      const sub = this.messagesSubject
+        .pipe(filter(msg => msg.topic === topic))
+        .subscribe(msg => observer.next(msg.payload));
 
       return () => {
         sub.unsubscribe();
-        const stompSub = this.subscriptions.get(topic);
-        if (stompSub) {
-          stompSub.unsubscribe();
-          this.subscriptions.delete(topic);
-        }
+        this.pendingSubscriptions.delete(topic);
+        this.sendUnsubscribe(topic);
       };
     });
   }
 
   /**
-   * Sends a message to a STOMP destination.
-   * Backend listens on /app/* destinations.
+   * Send a message to a backend destination.
    */
   sendMessage(destination: string, body: unknown): void {
-    if (this.client && this.client.connected) {
-      this.client.send(destination, {}, JSON.stringify(body));
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({ type: 'SEND', destination, body }));
     } else {
-      console.warn('STOMP client is not connected. Message not sent:', body);
+      console.warn('WebSocket is not connected. Message not sent:', body);
     }
   }
 
@@ -130,28 +133,42 @@ export class WebSocketService {
   }
 
   /**
-   * Checks if the STOMP client is currently connected.
+   * Check if the WebSocket is connected.
    */
   isConnected(): boolean {
-    return this.client && this.client.connected;
+    return this.ws !== null && this.ws.readyState === WebSocket.OPEN;
   }
 
   /**
-   * Closes the STOMP connection and cleans up.
+   * Closes the WebSocket connection and cleans up.
    */
   close(): void {
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
     }
-    this.subscriptions.forEach((sub: StompSubscription) => sub.unsubscribe());
-    this.subscriptions.clear();
-    if (this.client) {
-      this.client.disconnect(() => {
-        console.log('WebSocket disconnected');
-        this.connected$.next(false);
-      });
-      this.client = null;
+    this.reconnectAttempts = 0;
+    this.pendingSubscriptions.clear();
+    if (this.ws) {
+      try {
+        this.ws.close();
+      } catch (e) {
+        // Silently handle
+      }
+      this.ws = null;
+      this.connected$.next(false);
+    }
+  }
+
+  private sendSubscribe(topic: string): void {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({ type: 'SUBSCRIBE', topic }));
+    }
+  }
+
+  private sendUnsubscribe(topic: string): void {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({ type: 'UNSUBSCRIBE', topic }));
     }
   }
 }

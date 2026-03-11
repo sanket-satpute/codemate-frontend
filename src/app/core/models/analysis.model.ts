@@ -1,19 +1,32 @@
+export type JobType = 'PROJECT_ANALYSIS' | 'AI_REVIEW' | 'ARCHITECTURE_SCAN' | 'BUG_SCAN' | 'CHAT_TURN';
+export type JobStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+
 export interface AnalysisRequest {
   projectId: string;
-  filePaths?: string[]; // Optional: specific files to analyze
-  analysisType?: 'full' | 'incremental'; // Optional: type of analysis
+  filePaths?: string[];
+  analysisType?: 'full' | 'incremental';
 }
 
+export interface CreateJobRequest {
+  jobType: JobType;
+}
+
+/**
+ * Matches backend AnalysisJobResponseDTO exactly.
+ */
 export interface AnalysisResult {
-  id: string;
+  id?: number;
+  jobId: string;
   projectId: string;
-  timestamp: Date;
-  status: 'pending' | 'in-progress' | 'completed' | 'failed';
-  summary: string;
-  findings: AnalysisFinding[];
-  rawOutput: unknown; // Raw output from the AI model
+  jobType: JobType;
+  status: JobStatus;
+  createdAt: string;
+  updatedAt: string;
+  result?: string;
+  model?: string;
 }
 
+/** Legacy — kept for compatibility with other modules */
 export interface AnalysisFinding {
   file: string;
   lineNumber: number;

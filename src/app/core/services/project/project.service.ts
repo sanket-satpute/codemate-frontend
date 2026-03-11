@@ -5,8 +5,8 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { BaseService } from '../base.service';
 import { Project, ProjectDetails, UpdateProjectRequest, CreateProjectRequest } from '../../models/project.model';
-import { ProjectSummary } from '../../../features/projects/project-summary/models/project-summary.model';
 import { ApiEndpoints } from '../../constants/api-endpoints';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,7 +22,6 @@ export class ProjectService extends BaseService {
 
   /**
    * Fetches all projects for the current user.
-   * @returns An observable array of projects.
    */
   getProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(`${this.apiUrl}${ApiEndpoints.PROJECTS.BASE}`)
@@ -34,8 +33,6 @@ export class ProjectService extends BaseService {
 
   /**
    * Fetches a specific project by its ID.
-   * @param id The ID of the project.
-   * @returns An observable of the project details.
    */
   getProjectById(id: string): Observable<ProjectDetails> {
     return this.http.get<ProjectDetails>(`${this.apiUrl}${ApiEndpoints.PROJECTS.BY_ID(id)}`)
@@ -45,9 +42,7 @@ export class ProjectService extends BaseService {
   }
 
   /**
-   * Creates a new project.
-   * @param project The project creation request.
-   * @returns An observable of the newly created project.
+   * Creates a new project (name + description only, no files).
    */
   createProject(project: CreateProjectRequest): Observable<Project> {
     return this.http.post<Project>(`${this.apiUrl}${ApiEndpoints.PROJECTS.BASE}`, project)
@@ -57,10 +52,25 @@ export class ProjectService extends BaseService {
   }
 
   /**
+   * Creates a project with files uploaded to Cloudinary.
+   * Uses multipart/form-data: name (required), description (optional), files[] (required).
+   */
+  createProjectWithFiles(name: string, description: string, files: File[]): Observable<Project> {
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description || '');
+    files.forEach(file => formData.append('files', file));
+
+    return this.http.post<Project>(
+      `${this.apiUrl}${ApiEndpoints.PROJECTS.BASE}/create-with-files`,
+      formData
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Updates an existing project.
-   * @param id The ID of the project to update.
-   * @param project The project update request.
-   * @returns An observable of the updated project.
    */
   updateProject(id: string, project: UpdateProjectRequest): Observable<Project> {
     return this.http.put<Project>(`${this.apiUrl}${ApiEndpoints.PROJECTS.BY_ID(id)}`, project)
@@ -71,8 +81,6 @@ export class ProjectService extends BaseService {
 
   /**
    * Deletes a project by its ID.
-   * @param id The ID of the project to delete.
-   * @returns An observable of the deletion response.
    */
   deleteProject(id: string): Observable<unknown> {
     return this.http.delete<unknown>(`${this.apiUrl}${ApiEndpoints.PROJECTS.BY_ID(id)}`)
@@ -81,39 +89,62 @@ export class ProjectService extends BaseService {
       );
   }
 
-  // Alias for getProjectById to match some usages
+  /** Alias for getProjectById */
   getProjectDetail(projectId: string): Observable<ProjectDetails> {
     return this.getProjectById(projectId);
   }
 
   /**
    * Triggers an analysis for a project.
-   * @param projectId The ID of the project.
-   * @returns An observable of the analysis job.
+   * Backend requires { jobType: 'PROJECT_ANALYSIS' } in the body.
    */
-  runAnalysis(projectId: string): Observable<{ message: string; jobId: string }> {
-    return this.http.post<{ message: string; jobId: string }>(`${this.apiUrl}${ApiEndpoints.PROJECTS.START_ANALYSIS(projectId)}`, {})
+  runAnalysis(projectId: string): Observable<unknown> {
+    return this.http.post(`${this.apiUrl}${ApiEndpoints.PROJECTS.START_ANALYSIS(projectId)}`, { jobType: 'PROJECT_ANALYSIS' })
       .pipe(
         catchError(this.handleError)
       );
   }
 
+  // ─── File Management ───────────────────────────────────────────────
+
   /**
-   * Fetches a summary for a project.
-   * @param projectId The ID of the project.
-   * @returns An observable of the project summary.
+   * Adds files to an existing project.
    */
-  getProjectSummary(projectId: string): Observable<ProjectSummary> {
-    // Assuming ProjectSummary type is imported, but it's not in the file. Need to add import.
+  addFilesToProject(projectId: string, files: File[]): Observable<Project> {
+    const formData = new FormData();
+    files.forEach(file => formData.append('files', file));
 
-    // Since not imported, let's assume it's not defined, but for now, add placeholder.
-    // Actually, from top-level, it was import { ProjectSummary } from '../../features/projects/project-summary/models/project-summary.model';
-    // But to add, I need to import.
+    return this.http.post<Project>(
+      `${this.apiUrl}${ApiEndpoints.PROJECTS.FILES(projectId)}`,
+      formData
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-    // For now, I'll use any.
-    return this.http.get<any>(`${this.apiUrl}${ApiEndpoints.PROJECTS.BY_ID(projectId)}/summary`)
-      .pipe(
-        catchError(this.handleError)
-      );
+  /**
+   * Replaces a specific file in a project.
+   */
+  replaceFileInProject(projectId: string, fileId: string, file: File): Observable<Project> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.put<Project>(
+      `${this.apiUrl}${ApiEndpoints.PROJECTS.FILE_BY_ID(projectId, fileId)}`,
+      formData
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Deletes a specific file from a project.
+   */
+  deleteFileFromProject(projectId: string, fileId: string): Observable<Project> {
+    return this.http.delete<Project>(
+      `${this.apiUrl}${ApiEndpoints.PROJECTS.FILE_BY_ID(projectId, fileId)}`
+    ).pipe(
+      catchError(this.handleError)
+    );
   }
 }

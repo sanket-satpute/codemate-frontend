@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { NgZone } from '@angular/core';
+import { ToastService } from '../../../core/services/toast';
 interface Particle {
   x: number;
   y: number;
@@ -20,6 +21,8 @@ export class WelcomeOnboardingComponent implements OnInit, OnDestroy {
   particles: Particle[] = [];
   private animationFrameId?: number; // Use number for requestAnimationFrame ID
   private particleCount = 50;
+
+  private readonly toastService = inject(ToastService);
 
   constructor(private router: Router, private ngZone: NgZone) {}
 
@@ -69,7 +72,14 @@ export class WelcomeOnboardingComponent implements OnInit, OnDestroy {
   }
 
   showDemo(demoType: string): void {
-    console.log('Showing demo:', demoType);
+    const routes: Record<string, string> = {
+      analysis: '/dashboard',
+      chat: '/dashboard',
+      reports: '/dashboard',
+    };
+    const route = routes[demoType] ?? '/dashboard';
+    this.toastService.show(`Create a project first, then use ${demoType} from your dashboard.`, 'info');
+    this.router.navigate([route]);
   }
 
   trackByParticle(index: number, particle: Particle): any {

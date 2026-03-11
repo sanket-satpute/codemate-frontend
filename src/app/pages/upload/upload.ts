@@ -1,5 +1,5 @@
 // path: src/app/pages/upload/upload.ts
-import { Component, Signal, WritableSignal, signal } from '@angular/core';
+import { Component, Signal, WritableSignal, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UploadService } from '../../core/services/upload.service';
 import { Router, RouterModule } from '@angular/router'; // Added RouterModule
@@ -21,7 +21,7 @@ import { JobProgressCardComponent } from '../../shared/ui/job-progress-card/job-
   templateUrl: './upload.html',
   styleUrls: ['./upload.css']
 })
-export class UploadComponent {
+export class UploadComponent implements OnDestroy {
   selectedFile: File | null = null;
   uploadProgress = 0;
   isUploading = false;
@@ -30,12 +30,17 @@ export class UploadComponent {
   projectName = ''; // Added projectName
   projectDescription = ''; // Added projectDescription
   jobStatus: WritableSignal<JobStatus | null> = signal(null);
+  private jobSubscription: any;
 
   constructor(
     private uploadService: UploadService,
     private router: Router,
     private jobService: JobService
   ) {}
+
+  ngOnDestroy(): void {
+    this.jobSubscription?.unsubscribe();
+  }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -71,14 +76,13 @@ export class UploadComponent {
     }
 
     this.isUploading = true;
-    this.isUploading = true;
     this.uploadService.uploadFile(this.selectedFile).subscribe({
       next: (event: number | JobStatus) => {
         if (typeof event === 'number') {
           this.uploadProgress = event;
         } else {
           this.jobStatus.set(event);
-          this.jobService.subscribeToJob(event.jobId).subscribe({
+          this.jobSubscription = this.jobService.subscribeToJob(event.jobId).subscribe({
             next: (status) => {
               this.jobStatus.set(status);
               if (status.state === 'COMPLETED' || status.state === 'FAILED' || status.state === 'CANCELLED') {

@@ -12,7 +12,7 @@
   <!-- Navigation Sections -->
   <nav class="sidebar-nav">
     <div class="nav-sections">
-      <ng-container *ngFor="let section of sidebarSections">
+      <ng-container *ngFor="let section of sidebarSections()">
         <!-- Section Label -->
         <div class="section-label" *ngIf="isExpanded">
           <span>{{ section.label }}</span>

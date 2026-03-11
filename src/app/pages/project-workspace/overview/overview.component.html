@@ -1,120 +1,212 @@
-<div class="project-overview-container">
-  <!-- 1. Top Section — Project Header -->
-  <header class="project-header card">
-    <div class="header-main-info">
-      <h1>{{ projectName }}</h1>
-      <p class="description">{{ projectDescription }}</p>
-      <div class="tags-tech-stack">
-        <span class="tag-chip" *ngFor="let tag of projectTags"><i class="fas fa-tag"></i> {{ tag }}</span>
-      </div>
-      <div class="metadata-row">
-        <span><i class="fas fa-calendar-plus"></i> Created: {{ projectMetadata.createdDate }}</span>
-        <span><i class="fas fa-redo-alt"></i> Last Updated: {{ projectMetadata.lastUpdated }}</span>
-        <span><i class="fas fa-file-code"></i> Total Files: {{ projectMetadata.totalFiles }}</span>
-        <span><i class="fas fa-hdd"></i> Project Size: {{ projectMetadata.projectSize }}</span>
-      </div>
+<!-- Loading State -->
+<div class="overview-loading" *ngIf="isLoading()">
+  <div class="skeleton-header card">
+    <div class="skeleton-line title"></div>
+    <div class="skeleton-line desc"></div>
+    <div class="skeleton-line meta"></div>
+  </div>
+  <div class="skeleton-grid">
+    <div class="skeleton-card card" *ngFor="let i of [1,2,3,4]">
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line short"></div>
     </div>
-    <div class="action-bar">
-      <button class="action-btn" (click)="editProject()"><i class="fas fa-edit"></i> Edit Project</button>
-      <button class="action-btn" (click)="reRunAnalysis()"><i class="fas fa-play"></i> Re-run Analysis</button>
-      <button class="action-btn" (click)="downloadReport()"><i class="fas fa-download"></i> Download Report</button>
-      <button class="action-btn delete-btn" (click)="deleteProject()"><i class="fas fa-trash-alt"></i> Delete Project</button>
+  </div>
+</div>
+
+<!-- Error State -->
+<div class="overview-error card" *ngIf="!isLoading() && errorMessage()">
+  <i class="fas fa-exclamation-triangle"></i>
+  <p>{{ errorMessage() }}</p>
+  <button class="btn-primary" (click)="loadProjectData()"><i class="fas fa-redo"></i> Retry</button>
+</div>
+
+<!-- ─── Loaded Content ────────────────────────────────────────────── -->
+<div class="overview-page" *ngIf="!isLoading() && !errorMessage()">
+
+  <!-- 1. Project Header -->
+  <header class="project-header card">
+    <div class="header-top">
+      <div class="header-info">
+        <h2 class="project-title">{{ projectName }}</h2>
+        <p class="project-desc" *ngIf="projectDescription">{{ projectDescription }}</p>
+        <div class="meta-chips">
+          <span class="meta-chip"><i class="fas fa-calendar-plus"></i> {{ projectMetadata.createdDate }}</span>
+          <span class="meta-chip"><i class="fas fa-sync-alt"></i> {{ projectMetadata.lastUpdated }}</span>
+          <span class="status-badge" [ngClass]="'status-' + projectMetadata.status">{{ projectMetadata.status }}</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" (click)="reRunAnalysis()" [disabled]="isAnalysisRunning()">
+          <i [class]="isAnalysisRunning() ? 'fas fa-spinner fa-spin' : 'fas fa-play'"></i>
+          {{ isAnalysisRunning() ? 'Running…' : 'Run Analysis' }}
+        </button>
+        <button class="btn-secondary" (click)="openAIChat()">
+          <i class="fas fa-comments"></i> AI Chat
+        </button>
+        <button class="btn-ghost btn-danger" (click)="deleteProject()">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
     </div>
   </header>
 
-  <div class="middle-layout-grid">
-    <div class="left-column">
-      <!-- 2. Middle Section — Project Health Summary -->
-      <section class="health-summary-grid">
-        <div class="health-card" *ngFor="let score of projectHealthScores" [class]="score.colorClass" [attr.data-tooltip]="score.tooltip">
-          <i [class]="score.icon"></i>
-          <div class="score-info">
-            <h3>{{ score.score }}</h3>
-            <p>{{ score.name }}</p>
+  <!-- 2. Quick Stats -->
+  <section class="stats-row">
+    <div class="stat-card" *ngFor="let stat of quickStats()" [ngClass]="'accent-' + stat.accent">
+      <div class="stat-icon"><i [class]="stat.icon"></i></div>
+      <div class="stat-body">
+        <span class="stat-value">{{ stat.value }}</span>
+        <span class="stat-label">{{ stat.label }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Main Content Grid -->
+  <div class="content-grid">
+
+    <!-- Left Column -->
+    <div class="col-main">
+
+      <!-- File Information Card -->
+      <section class="card section-card">
+        <div class="section-header">
+          <h3 class="section-heading"><i class="fas fa-file-code"></i> Project Files</h3>
+          <button class="btn-secondary btn-sm" (click)="triggerAddFiles()" [disabled]="isUploadingFiles()">
+            <i [class]="isUploadingFiles() ? 'fas fa-spinner fa-spin' : 'fas fa-plus'"></i>
+            {{ isUploadingFiles() ? 'Uploading…' : 'Add Files' }}
+          </button>
+        </div>
+
+        <!-- Hidden file inputs -->
+        <input type="file" #fileInput multiple style="display:none"
+               (change)="onFilesSelected($event)"
+               accept=".java,.py,.js,.ts,.html,.css,.scss,.json,.xml,.yml,.yaml,.md,.txt,.zip,.pdf,.docx,.doc,.xlsx,.xls,.csv,.sql,.sh,.bat,.properties,.jsx,.tsx,.less,.kt,.swift,.go,.rs,.c,.cpp,.h,.cs,.rb,.php,.r,.scala,.gradle,.toml,.ini,.cfg,.env,.log" />
+        <input type="file" #replaceFileInput style="display:none"
+               (change)="onReplaceFileSelected($event)"
+               accept=".java,.py,.js,.ts,.html,.css,.scss,.json,.xml,.yml,.yaml,.md,.txt,.zip,.pdf,.docx,.doc,.xlsx,.xls,.csv,.sql,.sh,.bat,.properties,.jsx,.tsx,.less,.kt,.swift,.go,.rs,.c,.cpp,.h,.cs,.rb,.php,.r,.scala,.gradle,.toml,.ini,.cfg,.env,.log" />
+
+        <!-- File stats summary -->
+        <div class="file-overview" *ngIf="fileStats().totalFiles > 0">
+          <div class="file-summary">
+            <span class="file-big-number">{{ fileStats().totalFiles }}</span>
+            <span class="file-label">Files · {{ fileStats().totalSize }}</span>
           </div>
+          <div class="file-type-chips" *ngIf="fileStats().types.length > 0">
+            <span class="type-chip" *ngFor="let t of fileStats().types">
+              .{{ t.extension }} <b>{{ t.count }}</b>
+            </span>
+          </div>
+        </div>
+
+        <!-- File list table -->
+        <div class="file-list" *ngIf="projectFiles().length > 0">
+          <div class="file-row" *ngFor="let file of projectFiles()">
+            <div class="file-icon">
+              <i [class]="getFileIcon(file.fileExtension)"></i>
+            </div>
+            <div class="file-info">
+              <span class="file-name">{{ file.filename }}</span>
+              <span class="file-meta">
+                {{ formatSize(file.fileSize) }}
+                <span *ngIf="file.uploadedAt"> · {{ file.uploadedAt | date:'short' }}</span>
+              </span>
+            </div>
+            <div class="file-actions">
+              <button class="btn-icon" title="Replace file" (click)="triggerReplaceFile(file.id)"
+                      [disabled]="replacingFileId() === file.id">
+                <i [class]="replacingFileId() === file.id ? 'fas fa-spinner fa-spin' : 'fas fa-sync-alt'"></i>
+              </button>
+              <a *ngIf="file.cloudinaryUrl" class="btn-icon" title="Download file"
+                 [href]="file.cloudinaryUrl" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-download"></i>
+              </a>
+              <button class="btn-icon btn-icon-danger" title="Delete file" (click)="deleteFile(file)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-block" *ngIf="fileStats().totalFiles === 0">
+          <i class="fas fa-folder-open"></i>
+          <p>No files uploaded yet.</p>
+          <button class="btn-primary btn-sm" (click)="triggerAddFiles()">
+            <i class="fas fa-upload"></i> Upload Files
+          </button>
         </div>
       </section>
 
-      <!-- 3. Quick Stats Section -->
-      <section class="quick-stats-section card">
-        <h2>Quick Stats</h2>
-        <div class="stats-grid">
-          <div class="stat-item" *ngFor="let stat of quickStats">
-            <span class="label">{{ stat.label }}:</span>
-            <span class="value">{{ stat.value }}</span>
+      <!-- Latest Analysis Card -->
+      <section class="card section-card" *ngIf="hasAnalysis()">
+        <h3 class="section-heading"><i class="fas fa-microscope"></i> Latest Analysis</h3>
+        <div class="analysis-summary">
+          <div class="analysis-meta">
+            <span class="job-badge" [ngClass]="'status-' + lastJobStatus()">{{ lastJobStatus() }}</span>
+            <span class="model-tag" *ngIf="lastJobModel()">{{ lastJobModel() }}</span>
           </div>
+          <button class="btn-primary btn-sm" (click)="viewFullAnalysis()">
+            View Full Analysis <i class="fas fa-arrow-right"></i>
+          </button>
         </div>
       </section>
 
-      <!-- 4. Major Issues Section -->
-      <section class="major-issues-section card">
-        <h2>Major Issues</h2>
-        <p class="last-scan">Last scan: {{ majorIssues.lastScanDate }}</p>
-        <div class="issue-counts">
-          <span class="critical"><i class="fas fa-bug"></i> Critical: {{ majorIssues.criticalIssuesCount }}</span>
-          <span class="high"><i class="fas fa-fire"></i> High: {{ majorIssues.highIssues }}</span>
-          <span class="medium"><i class="fas fa-exclamation-triangle"></i> Medium: {{ majorIssues.mediumIssues }}</span>
-          <span class="low"><i class="fas fa-info-circle"></i> Low: {{ majorIssues.lowIssues }}</span>
+      <!-- No Analysis Empty State -->
+      <section class="card section-card" *ngIf="!hasAnalysis()">
+        <div class="empty-block centered">
+          <i class="fas fa-flask"></i>
+          <h4>No Analysis Yet</h4>
+          <p>Run your first analysis to see code quality insights.</p>
+          <button class="btn-primary btn-sm" (click)="reRunAnalysis()" [disabled]="isAnalysisRunning()">
+            <i class="fas fa-play"></i> Start Analysis
+          </button>
         </div>
-        <h3>Top Critical Problems:</h3>
-        <ul class="critical-problems-list">
-          <li *ngFor="let problem of majorIssues.topCriticalProblems"><i class="fas fa-times-circle"></i> {{ problem }}</li>
-        </ul>
-        <button class="full-analysis-btn" (click)="viewFullAnalysis()">View Full Analysis <i class="fas fa-arrow-right"></i></button>
       </section>
     </div>
 
-    <div class="right-column">
-      <!-- 5. File Structure Preview -->
-      <section class="file-structure-preview card">
-        <h2>File Structure Preview</h2>
-        <ul class="file-tree">
-          <ng-template #fileTreeTemplate let-nodes>
-            <li *ngFor="let node of nodes">
-              <div class="node-item" (click)="node.children && toggleFileExplorerNode(node, $event)">
-                <i *ngIf="node.children" class="fas" [class.fa-folder-open]="node.expanded" [class.fa-folder]="!node.expanded"></i>
-                <i *ngIf="!node.children" class="fas fa-file-code"></i>
-                <span>{{ node.name }}</span>
-              </div>
-              <ul *ngIf="node.children && node.expanded">
-                <ng-container *ngTemplateOutlet="fileTreeTemplate; context: { $implicit: node.children }"></ng-container>
-              </ul>
-            </li>
-          </ng-template>
-          <ng-container *ngTemplateOutlet="fileTreeTemplate; context: { $implicit: fileStructurePreview }"></ng-container>
-        </ul>
-        <button class="open-full-explorer-btn" (click)="openFullFileExplorer()">Open Full File Explorer <i class="fas fa-external-link-alt"></i></button>
-      </section>
+    <!-- Right Column — Recent Activity -->
+    <div class="col-side">
+      <section class="card section-card">
+        <h3 class="section-heading"><i class="fas fa-history"></i> Recent Activity</h3>
 
-      <!-- 6. Recent Activity / Recent Jobs -->
-      <section class="recent-activity-section card">
-        <h2>Recent Activity</h2>
-        <div class="activity-timeline">
-          <div class="activity-item" *ngFor="let activity of recentActivities">
-            <i [class]="activity.icon"></i>
-            <div class="activity-details">
-              <p class="description">{{ activity.description }}</p>
-              <span class="time">{{ activity.time }}</span>
+        <div class="activity-list" *ngIf="recentActivities().length > 0">
+          <div class="activity-row" *ngFor="let a of recentActivities()" [ngClass]="a.statusClass">
+            <i [class]="a.icon" class="activity-icon"></i>
+            <div class="activity-body">
+              <span class="activity-text">{{ a.description }}</span>
+              <span class="activity-time">{{ a.time }}</span>
             </div>
           </div>
+        </div>
+
+        <div class="empty-block" *ngIf="recentActivities().length === 0">
+          <p>No recent activity to show.</p>
         </div>
       </section>
     </div>
   </div>
 
-  <!-- 7. Bottom Section — Quick Actions -->
-  <section class="bottom-quick-actions">
-    <button class="large-action-btn" (click)="uploadMoreFiles()">
-      <i class="fas fa-upload"></i>
-      <span>Upload More Files</span>
-    </button>
-    <button class="large-action-btn" (click)="runDeepAnalysis()">
+  <!-- 4. Quick Actions Footer -->
+  <section class="quick-actions-bar">
+    <button class="action-tile" (click)="reRunAnalysis()" [disabled]="isAnalysisRunning()">
       <i class="fas fa-flask"></i>
-      <span>Run Deep Analysis</span>
+      <span class="tile-title">Run Analysis</span>
+      <span class="tile-desc">Scan code for issues and quality</span>
     </button>
-    <button class="large-action-btn" (click)="openDebugView()">
-      <i class="fas fa-bug"></i>
-      <span>Open Debug View</span>
+    <button class="action-tile" (click)="openAIChat()">
+      <i class="fas fa-comments"></i>
+      <span class="tile-title">AI Chat</span>
+      <span class="tile-desc">Ask questions about your code</span>
+    </button>
+    <button class="action-tile" (click)="viewFullAnalysis()">
+      <i class="fas fa-chart-bar"></i>
+      <span class="tile-title">View Results</span>
+      <span class="tile-desc">See full analysis breakdown</span>
+    </button>
+    <button class="action-tile" (click)="triggerAddFiles()">
+      <i class="fas fa-file-upload"></i>
+      <span class="tile-title">Add Files</span>
+      <span class="tile-desc">Upload new files to this project</span>
     </button>
   </section>
 </div>

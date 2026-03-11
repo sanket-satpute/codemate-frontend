@@ -1,23 +1,37 @@
-import { ProjectFile } from '../../modules/project-files/project-files.models';
+export type ProjectStatus = 'ACTIVE' | 'ARCHIVED';
+
+export interface ProjectFileInfo {
+  id: string;
+  filename: string;
+  fileSize: number;
+  fileType: string;
+  fileExtension: string;
+  cloudinaryUrl?: string;
+  uploadedAt?: string;
+}
 
 export interface Project {
   id: string;
   name: string;
-  description?: string; // Added optional description property
+  description?: string;
   createdAt: string;
-  status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
-  progress?: number; // Added for UI representation
-  // Add other properties as needed from the backend response
+  updatedAt?: string;
+  status: ProjectStatus;
+  lastAnalysisJobId?: string;
+
+  // File stats from backend
+  totalFiles: number;
+  totalFileSize: number;
+  fileTypeBreakdown?: Record<string, number>; // e.g. { "java": 5, "py": 3 }
+  files?: ProjectFileInfo[];
 }
 
 export interface ProjectListResponse {
-    projects: Project[];
+  projects: Project[];
 }
 
 export interface ProjectDetails extends Project {
-  // Add detailed properties from the backend response
   description: string;
-  files: ProjectFile[]; // Replace 'any' with a proper file interface later
 }
 
 export interface CreateProjectRequest {
@@ -28,6 +42,6 @@ export interface CreateProjectRequest {
 export interface UpdateProjectRequest {
   name?: string;
   description?: string;
-  status?: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+  status?: ProjectStatus;
+  lastAnalysisJobId?: string;
 }
-export type { ProjectFile };

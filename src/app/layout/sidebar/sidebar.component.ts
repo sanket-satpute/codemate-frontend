@@ -1,7 +1,9 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map, startWith } from 'rxjs';
 
 interface SidebarOption {
   name: string;
@@ -29,46 +31,58 @@ export class SidebarComponent {
   isExpanded = true;
   expandedMenus: { [key: string]: boolean } = {};
 
-  constructor(private authService: AuthService) { }
+  private router = inject(Router);
 
-  /** Grouped sidebar sections for visual hierarchy */
-  sidebarSections: SidebarSection[] = [
-    {
-      label: 'Main',
-      items: [
-        { name: 'Dashboard', icon: 'fas fa-tachometer-alt', route: '/dashboard', tooltip: 'Dashboard' },
-        { name: 'Projects', icon: 'fas fa-folder-open', route: '/projects', tooltip: 'Projects' },
-        {
-          name: 'Project Workspace',
-          icon: 'fas fa-code-branch',
-          tooltip: 'Project Workspace',
-          subOptions: [
-            { name: 'Overview', icon: 'fas fa-info-circle', route: '/project-workspace/overview', tooltip: 'Overview' },
-            { name: 'Code Analysis', icon: 'fas fa-chart-bar', route: '/project-workspace/code-analysis', tooltip: 'Code Analysis' },
-            { name: 'Code Quality', icon: 'fas fa-medal', route: '/project-workspace/code-quality', tooltip: 'Code Quality' },
-            { name: 'UI/UX Auditor', icon: 'fas fa-vector-square', route: '/project-workspace/ui-ux-auditor', tooltip: 'UI/UX Auditor' },
-            { name: 'AI Chat', icon: 'fas fa-comments', route: '/project-workspace/ai-chat', tooltip: 'AI Chat' },
-            { name: 'File Explorer', icon: 'fas fa-folder', route: '/project-workspace/file-explorer', tooltip: 'File Explorer' },
-          ],
-        },
-      ]
-    },
-    {
-      label: 'Tools',
-      items: [
-        { name: 'AI Tools', icon: 'fas fa-robot', route: '/ai-tools', tooltip: 'AI Tools' },
-        { name: 'Templates & Starters', icon: 'fas fa-rocket', route: '/templates', tooltip: 'Templates & Starters' },
-      ]
-    },
-    {
-      label: 'Account',
-      items: [
-        { name: 'Notifications', icon: 'fas fa-bell', route: '/notifications', tooltip: 'Notifications' },
-        { name: 'Settings', icon: 'fas fa-cog', route: '/settings', tooltip: 'Settings' },
-        { name: 'Help Center', icon: 'fas fa-question-circle', route: '/help-center', tooltip: 'Help Center' },
-      ]
-    }
-  ];
+  /** Extract projectId from URL like /project-workspace/:projectId/... */
+  private currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects),
+      startWith(this.router.url)
+    ),
+    { initialValue: this.router.url }
+  );
+
+  activeProjectId = computed(() => {
+    const url = this.currentUrl();
+    const match = url.match(/\/project-workspace\/([^/?]+)/);
+    return match ? match[1] : null;
+  });
+
+  /** Build sidebar sections. Workspace routes are dynamic based on activeProjectId. */
+  sidebarSections = computed<SidebarSection[]>(() => {
+    const pid = this.activeProjectId();
+    const wsBase = pid ? `/project-workspace/${pid}` : null;
+
+    return [
+      {
+        label: 'Main',
+        items: [
+          { name: 'Dashboard', icon: 'fas fa-tachometer-alt', route: '/dashboard', tooltip: 'Dashboard' },
+          { name: 'Projects', icon: 'fas fa-folder-open', route: '/projects', tooltip: 'Projects' },
+          ...(wsBase ? [{
+            name: 'Project Workspace',
+            icon: 'fas fa-code-branch',
+            tooltip: 'Project Workspace',
+            subOptions: [
+              { name: 'Overview', icon: 'fas fa-info-circle', route: `${wsBase}/overview`, tooltip: 'Overview' },
+              { name: 'Code Analysis', icon: 'fas fa-chart-bar', route: `${wsBase}/code-analysis`, tooltip: 'Code Analysis' },
+              { name: 'AI Chat', icon: 'fas fa-comments', route: `${wsBase}/ai-chat`, tooltip: 'AI Chat' },
+            ],
+          }] : []),
+        ]
+      },
+      {
+        label: 'Account',
+        items: [
+          { name: 'Notifications', icon: 'fas fa-bell', route: '/notifications', tooltip: 'Notifications' },
+          { name: 'Settings', icon: 'fas fa-cog', route: '/settings', tooltip: 'Settings' },
+        ]
+      }
+    ];
+  });
+
+  constructor(private authService: AuthService) { }
 
   toggleSidebar() {
     this.isExpanded = !this.isExpanded;

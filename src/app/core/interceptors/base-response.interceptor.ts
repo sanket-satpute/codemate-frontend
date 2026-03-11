@@ -1,5 +1,5 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 /**
@@ -25,8 +25,9 @@ export function BaseResponseInterceptor(request: HttpRequest<unknown>, next: Htt
                     'data' in body &&
                     'message' in body
                 ) {
-                    // If success is false, we can still allow the data through
-                    // (the error interceptor / catchError will handle HTTP errors)
+                    if (!body.success) {
+                        throw new Error(body.message || 'Request failed');
+                    }
                     return event.clone({ body: body.data });
                 }
             }

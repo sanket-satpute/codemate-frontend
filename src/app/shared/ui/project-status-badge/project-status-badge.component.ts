@@ -11,10 +11,14 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./project-status-badge.component.scss']
 })
 export class ProjectStatusBadgeComponent {
-  @Input() status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'IN_PROGRESS' = 'PENDING';
+  @Input() status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'IN_PROGRESS' | 'ACTIVE' | 'ARCHIVED' = 'PENDING';
 
   get statusClass(): string {
     switch (this.status) {
+      case 'ACTIVE':
+        return 'badge status-active';
+      case 'ARCHIVED':
+        return 'badge status-archived';
       case 'PENDING':
         return 'badge status-pending';
       case 'RUNNING':
@@ -31,6 +35,10 @@ export class ProjectStatusBadgeComponent {
 
   get statusText(): string {
     switch (this.status) {
+      case 'ACTIVE':
+        return 'Active';
+      case 'ARCHIVED':
+        return 'Archived';
       case 'PENDING':
         return 'Not Started';
       case 'RUNNING':

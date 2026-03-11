@@ -3,8 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../../core/services/project/project.service';
-import { ProjectDetails } from '../../core/models/project.model';
-import { ProjectFile } from '../../modules/project-files/project-files.models'; // Corrected import path
+import { ProjectDetails, ProjectFileInfo } from '../../core/models/project.model';
 import { FileExplorerComponent } from '../../components/project-detail/file-explorer/file-explorer';
 import { CodeViewerComponent } from '../../components/project-detail/code-viewer/code-viewer';
 import { ChatBoxComponent } from '../../components/project-detail/chat-box/chat-box';
@@ -21,7 +20,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class ProjectDetailComponent implements OnInit {
   projectDetails$: Observable<ProjectDetails | null> = of(null);
-  selectedFile: ProjectFile | null = null;
+  selectedFile: ProjectFileInfo | null = null;
   isLoading = true;
   errorMessage = '';
 
@@ -65,7 +64,7 @@ export class ProjectDetailComponent implements OnInit {
     });
   }
 
-  onFileSelected(file: ProjectFile) {
+  onFileSelected(file: ProjectFileInfo) {
     this.selectedFile = file;
   }
 }

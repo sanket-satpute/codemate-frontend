@@ -174,10 +174,6 @@
   gap: 16px;
 }
 
-.integrations-grid {
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-}
-
 .card {
   background: rgba(15, 23, 42, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -250,6 +246,27 @@
     &.readonly {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    &.input-error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+    }
+  }
+
+  .field-error {
+    font-size: 0.72rem;
+    color: #ef4444;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &::before {
+      content: '\f071';
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 900;
+      font-size: 0.6rem;
     }
   }
 
@@ -537,230 +554,49 @@
   }
 }
 
-// ─── 2FA ───
-.twofa-hint {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border-radius: 9px;
-  background: rgba(99, 102, 241, 0.06);
-  border: 1px solid rgba(99, 102, 241, 0.12);
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.5);
-
-  i {
-    color: #818cf8;
-    font-size: 1.2rem;
-  }
-}
-
-// ─── Billing ───
-.plan-card {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.08));
-  border-color: rgba(99, 102, 241, 0.2);
-
-  .plan-badge {
-    font-size: 0.6rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #818cf8;
-  }
-
-  .plan-price {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #fff;
-
-    span {
-      font-size: 0.8rem;
-      font-weight: 400;
-      color: rgba(255, 255, 255, 0.4);
-    }
-  }
-
-  .plan-renew {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.35);
-  }
-}
-
-.invoice-amount {
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: #22c55e;
-}
-
-// ─── Integrations ───
-.integration-card {
-  &.connected {
-    border-color: rgba(34, 197, 94, 0.15);
-  }
-
-  .integ-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .integ-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 9px;
-    background: rgba(255, 255, 255, 0.04);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  .integ-status {
-    font-size: 0.62rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.25);
-
-    &.on {
-      color: #22c55e;
-    }
-  }
-
-  .integ-perms {
-    font-size: 0.72rem;
-  }
-
-  .integ-synced {
-    font-size: 0.68rem;
-    color: rgba(255, 255, 255, 0.25);
-  }
-}
-
-// ─── API Keys ───
-.key-code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.78rem;
-  color: #818cf8;
-  background: rgba(99, 102, 241, 0.08);
-  padding: 2px 8px;
-  border-radius: 5px;
-}
-
-.key-actions {
-  display: flex;
-  gap: 4px;
-}
-
-// ─── Workspace ───
-.member-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #818cf8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.storage-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.5);
-
-  .storage-pct {
-    color: #818cf8;
-    font-weight: 600;
-  }
-}
-
-.progress-bar {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
-  overflow: hidden;
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #6366f1, #818cf8);
-    border-radius: 6px;
-    transition: width 0.4s ease;
-  }
-}
-
-.limit-value {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-// ─── Danger Zone ───
-.danger-card {
-  border-color: rgba(239, 68, 68, 0.12) !important;
-  background: rgba(239, 68, 68, 0.03) !important;
-  flex-direction: row !important;
-  justify-content: space-between;
-  align-items: center;
-
-  .danger-info {
-    flex: 1;
-
-    h4 {
-      color: #fff;
-      margin: 0 0 4px 0;
-      font-size: 0.86rem;
-    }
-
-    p {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.35);
-      margin: 0;
-    }
-  }
-}
-
-// ─── Toast ───
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: #111827;
-  border: 1px solid rgba(34, 197, 94, 0.2);
-  color: #22c55e;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 0.82rem;
-  font-weight: 600;
+// ─── Email Field with Pen Icon ───
+.email-field-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  transform: translateY(80px);
-  opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 1001;
 
-  &.visible {
-    transform: translateY(0);
-    opacity: 1;
-  }
-
-  i {
-    font-size: 0.9rem;
+  input {
+    flex: 1;
   }
 }
 
-// ─── Modal ───
-.modal-overlay {
+.btn-edit-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 9px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  font-size: 0.72rem;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    color: #a5b4fc;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+  }
+}
+
+// ─── Change Email Dialog ───
+.dialog-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -768,44 +604,229 @@
   animation: fadeIn 0.15s ease;
 }
 
-.modal-panel {
-  background: #111827;
+.dialog-panel {
+  background: #131a2b;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 28px;
-  max-width: 420px;
-  width: 90%;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  padding: 24px;
+  width: 420px;
+  max-width: 92vw;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: dialogSlideIn 0.2s ease;
 
-  .modal-header {
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .dialog-title {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 10px;
 
-    .modal-warn-icon {
-      color: #ef4444;
-      font-size: 1.3rem;
+    i {
+      color: #818cf8;
+      font-size: 1rem;
     }
 
     h3 {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       color: #fff;
       margin: 0;
     }
   }
 
-  .modal-message {
-    font-size: 0.84rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0 0 20px 0;
-    line-height: 1.5;
+  .dialog-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+
+    &:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
   }
 
-  .modal-actions {
+  .dialog-desc {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0 0 16px 0;
+    line-height: 1.55;
+  }
+
+  .dialog-current-email {
     display: flex;
-    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+
+    .label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .value {
+      font-size: 0.82rem;
+      color: #a5b4fc;
+      font-weight: 500;
+    }
+  }
+
+  .dialog-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .dialog-actions {
+    display: flex;
     justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+
+// ─── Danger Zone / Reset & Account ───
+.danger-card {
+  border-color: rgba(239, 68, 68, 0.12) !important;
+  background: rgba(239, 68, 68, 0.03) !important;
+
+  .danger-info {
+    flex: 1;
+    margin-bottom: 16px;
+
+    h4 {
+      color: var(--text-primary, #fff);
+      margin: 0 0 6px 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+
+      i {
+        margin-right: 8px;
+        color: #ef4444;
+      }
+    }
+
+    p {
+      font-size: 0.78rem;
+      color: var(--text-muted, rgba(255, 255, 255, 0.45));
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+.warning-card {
+  border-color: rgba(245, 158, 11, 0.15) !important;
+  background: rgba(245, 158, 11, 0.03) !important;
+
+  .danger-info {
+    flex: 1;
+    margin-bottom: 16px;
+
+    h4 {
+      color: var(--text-primary, #fff);
+      margin: 0 0 6px 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+
+      i {
+        margin-right: 8px;
+        color: #f59e0b;
+      }
+    }
+
+    p {
+      font-size: 0.78rem;
+      color: var(--text-muted, rgba(255, 255, 255, 0.45));
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+.btn-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+
+  &:hover:not(:disabled) {
+    background: rgba(245, 158, 11, 0.25);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Forms inside disable/delete cards
+.disable-form,
+.delete-form {
+  .form-group {
+    margin-bottom: 12px;
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted, rgba(255, 255, 255, 0.5));
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+      background: var(--input-bg, rgba(255, 255, 255, 0.04));
+      color: var(--text-primary, #fff);
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus {
+        border-color: rgba(99, 102, 241, 0.5);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+      }
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
   }
 }

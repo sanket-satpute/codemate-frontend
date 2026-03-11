@@ -1,56 +1,121 @@
-import { Injectable, signal, effect, Renderer2, inject, RendererFactory2 } from '@angular/core';
+import { Injectable, signal, effect, Renderer2, RendererFactory2, OnDestroy } from '@angular/core';
 import { getSystemTheme } from '../../utils/theme.utils';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark';
+export type ThemePreference = 'light' | 'dark' | 'system';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ThemeService {
+export class ThemeService implements OnDestroy {
   private renderer: Renderer2;
+  private systemMediaQuery: MediaQueryList | null = null;
+  private systemListener: ((e: MediaQueryListEvent) => void) | null = null;
+
+  /** The user's preference: 'light', 'dark', or 'system' */
+  themePreference = signal<ThemePreference>('system');
+
+  /** The resolved (applied) theme: always 'light' or 'dark' */
   currentTheme = signal<Theme>('light');
-  isWiping = signal<boolean>(false); // New signal to control wipe animation
+
+  isWiping = signal<boolean>(false);
 
   constructor(private rendererFactory: RendererFactory2) {
     this.renderer = rendererFactory.createRenderer(null, null);
     this.initTheme();
 
+    // Persist preference to localStorage whenever it changes
     effect(() => {
-      const theme = this.currentTheme();
+      const pref = this.themePreference();
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('theme', theme);
+        localStorage.setItem('themePreference', pref);
       }
-      // applyTheme is now called directly in initTheme and after wipe animation
-    }, { allowSignalWrites: true });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.removeSystemListener();
   }
 
   private initTheme(): void {
+    let preference: ThemePreference = 'system';
+
     if (typeof localStorage !== 'undefined') {
-      const storedTheme = localStorage.getItem('theme') as Theme;
-      if (storedTheme) {
-        this.currentTheme.set(storedTheme);
+      // Migrate old 'theme' key to new 'themePreference' if needed
+      const storedPref = localStorage.getItem('themePreference') as ThemePreference;
+      if (storedPref && ['light', 'dark', 'system'].includes(storedPref)) {
+        preference = storedPref;
       } else {
-        this.currentTheme.set(getSystemTheme());
+        const legacyTheme = localStorage.getItem('theme') as Theme;
+        if (legacyTheme && ['light', 'dark'].includes(legacyTheme)) {
+          preference = legacyTheme;
+        }
       }
-    } else {
-      this.currentTheme.set('light'); // Default to light if no localStorage
     }
-    this.applyTheme(this.currentTheme()); // Apply theme initially
+
+    this.themePreference.set(preference);
+    this.resolveAndApply(preference);
   }
 
-  toggleTheme(): void {
-    this.isWiping.set(true); // Start wipe animation (fade-in 200ms)
+  /**
+   * Set theme preference — called from settings UI.
+   * Accepts 'light', 'dark', or 'system'.
+   */
+  setTheme(preference: ThemePreference): void {
+    this.isWiping.set(true);
 
-    // Wait for the wipe-in animation to complete (200ms) + a short hold (50ms)
     setTimeout(() => {
-      this.currentTheme.update(current => (current === 'light' ? 'dark' : 'light'));
-      this.applyTheme(this.currentTheme()); // Apply new theme while wipe is fully opaque
+      this.themePreference.set(preference);
+      this.resolveAndApply(preference);
 
-      // After theme change, allow the wipe-out animation to complete (300ms)
       setTimeout(() => {
-        this.isWiping.set(false); // End wipe animation
-      }, 300); // Matching the fade-out duration of the wipe animation
-    }, 250); // 200ms (wipe-in) + 50ms (hold)
+        this.isWiping.set(false);
+      }, 300);
+    }, 250);
+  }
+
+  /** Toggle between light ↔ dark (ignores system). Used by navbar toggle button. */
+  toggleTheme(): void {
+    const next: ThemePreference = this.currentTheme() === 'light' ? 'dark' : 'light';
+    this.setTheme(next);
+  }
+
+  /** Resolve preference to actual theme and apply to DOM */
+  private resolveAndApply(preference: ThemePreference): void {
+    this.removeSystemListener();
+
+    let resolved: Theme;
+
+    if (preference === 'system') {
+      resolved = getSystemTheme();
+      this.listenToSystemChanges();
+    } else {
+      resolved = preference;
+    }
+
+    this.currentTheme.set(resolved);
+    this.applyTheme(resolved);
+  }
+
+  /** Listen for OS-level theme changes when preference is 'system' */
+  private listenToSystemChanges(): void {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+
+    this.systemMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    this.systemListener = (e: MediaQueryListEvent) => {
+      const newTheme: Theme = e.matches ? 'dark' : 'light';
+      this.currentTheme.set(newTheme);
+      this.applyTheme(newTheme);
+    };
+    this.systemMediaQuery.addEventListener('change', this.systemListener);
+  }
+
+  private removeSystemListener(): void {
+    if (this.systemMediaQuery && this.systemListener) {
+      this.systemMediaQuery.removeEventListener('change', this.systemListener);
+      this.systemMediaQuery = null;
+      this.systemListener = null;
+    }
   }
 
   private applyTheme(theme: Theme): void {

@@ -26,8 +26,9 @@ export class UploadService extends BaseService {
   uploadFile(projectId: string, file: File): Observable<number | UploadFileResponse> {
     const formData = new FormData();
     formData.append('file', file, file.name);
+    formData.append('projectId', projectId);
 
-    const req = new HttpRequest('POST', `${this.apiUrl}${ApiEndpoints.UPLOAD.FILE}/${projectId}`, formData, {
+    const req = new HttpRequest('POST', `${this.apiUrl}${ApiEndpoints.UPLOAD.FILE}`, formData, {
       reportProgress: true,
       headers: this.getHeaders().delete('Content-Type') // Let browser set Content-Type for FormData
     });

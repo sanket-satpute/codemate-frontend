@@ -22,8 +22,8 @@ export class DashboardService extends BaseService {
    * Backend: GET /api/dashboard (userId extracted from JWT)
    * @returns An observable of the dashboard data.
    */
-  getDashboardData(): Observable<any> {
-    return this.http.get<any>(this.apiUrl)
+  getDashboardData(): Observable<Dashboard> {
+    return this.http.get<Dashboard>(this.apiUrl)
       .pipe(
         catchError(this.handleError)
       );

@@ -40,21 +40,13 @@
       letter-spacing: 0.5px;
       
       // Status specific colors
-      &.status-PENDING {
-        background-color: rgba(v.$warning-color, 0.15);
-        color: v.$warning-color;
-      }
-      &.status-RUNNING {
-        background-color: rgba(v.$accent-cyan-400, 0.15);
-        color: v.$accent-cyan-400;
-      }
-      &.status-COMPLETED {
+      &.status-ACTIVE {
         background-color: rgba(v.$success-color, 0.15);
         color: v.$success-color;
       }
-      &.status-FAILED {
-        background-color: rgba(v.$error-color, 0.15);
-        color: v.$error-color;
+      &.status-ARCHIVED {
+        background-color: rgba(v.$warning-color, 0.15);
+        color: v.$warning-color;
       }
     }
   }
@@ -71,64 +63,102 @@
     text-overflow: ellipsis;
   }
 
-  .progress-bar-container {
-    width: 100%;
-    height: v.$space-sm; // Use variable for height
-    background-color: var(--background-canvas); // Lighter background for the track
-    border-radius: v.$border-radius-pill; // Rounded corners
-    margin-bottom: v.$space-md; // Spacing below progress bar
-    overflow: hidden;
-    position: relative;
+  .file-stats {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-  }
+    gap: 10px;
+    margin-bottom: v.$space-md;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
 
-  .progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, v.$primary-indigo-600, v.$accent-cyan-400); // Gradient fill
-    border-radius: v.$border-radius-pill; // Rounded corners
-    transition: width v.$transition-duration-slow ease-in-out; // Smooth transition for progress
-  }
+    .file-stat {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.55);
 
-  .progress-text {
-    position: absolute;
-    right: v.$space-sm; // Position text inside
-    font-size: v.$font-size-body-sm; // Smaller text
-    color: var(--text-primary); // Contrasting color
-    font-weight: v.$font-weight-medium;
-    text-shadow: 0 1px 2px rgba(v.$black, 0.2);
+      i {
+        font-size: 0.62rem;
+        color: v.$primary-indigo-600;
+        opacity: 0.8;
+      }
+    }
+
+    .file-type-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-left: auto;
+    }
+
+    .type-chip {
+      font-size: 0.62rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(v.$primary-indigo-600, 0.12);
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
   }
 
   .card-footer {
     display: flex;
-    justify-content: space-between; // Space between date and actions
+    justify-content: space-between;
     align-items: center;
-    margin-top: v.$space-md; // Use variable for margin
-    font-size: v.$font-size-body-sm; // Use variable
-    color: var(--text-muted); // Use muted text color
+    margin-top: auto;
+    padding-top: v.$space-md;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: v.$font-size-body-sm;
+    color: var(--text-muted);
 
-    .creation-date {
+    .footer-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .creation-date,
+      .updated-date {
+        display: flex;
+        align-items: center;
+        gap: 5px;
         color: var(--text-muted);
+        font-size: 0.72rem;
+
+        i { font-size: 0.6rem; opacity: 0.6; }
+      }
     }
 
     .actions {
       display: flex;
-      gap: v.$space-xs; // Use variable for gap
+      gap: v.$space-xs;
 
       .btn-icon {
         background: none;
         border: none;
-        color: var(--text-secondary); // Default icon color
-        font-size: v.$font-size-body-lg; // Use variable
+        color: var(--text-secondary);
+        font-size: v.$font-size-body-lg;
         cursor: pointer;
-        transition: all v.$transition-duration-fast ease-in-out; // Transition for hover
+        padding: v.$space-xs;
+        border-radius: v.$border-radius-sm;
+        transition: all v.$transition-duration-fast ease-in-out;
 
         &:hover {
-          color: var(--primary-color); // Primary color on hover
-          transform: scale(1.1); // Subtle scale on hover
+          color: var(--primary-color);
+          background-color: rgba(v.$primary-indigo-600, 0.1);
+          transform: scale(1.1);
         }
         &:active {
           transform: scale(0.95);
+        }
+
+        &--danger:hover {
+          color: v.$error-color;
+          background-color: rgba(v.$error-color, 0.1);
         }
       }
     }

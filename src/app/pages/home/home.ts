@@ -1,9 +1,8 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Api, User } from '../../core/services/api';
-import { Upload } from '../../core/services/upload';
+import { AuthService } from '../../core/services/auth.service';
 
 interface Feature {
   icon: string;
@@ -20,11 +19,15 @@ interface Feature {
 export class Home {
   @ViewChild('uploadSection') uploadSection!: ElementRef;
 
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   codeInput = '';
-  uploadProgress = 40;
+  uploadProgress = 0;
 
   // Login properties
-  user: User = { email: '', password: '' };
+  email = '';
+  password = '';
   loginError: string | null = null;
   selectedFile: File | null = null;
 
@@ -46,8 +49,6 @@ export class Home {
     }
   ];
 
-  constructor(private api: Api, private router: Router, private uploadService: Upload) {}
-
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -56,16 +57,8 @@ export class Home {
   }
 
   analyzeCode(): void {
-    if (this.selectedFile) {
-      this.uploadService.uploadFile(this.selectedFile).subscribe({
-        next: (event) => {
-          // Handle upload progress and completion
-        },
-        error: (err) => {
-          console.error('Upload error:', err);
-        }
-      });
-    }
+    // Redirect to dashboard — file upload requires a project context
+    this.router.navigate(['/dashboard']);
   }
 
   scrollToUpload(): void {
@@ -78,16 +71,13 @@ export class Home {
   }
 
   onLogin(): void {
-    this.loginError = null; // Clear previous errors
-    this.api.login(this.user).subscribe({
-      next: (response) => {
-        localStorage.setItem('jwt_token', response.token);
-        localStorage.setItem('user_email', response.email);
-        this.router.navigate(['/dashboard']); // Navigate to dashboard on successful login
+    this.loginError = null;
+    this.authService.login({ email: this.email, password: this.password }).subscribe({
+      next: () => {
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.loginError = err.error?.error || 'Login failed. Please try again.';
-        console.error('Login error:', err);
+        this.loginError = err.error?.message || 'Login failed. Please try again.';
       }
     });
   }

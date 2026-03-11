@@ -30,7 +30,7 @@ export abstract class BaseService {
    */
   protected getHeaders(): HttpHeaders {
     let headers = new HttpHeaders();
-    const token = localStorage.getItem('jwt_token');
+    const token = localStorage.getItem('jwt_token') ?? sessionStorage.getItem('jwt_token');
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }

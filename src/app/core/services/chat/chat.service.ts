@@ -1,100 +1,112 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs'; // Import 'of'
-import { catchError, filter, map } from 'rxjs/operators'; // Import 'filter' and 'map'
+import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { BaseService } from '../base.service';
-import { ChatMessage, SendMessageRequest } from '../../models/chat.model';
-import { WebSocketService } from '../websocket/websocket.service'; // Import WebSocketService
+import { ChatMessage, ChatResponseDTO } from '../../models/chat.model';
 import { ApiEndpoints } from '../../constants/api-endpoints';
+import { AuthService } from '../auth.service';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService extends BaseService {
   private readonly apiUrl = environment.apiUrl;
-  private chatHistorySubjects = new Map<string, BehaviorSubject<ChatMessage[]>>();
   private http = inject(HttpClient);
-  private wsService = inject(WebSocketService); // Inject WebSocketService
+  private authService = inject(AuthService);
 
-  constructor() {
-    super();
-    this.wsService.onMessage().pipe(
-      // Ensure messages are filtered and mapped correctly for chat
-      filter((msg: any): msg is { topic: string; payload: ChatMessage } => this.isChatMessagePayload(msg)),
-      map((msg: { topic: string; payload: ChatMessage }) => msg.payload as ChatMessage) // Explicitly cast payload to ChatMessage
-    ).subscribe(chatMessage => this.addMessageToHistory(chatMessage));
+  getChatHistory(projectId: string): Observable<ChatMessage[]> {
+    return this.http.get<ChatMessage[]>(`${this.apiUrl}${ApiEndpoints.CHAT.HISTORY(projectId)}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  sendMessage(projectId: string, message: string): Observable<ChatResponseDTO> {
+    return this.http.post<ChatResponseDTO>(
+      `${this.apiUrl}${ApiEndpoints.CHAT.SEND(projectId)}`,
+      { message }
+    ).pipe(catchError(this.handleError));
+  }
+
+  clearChatHistory(projectId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}${ApiEndpoints.CHAT.CLEAR(projectId)}`)
+      .pipe(catchError(this.handleError));
   }
 
   /**
-   * Retrieves the chat history for a specific project and file from the API.
-   * @param projectId The ID of the project.
-   * @param fileId The ID of the file.
-   * @returns An observable of the chat messages.
+   * Stream AI response tokens via SSE using fetch + ReadableStream.
+   * Emits each token as it arrives from the server.
    */
-  getChatHistory(projectId: string, fileId: string): Observable<ChatMessage[]> {
-    return this.http.get<ChatMessage[]>(`${this.apiUrl}${ApiEndpoints.CHAT.HISTORY(projectId)}/${fileId}`)
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
+  streamMessage(projectId: string, message: string): Observable<string> {
+    return new Observable(observer => {
+      const url = `${this.apiUrl}${ApiEndpoints.CHAT.STREAM(projectId)}`;
+      const token = this.authService.getJwt();
 
-  /**
-   * Sends a chat message to the backend via WebSocket.
-   * @param request The message to send.
-   * @returns An observable of the sent chat message (or the server's acknowledgment).
-   */
-  sendMessage(request: SendMessageRequest): Observable<ChatMessage> {
-    const destination = `/app${ApiEndpoints.CHAT.SEND(request.projectId)}/${request.fileId}`; // Assuming fileId is part of SendMessageRequest
-    const messagePayload: ChatMessage = {
-      id: `temp-${Date.now()}`, // Temporary ID, backend should assign real ID
-      projectId: request.projectId,
-      fileId: request.fileId, // Include fileId in payload
-      sender: request.sender, // Assuming sender is 'user' from frontend
-      message: request.message,
-      timestamp: new Date().toISOString()
-    };
-    this.wsService.sendMessage(destination, messagePayload); // Wrap in object with topic
+      const abortController = new AbortController();
 
-    // Return an observable of the message that was sent (or a mock acknowledgment)
-    // The actual message might come back via WebSocket later with a real ID
-    return of(messagePayload); // Return the message sent for immediate UI update
-  }
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ message }),
+        signal: abortController.signal
+      }).then(async response => {
+        if (!response.ok) {
+          observer.error(new Error(`HTTP ${response.status}`));
+          return;
+        }
 
-  /**
-   * Adds an incoming message to the chat history.
-   * @param message The chat message to add.
-   */
-  private addMessageToHistory(message: ChatMessage): void {
-    const subject = this.chatHistorySubjects.get(message.projectId);
-    if (subject) {
-      const currentHistory = subject.value;
-      subject.next([...currentHistory, message]);
-    } else {
-      // If no subject exists, create one and add the message
-      this.chatHistorySubjects.set(message.projectId, new BehaviorSubject<ChatMessage[]>([message]));
-    }
-  }
+        const reader = response.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
 
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-  /**
-   * Handles incoming messages from the WebSocket service.
-   * @param message The incoming WebSocket message.
-   */
-  private handleIncomingWebSocketMessage(message: unknown): void {
-    // Assuming the WebSocket message contains a ChatMessage structure
-    if (this.isChatMessagePayload(message)) { // Renamed from isChatMessage
-      const chatMessage: ChatMessage = message.payload;
-      this.addMessageToHistory(chatMessage);
-    }
-  }
+          buffer += decoder.decode(value, { stream: true });
 
-  public isChatMessagePayload(message: unknown): message is { type: string; payload: ChatMessage } { // Renamed from isChatMessage
-    return (
-      typeof message === 'object' &&
-      message !== null &&
-      'type' in message &&
-      message.type === 'chatMessage' &&
-      'payload' in message
-    );
+          // SSE events are separated by double newlines
+          const events = buffer.split('\n\n');
+          buffer = events.pop() || '';
+
+          for (const event of events) {
+            for (const line of event.split('\n')) {
+              if (line.startsWith('data:')) {
+                let data = line.substring(5);
+                // Strip JSON string quotes if present
+                if (data.startsWith('"') && data.endsWith('"')) {
+                  try { data = JSON.parse(data); } catch { /* use raw */ }
+                }
+                if (data) observer.next(data);
+              }
+            }
+          }
+        }
+
+        // Process any remaining data in buffer
+        if (buffer.trim()) {
+          for (const line of buffer.split('\n')) {
+            if (line.startsWith('data:')) {
+              let data = line.substring(5);
+              if (data.startsWith('"') && data.endsWith('"')) {
+                try { data = JSON.parse(data); } catch { /* use raw */ }
+              }
+              if (data) observer.next(data);
+            }
+          }
+        }
+
+        observer.complete();
+      }).catch(error => {
+        if (error.name !== 'AbortError') {
+          observer.error(error);
+        }
+      });
+
+      return () => abortController.abort();
+    });
   }
 }

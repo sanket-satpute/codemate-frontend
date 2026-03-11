@@ -35,16 +35,16 @@
     <div class="project-content">
       <div class="file-explorer-panel">
         <app-file-explorer
-          [files]="project.files"
-          [selectedFile]="selectedFile"
-          (fileSelected)="onFileSelected($event)"
+          [files]="$any(project.files || [])"
+          [selectedFile]="$any(selectedFile)"
+          (fileSelected)="onFileSelected($any($event))"
           title="Select to view file content"
         ></app-file-explorer>
       </div>
 
       <div class="main-content-panel">
         <div class="code-viewer-area">
-          <app-code-viewer [fileContent]="selectedFile?.filePath || ''" title="View and interact with your code"></app-code-viewer>
+          <app-code-viewer [fileContent]="$any(selectedFile)?.filePath || ''" title="View and interact with your code"></app-code-viewer>
         </div>
         <div class="chat-area">
           <app-chat-box [projectId]="project.id" title="Engage with AI for code assistance"></app-chat-box>

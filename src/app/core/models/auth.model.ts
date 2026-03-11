@@ -36,7 +36,22 @@ export interface UserProfile {
 }
 
 export interface PasswordChangeDTO {
-  currentPassword?: string;
-  newPassword?: string;
-  confirmNewPassword?: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+export interface DisableAccountDTO {
+  days: number;
+  password: string;
+}
+
+export interface DeleteAccountDTO {
+  password: string;
+}
+
+export interface ChangeEmailDTO {
+  currentPassword: string;
+  newEmail: string;
+  confirmNewEmail: string;
 }

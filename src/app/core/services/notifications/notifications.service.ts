@@ -80,13 +80,51 @@ export class NotificationsService extends BaseService implements OnDestroy {
   }
 
   /**
+   * Marks all notifications as read on the backend.
+   * POST /notifications/mark-all-read
+   */
+  markAllAsRead(): Observable<unknown> {
+    return this.http.post(
+      `${this.apiUrl}${ApiEndpoints.NOTIFICATIONS.MARK_ALL_READ}`,
+      {},
+      { headers: this.getHeaders() }
+    ).pipe(
+      tap(() => {
+        this.notifications.update(notifications =>
+          notifications.map(n => ({ ...n, read: true }))
+        );
+        this.updateUnreadCount();
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Deletes a single notification on the backend.
+   * DELETE /notifications/:id
+   */
+  deleteNotification(notificationId: string): Observable<unknown> {
+    return this.http.delete(
+      `${this.apiUrl}${ApiEndpoints.NOTIFICATIONS.DELETE(notificationId)}`,
+      { headers: this.getHeaders() }
+    ).pipe(
+      tap(() => {
+        this.notifications.update(notifications =>
+          notifications.filter(n => n.id !== notificationId)
+        );
+        this.updateUnreadCount();
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Clears all notifications for the current user on the backend.
    * POST /notifications/clear
    */
   clearAllNotifications(): Observable<unknown> {
-    return this.http.post(
+    return this.http.delete(
       `${this.apiUrl}${ApiEndpoints.NOTIFICATIONS.CLEAR}`,
-      {},
       { headers: this.getHeaders() }
     ).pipe(
       tap(() => {

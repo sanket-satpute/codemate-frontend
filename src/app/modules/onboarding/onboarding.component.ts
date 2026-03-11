@@ -222,12 +222,10 @@ export class OnboardingComponent implements OnInit {
 
   // Handle project creation
   handleProjectCreation(name: string, description: string, visibility: 'private' | 'team' | 'public'): void {
-    console.log('OnboardingComponent received project creation:', { name, description, visibility });
     const projectRequest: UploadProjectRequest = { name, description, visibility };
     // Integrate with actual project service
     this.uploadService.uploadProject(projectRequest).subscribe(
       (response: Project) => { // Explicitly typed response
-        console.log('Project created successfully:', response);
         this.nextStep(); // Move to the next step after successful project creation
       },
       (error: any) => { // Explicitly typed error
@@ -239,7 +237,6 @@ export class OnboardingComponent implements OnInit {
 
   // Handle files upload
   handleFilesUpload(files: FileList): void {
-    console.log('OnboardingComponent received files for upload:', files);
     // Integrate with actual file upload service - assuming it handles multiple files
     // The current `uploadFile` in `UploadService` takes a single File.
     // For simplicity, let's just upload the first file for now or iterate.
@@ -247,9 +244,8 @@ export class OnboardingComponent implements OnInit {
       this.uploadService.uploadFile(files[0]).subscribe(
         (response: number | JobStatus) => { // Explicitly typed response
           if (typeof response === 'number') {
-            console.log(`Upload progress: ${response}%`);
+            // Upload progress
           } else {
-            console.log('Files uploaded successfully (Job Status):', response);
             this.nextStep(); // Move to the next step after successful upload
           }
         },
@@ -267,7 +263,6 @@ export class OnboardingComponent implements OnInit {
 
   // Handle analysis initiation
   handleAnalysisInitiation(): void {
-    console.log('OnboardingComponent received analysis initiation.');
     // Integrate with actual analysis service (assuming project service can trigger this)
     // this.projectService.initiateAnalysis(this.currentProject.id).subscribe(
     //   response => {
