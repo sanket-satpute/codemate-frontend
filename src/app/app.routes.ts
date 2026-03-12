@@ -5,26 +5,17 @@ import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'auth/login',
+    pathMatch: 'full'
+  },
+  {
     path: 'auth',
     canActivate: [guestGuard], // Protect auth routes from logged-in users
     children: [
       { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
       { path: 'register', loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent) },
       { path: '', redirectTo: 'login', pathMatch: 'full' }
-    ]
-  },
-  {
-    path: 'onboarding',
-    loadComponent: () => import('./modules/onboarding/onboarding.component').then(m => m.OnboardingComponent),
-    children: [
-      // Default to the first step, directly loading the component instead of redirecting
-      { path: '', loadComponent: () => import('./modules/onboarding/welcome-onboarding/welcome-onboarding.component').then(m => m.WelcomeOnboardingComponent), pathMatch: 'full' },
-      { path: 'welcome', loadComponent: () => import('./modules/onboarding/welcome-onboarding/welcome-onboarding.component').then(m => m.WelcomeOnboardingComponent) },
-      { path: 'create-project', loadComponent: () => import('./modules/onboarding/onboarding-step/onboarding-step.component').then(m => m.OnboardingStepComponent) },
-      { path: 'upload-files', loadComponent: () => import('./modules/onboarding/onboarding-step/onboarding-step.component').then(m => m.OnboardingStepComponent) },
-      { path: 'run-analysis', loadComponent: () => import('./modules/onboarding/onboarding-step/onboarding-step.component').then(m => m.OnboardingStepComponent) },
-      { path: 'chat-with-ai', loadComponent: () => import('./modules/onboarding/onboarding-step/onboarding-step.component').then(m => m.OnboardingStepComponent) },
-      { path: 'view-results', loadComponent: () => import('./modules/onboarding/onboarding-step/onboarding-step.component').then(m => m.OnboardingStepComponent) },
     ]
   },
   {

@@ -1,8 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router'; // RouterOutlet is for app.html's <router-outlet>
+import { RouterOutlet } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
-import { LocalStorageService } from './core/services/local-storage/local-storage.service';
 import { ToastComponent } from './shared/ui/toast/toast.component';
 
 @Component({
@@ -15,17 +14,8 @@ import { ToastComponent } from './shared/ui/toast/toast.component';
 export class App implements OnInit {
   title = 'codescope-frontend';
   private authService = inject(AuthService);
-  private localStorageService = inject(LocalStorageService);
-  private router = inject(Router);
 
   ngOnInit(): void {
-    // Attempt to restore authentication state from storage on app initialization
     this.authService.restoreSession();
-
-    // Check if onboarding is completed
-    const hasCompletedOnboarding = this.localStorageService.getItem('hasCompletedOnboarding');
-    if (hasCompletedOnboarding !== 'true') {
-      this.router.navigate(['/onboarding']);
-    }
   }
 }
