@@ -205,30 +205,9 @@ $footer-height: var(--spacing-12); // 48px
 // Global Max Width
 $max-content-width: 1400px;
 
-// Onboarding Specific Variables (map to direct values or derived from new spacing)
-$onboarding-progress-bar-width: 200px;
-$onboarding-step-content-max-width: 800px;
-$onboarding-navigation-section-max-width: 800px;
-$onboarding-step-indicator-size: 50px;
-$onboarding-tooltip-offset-y: var(--spacing-10); // 40px
-$onboarding-tooltip-arrow-size: var(--spacing-1); // 4px
-$onboarding-step-premium-max-width: 900px;
-$onboarding-step-icon-wrapper-size: var(--spacing-20); // 80px
 $stroke-width-base: 2px;
 $stroke-width-lg: 2.5px;
 $stroke-width-md: 1.5px;
-$onboarding-step-number-offset: var(--spacing-4); // 16px
-$onboarding-step-number-size: var(--spacing-8); // 32px
-$onboarding-step-number-border-width: 3px;
-$onboarding-illustration-max-width: 300px;
-$onboarding-action-number-size: var(--spacing-8); // 32px
-$onboarding-demo-icon-size: var(--spacing-12); // 48px
-$onboarding-visual-card-max-width: 420px;
-$onboarding-visual-mockup-min-height: 200px;
-
-$welcome-onboarding-logo-size: 180px;
-$welcome-onboarding-logo-glow-size: 220px;
-$welcome-onboarding-feature-media-min-height: 300px;
 
 // 8. Animation & Transition System
 $transition-duration-base: var(--duration-base);

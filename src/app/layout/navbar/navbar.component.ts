@@ -103,7 +103,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   };
 
   // FIX #10: Segments to exclude from breadcrumbs
-  private excludedSegments = new Set(['auth', 'login', 'register', 'onboarding']);
+  private excludedSegments = new Set(['auth', 'login', 'register']);
 
   ngOnInit(): void {
     this.updateBreadcrumbs(this.router.url);
@@ -126,7 +126,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     const cleanUrl = url.split('?')[0].split('#')[0];
     const segments = cleanUrl.split('/').filter(s => s && s !== '');
 
-    // FIX #10: If first segment is excluded (auth, onboarding), clear breadcrumbs
+    // FIX #10: If first segment is excluded (auth), clear breadcrumbs
     if (segments.length > 0 && this.excludedSegments.has(segments[0])) {
       this.breadcrumbs.set([]);
       return;

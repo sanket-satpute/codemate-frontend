@@ -46,11 +46,6 @@ $breakpoints: (
   -webkit-text-fill-color: transparent;
 }
 
-// Onboarding specific background gradient
-@mixin onboarding-background-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-}
-
 @mixin glass-card {
   @include glassmorphism($bg-opacity: 0.06, $border-opacity: 0.15); // Using global glassmorphism mixin
   border-radius: v.$border-radius-lg;
