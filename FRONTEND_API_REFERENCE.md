@@ -1,4 +1,4 @@
-# CodeScope Frontend API Reference
+# CodeMate Frontend API Reference
 
 This guide provides Angular frontend developers with a clear reference to all available backend APIs, including REST endpoints and WebSocket channels.
 

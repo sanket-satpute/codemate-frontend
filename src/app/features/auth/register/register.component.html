@@ -3,7 +3,7 @@
   <div class="auth-hero-section">
     <div class="auth-hero">
       <div class="hero-content">
-        <h1 class="hero-title">Join CodeScope</h1>
+        <h1 class="hero-title">Join CodeMate</h1>
         <p class="hero-subtitle">Start reviewing your code with AI-powered intelligence</p>
         <div class="hero-features">
           <div class="feature-item">
@@ -33,13 +33,13 @@
     <div class="auth-form-container">
       <div class="form-header">
         <div class="logo-wrapper">
-          <img src="assets/logo.svg" alt="CodeScope Logo" class="auth-logo"
+          <img src="assets/logo.svg" alt="CodeMate Logo" class="auth-logo"
             (error)="$event.target.style.display='none'" />
           <!-- Fallback icon if logo fails to load -->
           <i class="fas fa-code logo-fallback" aria-hidden="true"></i>
         </div>
         <h1 class="form-title">Create your account</h1>
-        <p class="form-subtitle">Get started with CodeScope in seconds</p>
+        <p class="form-subtitle">Get started with CodeMate in seconds</p>
       </div>
 
       <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">

@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "codescope-frontend": {
+    "codemate-frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -74,10 +74,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "codescope-frontend:build:production"
+              "buildTarget": "codemate-frontend:build:production"
             },
             "development": {
-              "buildTarget": "codescope-frontend:build:development"
+              "buildTarget": "codemate-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"

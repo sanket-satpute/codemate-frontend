@@ -23,7 +23,7 @@ export class DocumentationComponent implements OnInit {
       id: 'getting-started',
       title: 'Getting Started',
       content: `# Getting Started
-Welcome to CodeScope! This guide will help you get started with our AI Code Analysis Platform.
+Welcome to CodeMate! This guide will help you get started with our AI Code Analysis Platform.
 
 ## 1. Create your first project
 To begin, navigate to the "Projects" section and click on "Create New Project". Give your project a meaningful name and a brief description.
@@ -42,23 +42,23 @@ The dashboard provides an overview of your projects and analysis results. You ca
       id: 'project-workflow',
       title: 'Project Workflow',
       content: `# Project Workflow
-Understanding the lifecycle of a project within CodeScope.
+Understanding the lifecycle of a project within CodeMate.
 
 ## Creating and Managing Projects
-Projects are the core organizational units in CodeScope. Each project can contain multiple code repositories or individual files.
+Projects are the core organizational units in CodeMate. Each project can contain multiple code repositories or individual files.
 
 ### Project Settings
 You can access project-specific settings to configure analysis rules, notifications, and team access.
 
 ## Version Control Integration
-CodeScope integrates with popular version control systems to streamline your development workflow.
+CodeMate integrates with popular version control systems to streamline your development workflow.
 `
     },
     {
       id: 'how-analysis-works',
       title: 'How Analysis Works',
       content: `# How Analysis Works
-CodeScope leverages advanced AI algorithms to perform deep code analysis.
+CodeMate leverages advanced AI algorithms to perform deep code analysis.
 
 ## Static Code Analysis
 Our platform performs static analysis to identify potential bugs, code smells, and security vulnerabilities without executing the code.
@@ -74,16 +74,16 @@ Configure custom rule sets to tailor the analysis to your team's coding standard
       id: 'understanding-insights',
       title: 'Understanding Insights',
       content: `# Understanding Insights
-Interpreting the results and recommendations from CodeScope's analysis.
+Interpreting the results and recommendations from CodeMate's analysis.
 
 ## Error and Warning Classification
-Learn how CodeScope classifies different types of issues, from critical errors to minor warnings.
+Learn how CodeMate classifies different types of issues, from critical errors to minor warnings.
 
 ## Code Quality Score
 Each project receives a code quality score, reflecting the overall health and maintainability of your codebase.
 
 ## Actionable Recommendations
-CodeScope provides clear, actionable recommendations to help you resolve identified issues efficiently.
+CodeMate provides clear, actionable recommendations to help you resolve identified issues efficiently.
 `
     },
     {
@@ -125,7 +125,7 @@ Filter reports by project, analysis status, and date range to get the specific d
 Common issues and their solutions.
 
 ## Connection Problems
-Tips for resolving connectivity issues with the CodeScope platform.
+Tips for resolving connectivity issues with the CodeMate platform.
 
 ## Analysis Failures
 Guidance on diagnosing and fixing problems that lead to failed analysis jobs.

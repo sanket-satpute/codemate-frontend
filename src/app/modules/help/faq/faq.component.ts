@@ -33,16 +33,16 @@ export class FaqComponent {
       category: 'General',
       items: [
         {
-          question: 'What is CodeScope?',
-          answer: 'CodeScope is an AI-powered code analysis platform that helps developers identify issues, improve code quality, and understand their codebase better.'
+          question: 'What is CodeMate?',
+          answer: 'CodeMate is an AI-powered code analysis platform that helps developers identify issues, improve code quality, and understand their codebase better.'
         },
         {
-          question: 'How does CodeScope work?',
-          answer: 'CodeScope uses advanced machine learning models to analyze your source code for bugs, vulnerabilities, code smells, and provides actionable insights and recommendations.'
+          question: 'How does CodeMate work?',
+          answer: 'CodeMate uses advanced machine learning models to analyze your source code for bugs, vulnerabilities, code smells, and provides actionable insights and recommendations.'
         },
         {
-          question: 'What programming languages does CodeScope support?',
-          answer: 'CodeScope supports a wide range of popular programming languages including JavaScript, Python, Java, C#, Go, and more. We are continuously expanding our language support.'
+          question: 'What programming languages does CodeMate support?',
+          answer: 'CodeMate supports a wide range of popular programming languages including JavaScript, Python, Java, C#, Go, and more. We are continuously expanding our language support.'
         }
       ]
     },

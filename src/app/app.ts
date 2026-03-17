@@ -12,7 +12,7 @@ import { ToastComponent } from './shared/ui/toast/toast.component';
   styleUrl: './app.css',
 })
 export class App implements OnInit {
-  title = 'codescope-frontend';
+  title = 'codemate-frontend';
   private authService = inject(AuthService);
 
   ngOnInit(): void {
